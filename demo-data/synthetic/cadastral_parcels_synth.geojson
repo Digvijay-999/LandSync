@@ -1,0 +1,2972 @@
+{
+  "type": "FeatureCollection",
+  "name": "cadastral_parcels_synthetic",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "EPSG:4326"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1001",
+        "owner_name": "Ramesh Sharma",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85,
+              18.52
+            ],
+            [
+              73.8508,
+              18.52
+            ],
+            [
+              73.8508,
+              18.5206
+            ],
+            [
+              73.85,
+              18.5206
+            ],
+            [
+              73.85,
+              18.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1002",
+        "owner_name": "Priya Patel",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85095,
+              18.52
+            ],
+            [
+              73.85175,
+              18.52
+            ],
+            [
+              73.85175,
+              18.5206
+            ],
+            [
+              73.85095,
+              18.5206
+            ],
+            [
+              73.85095,
+              18.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1003",
+        "owner_name": "Anil Kulkarni",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8519,
+              18.52
+            ],
+            [
+              73.8527,
+              18.52
+            ],
+            [
+              73.8527,
+              18.5206
+            ],
+            [
+              73.8519,
+              18.5206
+            ],
+            [
+              73.8519,
+              18.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1004",
+        "owner_name": "Sunita Deshmukh",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85285,
+              18.52
+            ],
+            [
+              73.85365,
+              18.52
+            ],
+            [
+              73.85365,
+              18.5206
+            ],
+            [
+              73.85285,
+              18.5206
+            ],
+            [
+              73.85285,
+              18.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1005",
+        "owner_name": "Vikram Joshi",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8538,
+              18.52
+            ],
+            [
+              73.8546,
+              18.52
+            ],
+            [
+              73.8546,
+              18.5206
+            ],
+            [
+              73.8538,
+              18.5206
+            ],
+            [
+              73.8538,
+              18.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1006",
+        "owner_name": "Meera Nair",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85475,
+              18.52
+            ],
+            [
+              73.85555,
+              18.52
+            ],
+            [
+              73.85555,
+              18.5206
+            ],
+            [
+              73.85475,
+              18.5206
+            ],
+            [
+              73.85475,
+              18.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1007",
+        "owner_name": "Rajesh Gupta",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8557,
+              18.52
+            ],
+            [
+              73.8565,
+              18.52
+            ],
+            [
+              73.8565,
+              18.5206
+            ],
+            [
+              73.8557,
+              18.5206
+            ],
+            [
+              73.8557,
+              18.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1008",
+        "owner_name": "Kavita Rao",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85665,
+              18.52
+            ],
+            [
+              73.85745,
+              18.52
+            ],
+            [
+              73.85745,
+              18.5206
+            ],
+            [
+              73.85665,
+              18.5206
+            ],
+            [
+              73.85665,
+              18.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1009",
+        "owner_name": "Suresh Patil",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8576,
+              18.52
+            ],
+            [
+              73.8584,
+              18.52
+            ],
+            [
+              73.8584,
+              18.5206
+            ],
+            [
+              73.8576,
+              18.5206
+            ],
+            [
+              73.8576,
+              18.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1010",
+        "owner_name": "Neha Verma",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85855,
+              18.52
+            ],
+            [
+              73.85935,
+              18.52
+            ],
+            [
+              73.85935,
+              18.5206
+            ],
+            [
+              73.85855,
+              18.5206
+            ],
+            [
+              73.85855,
+              18.52
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1011",
+        "owner_name": "Deepak Shinde",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85,
+              18.52075
+            ],
+            [
+              73.8508,
+              18.52075
+            ],
+            [
+              73.8508,
+              18.52135
+            ],
+            [
+              73.85,
+              18.52135
+            ],
+            [
+              73.85,
+              18.52075
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1012",
+        "owner_name": "Pooja Mehta",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85095,
+              18.52075
+            ],
+            [
+              73.85175,
+              18.52075
+            ],
+            [
+              73.85175,
+              18.52135
+            ],
+            [
+              73.85095,
+              18.52135
+            ],
+            [
+              73.85095,
+              18.52075
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1013",
+        "owner_name": "Ramesh Sharma",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8519,
+              18.52075
+            ],
+            [
+              73.8527,
+              18.52075
+            ],
+            [
+              73.8527,
+              18.52135
+            ],
+            [
+              73.8519,
+              18.52135
+            ],
+            [
+              73.8519,
+              18.52075
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1014",
+        "owner_name": "Priya Patel",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85285,
+              18.52075
+            ],
+            [
+              73.85365,
+              18.52075
+            ],
+            [
+              73.85365,
+              18.52135
+            ],
+            [
+              73.85285,
+              18.52135
+            ],
+            [
+              73.85285,
+              18.52075
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1015",
+        "owner_name": "Anil Kulkarni",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8538,
+              18.52075
+            ],
+            [
+              73.8546,
+              18.52075
+            ],
+            [
+              73.8546,
+              18.52135
+            ],
+            [
+              73.8538,
+              18.52135
+            ],
+            [
+              73.8538,
+              18.52075
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1016",
+        "owner_name": "Sunita Deshmukh",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85475,
+              18.52075
+            ],
+            [
+              73.85555,
+              18.52075
+            ],
+            [
+              73.85555,
+              18.52135
+            ],
+            [
+              73.85475,
+              18.52135
+            ],
+            [
+              73.85475,
+              18.52075
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1017",
+        "owner_name": "Vikram Joshi",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8557,
+              18.52075
+            ],
+            [
+              73.8565,
+              18.52075
+            ],
+            [
+              73.8565,
+              18.52135
+            ],
+            [
+              73.8557,
+              18.52135
+            ],
+            [
+              73.8557,
+              18.52075
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1018",
+        "owner_name": "Meera Nair",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85665,
+              18.52075
+            ],
+            [
+              73.85745,
+              18.52075
+            ],
+            [
+              73.85745,
+              18.52135
+            ],
+            [
+              73.85665,
+              18.52135
+            ],
+            [
+              73.85665,
+              18.52075
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1019",
+        "owner_name": "Rajesh Gupta",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8576,
+              18.52075
+            ],
+            [
+              73.8584,
+              18.52075
+            ],
+            [
+              73.8584,
+              18.52135
+            ],
+            [
+              73.8576,
+              18.52135
+            ],
+            [
+              73.8576,
+              18.52075
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1020",
+        "owner_name": "Kavita Rao",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85855,
+              18.52075
+            ],
+            [
+              73.85935,
+              18.52075
+            ],
+            [
+              73.85935,
+              18.52135
+            ],
+            [
+              73.85855,
+              18.52135
+            ],
+            [
+              73.85855,
+              18.52075
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1021",
+        "owner_name": "Suresh Patil",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85,
+              18.5215
+            ],
+            [
+              73.8508,
+              18.5215
+            ],
+            [
+              73.8508,
+              18.5221
+            ],
+            [
+              73.85,
+              18.5221
+            ],
+            [
+              73.85,
+              18.5215
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1022",
+        "owner_name": "Neha Verma",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85095,
+              18.5215
+            ],
+            [
+              73.85175,
+              18.5215
+            ],
+            [
+              73.85175,
+              18.5221
+            ],
+            [
+              73.85095,
+              18.5221
+            ],
+            [
+              73.85095,
+              18.5215
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1023",
+        "owner_name": "Deepak Shinde",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8519,
+              18.5215
+            ],
+            [
+              73.8527,
+              18.5215
+            ],
+            [
+              73.8527,
+              18.5221
+            ],
+            [
+              73.8519,
+              18.5221
+            ],
+            [
+              73.8519,
+              18.5215
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1024",
+        "owner_name": "Pooja Mehta",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85285,
+              18.5215
+            ],
+            [
+              73.85365,
+              18.5215
+            ],
+            [
+              73.85365,
+              18.5221
+            ],
+            [
+              73.85285,
+              18.5221
+            ],
+            [
+              73.85285,
+              18.5215
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1025",
+        "owner_name": "Ramesh Sharma",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8538,
+              18.5215
+            ],
+            [
+              73.8546,
+              18.5215
+            ],
+            [
+              73.8546,
+              18.5221
+            ],
+            [
+              73.8538,
+              18.5221
+            ],
+            [
+              73.8538,
+              18.5215
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1026",
+        "owner_name": "Priya Patel",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85475,
+              18.5215
+            ],
+            [
+              73.85555,
+              18.5215
+            ],
+            [
+              73.85555,
+              18.5221
+            ],
+            [
+              73.85475,
+              18.5221
+            ],
+            [
+              73.85475,
+              18.5215
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1027",
+        "owner_name": "Anil Kulkarni",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8557,
+              18.5215
+            ],
+            [
+              73.8565,
+              18.5215
+            ],
+            [
+              73.8565,
+              18.5221
+            ],
+            [
+              73.8557,
+              18.5221
+            ],
+            [
+              73.8557,
+              18.5215
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1028",
+        "owner_name": "Sunita Deshmukh",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85665,
+              18.5215
+            ],
+            [
+              73.85745,
+              18.5215
+            ],
+            [
+              73.85745,
+              18.5221
+            ],
+            [
+              73.85665,
+              18.5221
+            ],
+            [
+              73.85665,
+              18.5215
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1029",
+        "owner_name": "Vikram Joshi",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8576,
+              18.5215
+            ],
+            [
+              73.8584,
+              18.5215
+            ],
+            [
+              73.8584,
+              18.5221
+            ],
+            [
+              73.8576,
+              18.5221
+            ],
+            [
+              73.8576,
+              18.5215
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1030",
+        "owner_name": "Meera Nair",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85855,
+              18.5215
+            ],
+            [
+              73.85935,
+              18.5215
+            ],
+            [
+              73.85935,
+              18.5221
+            ],
+            [
+              73.85855,
+              18.5221
+            ],
+            [
+              73.85855,
+              18.5215
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1031",
+        "owner_name": "Rajesh Gupta",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85,
+              18.52225
+            ],
+            [
+              73.8508,
+              18.52225
+            ],
+            [
+              73.8508,
+              18.52285
+            ],
+            [
+              73.85,
+              18.52285
+            ],
+            [
+              73.85,
+              18.52225
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1032",
+        "owner_name": "Kavita Rao",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85095,
+              18.52225
+            ],
+            [
+              73.85175,
+              18.52225
+            ],
+            [
+              73.85175,
+              18.52285
+            ],
+            [
+              73.85095,
+              18.52285
+            ],
+            [
+              73.85095,
+              18.52225
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1033",
+        "owner_name": "Suresh Patil",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8519,
+              18.52225
+            ],
+            [
+              73.8527,
+              18.52225
+            ],
+            [
+              73.8527,
+              18.52285
+            ],
+            [
+              73.8519,
+              18.52285
+            ],
+            [
+              73.8519,
+              18.52225
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1034",
+        "owner_name": "Neha Verma",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85285,
+              18.52225
+            ],
+            [
+              73.85365,
+              18.52225
+            ],
+            [
+              73.85365,
+              18.52285
+            ],
+            [
+              73.85285,
+              18.52285
+            ],
+            [
+              73.85285,
+              18.52225
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1035",
+        "owner_name": "Deepak Shinde",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8538,
+              18.52225
+            ],
+            [
+              73.8546,
+              18.52225
+            ],
+            [
+              73.8546,
+              18.52285
+            ],
+            [
+              73.8538,
+              18.52285
+            ],
+            [
+              73.8538,
+              18.52225
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1036",
+        "owner_name": "Pooja Mehta",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85475,
+              18.52225
+            ],
+            [
+              73.85555,
+              18.52225
+            ],
+            [
+              73.85555,
+              18.52285
+            ],
+            [
+              73.85475,
+              18.52285
+            ],
+            [
+              73.85475,
+              18.52225
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1037",
+        "owner_name": "Ramesh Sharma",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8557,
+              18.52225
+            ],
+            [
+              73.8565,
+              18.52225
+            ],
+            [
+              73.8565,
+              18.52285
+            ],
+            [
+              73.8557,
+              18.52285
+            ],
+            [
+              73.8557,
+              18.52225
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1038",
+        "owner_name": "Priya Patel",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85665,
+              18.52225
+            ],
+            [
+              73.85745,
+              18.52225
+            ],
+            [
+              73.85745,
+              18.52285
+            ],
+            [
+              73.85665,
+              18.52285
+            ],
+            [
+              73.85665,
+              18.52225
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1039",
+        "owner_name": "Anil Kulkarni",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8576,
+              18.52225
+            ],
+            [
+              73.8584,
+              18.52225
+            ],
+            [
+              73.8584,
+              18.52285
+            ],
+            [
+              73.8576,
+              18.52285
+            ],
+            [
+              73.8576,
+              18.52225
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1040",
+        "owner_name": "Sunita Deshmukh",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85855,
+              18.52225
+            ],
+            [
+              73.85935,
+              18.52225
+            ],
+            [
+              73.85935,
+              18.52285
+            ],
+            [
+              73.85855,
+              18.52285
+            ],
+            [
+              73.85855,
+              18.52225
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1041",
+        "owner_name": "Vikram Joshi",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85,
+              18.523
+            ],
+            [
+              73.8508,
+              18.523
+            ],
+            [
+              73.8508,
+              18.5236
+            ],
+            [
+              73.85,
+              18.5236
+            ],
+            [
+              73.85,
+              18.523
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1042",
+        "owner_name": "Meera Nair",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85095,
+              18.523
+            ],
+            [
+              73.85175,
+              18.523
+            ],
+            [
+              73.85175,
+              18.5236
+            ],
+            [
+              73.85095,
+              18.5236
+            ],
+            [
+              73.85095,
+              18.523
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1043",
+        "owner_name": "Rajesh Gupta",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8519,
+              18.523
+            ],
+            [
+              73.8527,
+              18.523
+            ],
+            [
+              73.8527,
+              18.5236
+            ],
+            [
+              73.8519,
+              18.5236
+            ],
+            [
+              73.8519,
+              18.523
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1044",
+        "owner_name": "Kavita Rao",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85285,
+              18.523
+            ],
+            [
+              73.85365,
+              18.523
+            ],
+            [
+              73.85365,
+              18.5236
+            ],
+            [
+              73.85285,
+              18.5236
+            ],
+            [
+              73.85285,
+              18.523
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1045",
+        "owner_name": "Suresh Patil",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8538,
+              18.523
+            ],
+            [
+              73.8546,
+              18.523
+            ],
+            [
+              73.8546,
+              18.5236
+            ],
+            [
+              73.8538,
+              18.5236
+            ],
+            [
+              73.8538,
+              18.523
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1046",
+        "owner_name": "Neha Verma",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85475,
+              18.523
+            ],
+            [
+              73.85555,
+              18.523
+            ],
+            [
+              73.85555,
+              18.5236
+            ],
+            [
+              73.85475,
+              18.5236
+            ],
+            [
+              73.85475,
+              18.523
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1047",
+        "owner_name": "Deepak Shinde",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8557,
+              18.523
+            ],
+            [
+              73.8565,
+              18.523
+            ],
+            [
+              73.8565,
+              18.5236
+            ],
+            [
+              73.8557,
+              18.5236
+            ],
+            [
+              73.8557,
+              18.523
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1048",
+        "owner_name": "Pooja Mehta",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85665,
+              18.523
+            ],
+            [
+              73.85745,
+              18.523
+            ],
+            [
+              73.85745,
+              18.5236
+            ],
+            [
+              73.85665,
+              18.5236
+            ],
+            [
+              73.85665,
+              18.523
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1049",
+        "owner_name": "Ramesh Sharma",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8576,
+              18.523
+            ],
+            [
+              73.8584,
+              18.523
+            ],
+            [
+              73.8584,
+              18.5236
+            ],
+            [
+              73.8576,
+              18.5236
+            ],
+            [
+              73.8576,
+              18.523
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1050",
+        "owner_name": "Priya Patel",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85855,
+              18.523
+            ],
+            [
+              73.85935,
+              18.523
+            ],
+            [
+              73.85935,
+              18.5236
+            ],
+            [
+              73.85855,
+              18.5236
+            ],
+            [
+              73.85855,
+              18.523
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1051",
+        "owner_name": "Anil Kulkarni",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85,
+              18.52375
+            ],
+            [
+              73.8508,
+              18.52375
+            ],
+            [
+              73.8508,
+              18.52435
+            ],
+            [
+              73.85,
+              18.52435
+            ],
+            [
+              73.85,
+              18.52375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1052",
+        "owner_name": "Sunita Deshmukh",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85095,
+              18.52375
+            ],
+            [
+              73.85175,
+              18.52375
+            ],
+            [
+              73.85175,
+              18.52435
+            ],
+            [
+              73.85095,
+              18.52435
+            ],
+            [
+              73.85095,
+              18.52375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1053",
+        "owner_name": "Vikram Joshi",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8519,
+              18.52375
+            ],
+            [
+              73.8527,
+              18.52375
+            ],
+            [
+              73.8527,
+              18.52435
+            ],
+            [
+              73.8519,
+              18.52435
+            ],
+            [
+              73.8519,
+              18.52375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1054",
+        "owner_name": "Meera Nair",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85285,
+              18.52375
+            ],
+            [
+              73.85365,
+              18.52375
+            ],
+            [
+              73.85365,
+              18.52435
+            ],
+            [
+              73.85285,
+              18.52435
+            ],
+            [
+              73.85285,
+              18.52375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1055",
+        "owner_name": "Rajesh Gupta",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8538,
+              18.52375
+            ],
+            [
+              73.8546,
+              18.52375
+            ],
+            [
+              73.8546,
+              18.52435
+            ],
+            [
+              73.8538,
+              18.52435
+            ],
+            [
+              73.8538,
+              18.52375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1056",
+        "owner_name": "Kavita Rao",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85475,
+              18.52375
+            ],
+            [
+              73.85555,
+              18.52375
+            ],
+            [
+              73.85555,
+              18.52435
+            ],
+            [
+              73.85475,
+              18.52435
+            ],
+            [
+              73.85475,
+              18.52375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1057",
+        "owner_name": "Suresh Patil",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8557,
+              18.52375
+            ],
+            [
+              73.8565,
+              18.52375
+            ],
+            [
+              73.8565,
+              18.52435
+            ],
+            [
+              73.8557,
+              18.52435
+            ],
+            [
+              73.8557,
+              18.52375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1058",
+        "owner_name": "Neha Verma",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85665,
+              18.52375
+            ],
+            [
+              73.85745,
+              18.52375
+            ],
+            [
+              73.85745,
+              18.52435
+            ],
+            [
+              73.85665,
+              18.52435
+            ],
+            [
+              73.85665,
+              18.52375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1059",
+        "owner_name": "Deepak Shinde",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8576,
+              18.52375
+            ],
+            [
+              73.8584,
+              18.52375
+            ],
+            [
+              73.8584,
+              18.52435
+            ],
+            [
+              73.8576,
+              18.52435
+            ],
+            [
+              73.8576,
+              18.52375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1060",
+        "owner_name": "Pooja Mehta",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85855,
+              18.52375
+            ],
+            [
+              73.85935,
+              18.52375
+            ],
+            [
+              73.85935,
+              18.52435
+            ],
+            [
+              73.85855,
+              18.52435
+            ],
+            [
+              73.85855,
+              18.52375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1061",
+        "owner_name": "Ramesh Sharma",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85,
+              18.5245
+            ],
+            [
+              73.8508,
+              18.5245
+            ],
+            [
+              73.8508,
+              18.5251
+            ],
+            [
+              73.85,
+              18.5251
+            ],
+            [
+              73.85,
+              18.5245
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1062",
+        "owner_name": "Priya Patel",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85095,
+              18.5245
+            ],
+            [
+              73.85175,
+              18.5245
+            ],
+            [
+              73.85175,
+              18.5251
+            ],
+            [
+              73.85095,
+              18.5251
+            ],
+            [
+              73.85095,
+              18.5245
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1063",
+        "owner_name": "Anil Kulkarni",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8519,
+              18.5245
+            ],
+            [
+              73.8527,
+              18.5245
+            ],
+            [
+              73.8527,
+              18.5251
+            ],
+            [
+              73.8519,
+              18.5251
+            ],
+            [
+              73.8519,
+              18.5245
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1064",
+        "owner_name": "Sunita Deshmukh",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85285,
+              18.5245
+            ],
+            [
+              73.85365,
+              18.5245
+            ],
+            [
+              73.85365,
+              18.5251
+            ],
+            [
+              73.85285,
+              18.5251
+            ],
+            [
+              73.85285,
+              18.5245
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1065",
+        "owner_name": "Vikram Joshi",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8538,
+              18.5245
+            ],
+            [
+              73.8546,
+              18.5245
+            ],
+            [
+              73.8546,
+              18.5251
+            ],
+            [
+              73.8538,
+              18.5251
+            ],
+            [
+              73.8538,
+              18.5245
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1066",
+        "owner_name": "Meera Nair",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85475,
+              18.5245
+            ],
+            [
+              73.85555,
+              18.5245
+            ],
+            [
+              73.85555,
+              18.5251
+            ],
+            [
+              73.85475,
+              18.5251
+            ],
+            [
+              73.85475,
+              18.5245
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1067",
+        "owner_name": "Rajesh Gupta",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8557,
+              18.5245
+            ],
+            [
+              73.8565,
+              18.5245
+            ],
+            [
+              73.8565,
+              18.5251
+            ],
+            [
+              73.8557,
+              18.5251
+            ],
+            [
+              73.8557,
+              18.5245
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1068",
+        "owner_name": "Kavita Rao",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85665,
+              18.5245
+            ],
+            [
+              73.85745,
+              18.5245
+            ],
+            [
+              73.85745,
+              18.5251
+            ],
+            [
+              73.85665,
+              18.5251
+            ],
+            [
+              73.85665,
+              18.5245
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1069",
+        "owner_name": "Suresh Patil",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8576,
+              18.5245
+            ],
+            [
+              73.8584,
+              18.5245
+            ],
+            [
+              73.8584,
+              18.5251
+            ],
+            [
+              73.8576,
+              18.5251
+            ],
+            [
+              73.8576,
+              18.5245
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1070",
+        "owner_name": "Neha Verma",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85855,
+              18.5245
+            ],
+            [
+              73.85935,
+              18.5245
+            ],
+            [
+              73.85935,
+              18.5251
+            ],
+            [
+              73.85855,
+              18.5251
+            ],
+            [
+              73.85855,
+              18.5245
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1071",
+        "owner_name": "Deepak Shinde",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85,
+              18.52525
+            ],
+            [
+              73.8508,
+              18.52525
+            ],
+            [
+              73.8508,
+              18.52585
+            ],
+            [
+              73.85,
+              18.52585
+            ],
+            [
+              73.85,
+              18.52525
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1072",
+        "owner_name": "Pooja Mehta",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85095,
+              18.52525
+            ],
+            [
+              73.85175,
+              18.52525
+            ],
+            [
+              73.85175,
+              18.52585
+            ],
+            [
+              73.85095,
+              18.52585
+            ],
+            [
+              73.85095,
+              18.52525
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1073",
+        "owner_name": "Ramesh Sharma",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8519,
+              18.52525
+            ],
+            [
+              73.8527,
+              18.52525
+            ],
+            [
+              73.8527,
+              18.52585
+            ],
+            [
+              73.8519,
+              18.52585
+            ],
+            [
+              73.8519,
+              18.52525
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1074",
+        "owner_name": "Priya Patel",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85285,
+              18.52525
+            ],
+            [
+              73.85365,
+              18.52525
+            ],
+            [
+              73.85365,
+              18.52585
+            ],
+            [
+              73.85285,
+              18.52585
+            ],
+            [
+              73.85285,
+              18.52525
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1075",
+        "owner_name": "Anil Kulkarni",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8538,
+              18.52525
+            ],
+            [
+              73.8546,
+              18.52525
+            ],
+            [
+              73.8546,
+              18.52585
+            ],
+            [
+              73.8538,
+              18.52585
+            ],
+            [
+              73.8538,
+              18.52525
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1076",
+        "owner_name": "Sunita Deshmukh",
+        "land_use": "Mixed Use",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85475,
+              18.52525
+            ],
+            [
+              73.85555,
+              18.52525
+            ],
+            [
+              73.85555,
+              18.52585
+            ],
+            [
+              73.85475,
+              18.52585
+            ],
+            [
+              73.85475,
+              18.52525
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1077",
+        "owner_name": "Vikram Joshi",
+        "land_use": "Civic",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8557,
+              18.52825
+            ],
+            [
+              73.8565,
+              18.52825
+            ],
+            [
+              73.8565,
+              18.52885
+            ],
+            [
+              73.8557,
+              18.52885
+            ],
+            [
+              73.8557,
+              18.52825
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1078",
+        "owner_name": "Meera Nair",
+        "land_use": "Institutional",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85665,
+              18.52825
+            ],
+            [
+              73.85745,
+              18.52825
+            ],
+            [
+              73.85745,
+              18.52885
+            ],
+            [
+              73.85665,
+              18.52885
+            ],
+            [
+              73.85665,
+              18.52825
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1079",
+        "owner_name": "Rajesh Gupta",
+        "land_use": "Residential",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8576,
+              18.52825
+            ],
+            [
+              73.8584,
+              18.52825
+            ],
+            [
+              73.8584,
+              18.52885
+            ],
+            [
+              73.8576,
+              18.52885
+            ],
+            [
+              73.8576,
+              18.52825
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "CP-1080",
+        "owner_name": "Kavita Rao",
+        "land_use": "Commercial",
+        "area_sqm": 5618.4,
+        "source": "SYNTHETIC_CADASTRAL_REGISTER"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85855,
+              18.52825
+            ],
+            [
+              73.85935,
+              18.52825
+            ],
+            [
+              73.85935,
+              18.52885
+            ],
+            [
+              73.85855,
+              18.52885
+            ],
+            [
+              73.85855,
+              18.52825
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

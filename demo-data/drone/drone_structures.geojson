@@ -1,0 +1,54 @@
+{
+  "type": "FeatureCollection",
+  "name": "drone_structures",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "BLDG-DRN-001",
+        "building_height_m": 14.2,
+        "roof_type": "Flat Concrete",
+        "detection_confidence": 0.98
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [73.8568, 18.5205],
+            [73.8571, 18.5205],
+            [73.8571, 18.5208],
+            [73.8568, 18.5208],
+            [73.8568, 18.5205]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "BLDG-DRN-002",
+        "building_height_m": 8.5,
+        "roof_type": "Gabled Tile",
+        "detection_confidence": 0.94
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [73.8574, 18.52055],
+            [73.85765, 18.52055],
+            [73.85765, 18.52085],
+            [73.8574, 18.52085],
+            [73.8574, 18.52055]
+          ]
+        ]
+      }
+    }
+  ]
+}

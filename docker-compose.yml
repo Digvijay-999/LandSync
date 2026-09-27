@@ -1,0 +1,89 @@
+services:
+  postgres-postgis:
+    image: postgis/postgis:16-3.4
+    container_name: landsync-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-landsync}
+      POSTGRES_USER: ${POSTGRES_USER:-landsync}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-landsync_secret_dev_pass}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-landsync} -d ${POSTGRES_DB:-landsync}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - landsync-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: landsync-backend
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      DEBUG: ${DEBUG:-true}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      PROJECT_NAME: ${PROJECT_NAME:-LandSync AI}
+      API_V1_STR: /api/v1
+      BACKEND_HOST: 0.0.0.0
+      BACKEND_PORT: 8000
+      POSTGRES_SERVER: postgres-postgis
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-landsync}
+      POSTGRES_USER: ${POSTGRES_USER:-landsync}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-landsync_secret_dev_pass}
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-landsync}:${POSTGRES_PASSWORD:-landsync_secret_dev_pass}@postgres-postgis:5432/${POSTGRES_DB:-landsync}
+      DATABASE_URL_SYNC: postgresql://${POSTGRES_USER:-landsync}:${POSTGRES_PASSWORD:-landsync_secret_dev_pass}@postgres-postgis:5432/${POSTGRES_DB:-landsync}
+      CORS_ORIGINS: '["http://localhost:5173","http://127.0.0.1:5173","http://localhost:3000"]'
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      postgres-postgis:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health?check_db=false"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - landsync-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: landsync-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - landsync-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  landsync-network:
+    driver: bridge

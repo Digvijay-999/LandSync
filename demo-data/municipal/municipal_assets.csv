@@ -1,0 +1,6 @@
+asset_id,asset_type,department,latitude,longitude,condition,inspection_year
+MUN-101,Water Distribution Junction,Public Works,18.52055,73.85695,Good,2025
+MUN-102,Substation Transformer,Power Utility,18.52085,73.85750,Fair,2024
+MUN-103,Stormwater Culvert,Environmental Services,18.52135,73.85710,Good,2026
+MUN-104,Traffic Light Controller,Transit Division,18.52170,73.85775,Excellent,2026
+MUN-105,Telecom Distribution Vault,Urban Planning,18.52090,73.85680,Operational,2025

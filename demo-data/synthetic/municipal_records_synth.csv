@@ -1,0 +1,76 @@
+asset_id,property_id,facility_name,facility_type,latitude,longitude,tax_status,inspection_date
+MUN-300001,CP-1001,Ramesh Sharma Property,Residential,18.520205,73.850428,Tax Compliant,2026-03-15
+MUN-300002,CP-1002,Priya Patel Property,Commercial,18.520245,73.851305,Tax Compliant,2026-03-15
+MUN-300003,CP-1003,Anil Kulkarni Property,Mixed Use,18.520335,73.852347,Tax Compliant,2026-03-15
+MUN-300004,CP-1004,Sunita Deshmukh Property,Civic,18.520217,73.853328,Tax Compliant,2026-03-15
+MUN-300005,CP-1005,Vikram Joshi Property,Institutional,18.520206,73.854184,Tax Compliant,2026-03-15
+MUN-300006,CP-1006,Meera Nair Property,Residential,18.520301,73.855094,Tax Compliant,2026-03-15
+MUN-300007,CP-1007,Rajesh Gupta Property,Commercial,18.52024,73.856005,Tax Compliant,2026-03-15
+MUN-300008,CP-1008,Kavita Rao Property,Mixed Use,18.520309,73.85708,Tax Compliant,2026-03-15
+MUN-300009,CP-1009,Suresh Patil Property,Civic,18.520318,73.857944,Tax Compliant,2026-03-15
+MUN-300010,CP-1010,Neha Verma Property,Institutional,18.520201,73.859012,Tax Compliant,2026-03-15
+MUN-300011,CP-1011,Deepak Shinde Property,Commercial,18.52109,73.850461,Tax Compliant,2026-03-15
+MUN-300012,CP-1012,Pooja Mehta Property,Mixed Use,18.520981,73.851318,Tax Compliant,2026-03-15
+MUN-300013,CP-1013,Ramesh Sharma Property,Civic,18.521017,73.852391,Tax Compliant,2026-03-15
+MUN-300014,CP-1014,Priya Patel Property,Institutional,18.520969,73.853169,Tax Compliant,2026-03-15
+MUN-300015,CP-1015,Anil Kulkarni Property,Residential,18.521071,73.854269,Tax Compliant,2026-03-15
+MUN-300016,CP-1016,Sunita Deshmukh Property,Commercial,18.521096,73.855211,Tax Compliant,2026-03-15
+MUN-300017,CP-1017,Vikram Joshi Property,Mixed Use,18.521145,73.856107,Tax Compliant,2026-03-15
+MUN-300018,CP-1018,Meera Nair Property,Civic,18.52106,73.857026,Tax Compliant,2026-03-15
+MUN-300019,CP-1019,Rajesh Gupta Property,Institutional,18.521074,73.858066,Tax Compliant,2026-03-15
+MUN-300020,CP-1020,Kavita Rao Property,Residential,18.521065,73.859022,Tax Compliant,2026-03-15
+MUN-300021,CP-1021,Suresh Patil Property,Mixed Use,18.521709,73.850441,Tax Compliant,2026-03-15
+MUN-300022,CP-1022,Neha Verma Property,Civic,18.521758,73.851296,Tax Compliant,2026-03-15
+MUN-300023,CP-1023,Deepak Shinde Property,Institutional,18.521747,73.852216,Tax Compliant,2026-03-15
+MUN-300024,CP-1024,Pooja Mehta Property,Residential,18.521756,73.85317,Tax Compliant,2026-03-15
+MUN-300025,CP-1025,Ramesh Sharma Property,Commercial,18.521773,73.854227,Tax Compliant,2026-03-15
+MUN-300026,CP-1026,Priya Patel Property,Mixed Use,18.521742,73.855124,Tax Compliant,2026-03-15
+MUN-300027,CP-1027,Anil Kulkarni Property,Civic,18.521887,73.856053,Tax Compliant,2026-03-15
+MUN-300028,CP-1028,Sunita Deshmukh Property,Institutional,18.521822,73.85708,Tax Compliant,2026-03-15
+MUN-300029,CP-1029,Vikram Joshi Property,Residential,18.521846,73.857934,Tax Compliant,2026-03-15
+MUN-300030,CP-1030,Meera Nair Property,Commercial,18.521776,73.858883,Tax Compliant,2026-03-15
+MUN-300031,CP-1031,Rajesh Gupta Property,Civic,18.522578,73.850498,Tax Compliant,2026-03-15
+MUN-300032,CP-1032,Kavita Rao Property,Institutional,18.522587,73.851361,Tax Compliant,2026-03-15
+MUN-300033,CP-1033,Suresh Patil Property,Residential,18.522605,73.852369,Tax Compliant,2026-03-15
+MUN-300034,CP-1034,Neha Verma Property,Commercial,18.522456,73.853196,Tax Compliant,2026-03-15
+MUN-300035,CP-1035,Deepak Shinde Property,Mixed Use,18.522504,73.854163,Tax Compliant,2026-03-15
+MUN-300036,CP-1036,Pooja Mehta Property,Civic,18.522639,73.855092,Tax Compliant,2026-03-15
+MUN-300037,CP-1037,Ramesh Sharma Property,Institutional,18.522513,73.856175,Tax Compliant,2026-03-15
+MUN-300038,CP-1038,Priya Patel Property,Residential,18.522529,73.857081,Tax Compliant,2026-03-15
+MUN-300039,CP-1039,Anil Kulkarni Property,Commercial,18.522542,73.858083,Tax Compliant,2026-03-15
+MUN-300040,CP-1040,Sunita Deshmukh Property,Mixed Use,18.522499,73.858903,Tax Compliant,2026-03-15
+MUN-300041,OFFGRID-MUNI-40,Distant Substation Meter 40,Electrical Infrastructure,18.46,73.79,Municipal Asset,2026-03-15
+MUN-300042,OFFGRID-MUNI-41,Distant Substation Meter 41,Electrical Infrastructure,18.455,73.785,Municipal Asset,2026-03-15
+MUN-300043,CP-1043,Rajesh Gupta Property,Commercial,18.523253,73.852312,Tax Compliant,2026-03-15
+MUN-300044,CP-1044,Kavita Rao Property,Mixed Use,18.52338,73.853267,Tax Compliant,2026-03-15
+MUN-300045,CP-1045,Suresh Patil Property,Civic,18.523244,73.85418,Tax Compliant,2026-03-15
+MUN-300046,CP-1046,Neha Verma Property,Institutional,18.523302,73.85525,Tax Compliant,2026-03-15
+MUN-300047,CP-1047,Deepak Shinde Property,Residential,18.523209,73.856018,Tax Compliant,2026-03-15
+MUN-300048,CP-1048,Pooja Mehta Property,Commercial,18.523325,73.856972,Tax Compliant,2026-03-15
+MUN-300049,CP-1049,Ramesh Sharma Property,Mixed Use,18.523284,73.858058,Tax Compliant,2026-03-15
+MUN-300050,CP-1050,Priya Patel Property,Civic,18.523276,73.858863,Tax Compliant,2026-03-15
+MUN-300051,CP-1051,Anil Kulkarni Property,Residential,18.524056,73.850499,Tax Compliant,2026-03-15
+MUN-300052,CP-1052,Sunita Deshmukh Property,Commercial,18.524122,73.851444,Tax Compliant,2026-03-15
+MUN-300053,CP-1053,Vikram Joshi Property,Mixed Use,18.524094,73.852202,Tax Compliant,2026-03-15
+MUN-300054,CP-1054,Meera Nair Ancillary Meter,Utility Connection,18.52423,73.85353,Pending Audit,2026-03-15
+MUN-300055,CP-1055,Rajesh Gupta Ancillary Meter,Utility Connection,18.52423,73.85448,Pending Audit,2026-03-15
+MUN-300056,CP-1056,Kavita Rao Ancillary Meter,Utility Connection,18.52423,73.85543,Pending Audit,2026-03-15
+MUN-300057,CP-1057,Suresh Patil Ancillary Meter,Utility Connection,18.52423,73.85638,Pending Audit,2026-03-15
+MUN-300058,CP-1058,Neha Verma Ancillary Meter,Utility Connection,18.52423,73.85733,Pending Audit,2026-03-15
+MUN-300059,CP-1059,Deepak Shinde Ancillary Meter,Utility Connection,18.52423,73.85828,Pending Audit,2026-03-15
+MUN-300060,CP-1060,Pooja Mehta Ancillary Meter,Utility Connection,18.52423,73.85923,Pending Audit,2026-03-15
+MUN-300061,CP-1061,Ramesh Sharma Ancillary Meter,Utility Connection,18.52498,73.85068,Pending Audit,2026-03-15
+MUN-300062,CP-1062,Priya Patel Ancillary Meter,Utility Connection,18.52498,73.85163,Pending Audit,2026-03-15
+MUN-300063,CP-1063,Anil Kulkarni Ancillary Meter,Utility Connection,18.52498,73.85258,Pending Audit,2026-03-15
+MUN-300064,MUNICIPAL-CLAIM-ERR-63,Government Easement Right-of-Way,Disputed Municipal Reserve,18.5248,73.85325,Exempt / In Litigation,2026-03-15
+MUN-300065,MUNICIPAL-CLAIM-ERR-64,Government Easement Right-of-Way,Disputed Municipal Reserve,18.5248,73.8542,Exempt / In Litigation,2026-03-15
+MUN-300066,MUNICIPAL-CLAIM-ERR-65,Government Easement Right-of-Way,Disputed Municipal Reserve,18.5248,73.85515,Exempt / In Litigation,2026-03-15
+MUN-300067,MUNICIPAL-CLAIM-ERR-66,Government Easement Right-of-Way,Disputed Municipal Reserve,18.5248,73.8561,Exempt / In Litigation,2026-03-15
+MUN-300068,MUNICIPAL-CLAIM-ERR-67,Government Easement Right-of-Way,Disputed Municipal Reserve,18.5248,73.85705,Exempt / In Litigation,2026-03-15
+MUN-300069,MUNICIPAL-CLAIM-ERR-68,Government Easement Right-of-Way,Disputed Municipal Reserve,18.5248,73.858,Exempt / In Litigation,2026-03-15
+MUN-300070,OFFGRID-ASSET-69,Suburban Water Reservoir Tank,Public Infrastructure,18.46,73.79,Government Owned,2026-03-15
+MUN-300071,OFFGRID-ASSET-70,Suburban Water Reservoir Tank,Public Infrastructure,18.458,73.788,Government Owned,2026-03-15
+MUN-300072,OFFGRID-ASSET-71,Suburban Water Reservoir Tank,Public Infrastructure,18.456,73.786,Government Owned,2026-03-15
+MUN-300073,OFFGRID-ASSET-72,Suburban Water Reservoir Tank,Public Infrastructure,18.454,73.784,Government Owned,2026-03-15
+MUN-300074,OFFGRID-ASSET-73,Suburban Water Reservoir Tank,Public Infrastructure,18.452,73.782,Government Owned,2026-03-15
+MUN-300075,OFFGRID-ASSET-74,Suburban Water Reservoir Tank,Public Infrastructure,18.45,73.78,Government Owned,2026-03-15

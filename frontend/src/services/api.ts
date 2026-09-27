@@ -1,0 +1,327 @@
+import axios, { AxiosError } from 'axios'
+import type {
+  HealthResponse,
+  Project,
+  ProjectCreateInput,
+  ProjectListResponse,
+  Dataset,
+  DatasetListResponse,
+  DatasetProfile,
+  ProjectLayersResponse,
+  GeoJSONFeatureCollection,
+  FeatureListResponse,
+  MatchRun,
+  MatchRunListResponse,
+  FeatureMatchListResponse,
+  MatchDetailResponse,
+  MatchingRunCreateInput,
+  SourceFeatureCandidateItem,
+  SourceFeatureSummaryResponse,
+  ReviewQueueResponse,
+  ReviewStatisticsResponse,
+  MatchReviewCreateInput,
+  UnifiedRecordListItem,
+  UnifiedRecordListResponse,
+  UnifiedRecordDetail,
+  UnifiedRecordBuildResponse,
+  UnifiedRecordStatistics,
+  UnifiedRecordSource,
+} from '../types'
+
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
+export const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 30000,
+})
+
+// Centralized error interceptor
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError<{ error?: { message?: string } }>) => {
+    const errorMsg =
+      error.response?.data?.error?.message ||
+      error.message ||
+      'An unexpected network error occurred'
+    console.error(`[API Error] ${error.config?.method?.toUpperCase()} ${error.config?.url}:`, errorMsg)
+    return Promise.reject(error)
+  }
+)
+
+export const api = {
+  // System Health
+  async getHealth(checkDb = true): Promise<HealthResponse> {
+    const response = await apiClient.get<HealthResponse>('/api/health', {
+      params: { check_db: checkDb },
+    })
+    return response.data
+  },
+
+  // Projects
+  async getProjects(skip = 0, limit = 50): Promise<ProjectListResponse> {
+    const response = await apiClient.get<ProjectListResponse>('/api/v1/projects', {
+      params: { skip, limit },
+    })
+    return response.data
+  },
+
+  async getProject(id: string): Promise<Project> {
+    const response = await apiClient.get<Project>(`/api/v1/projects/${id}`)
+    return response.data
+  },
+
+  async createProject(input: ProjectCreateInput): Promise<Project> {
+    const response = await apiClient.post<Project>('/api/v1/projects', input)
+    return response.data
+  },
+
+  async deleteProject(id: string): Promise<void> {
+    await apiClient.delete(`/api/v1/projects/${id}`)
+  },
+
+  // Datasets
+  async getProjectDatasets(projectId: string, skip = 0, limit = 50): Promise<DatasetListResponse> {
+    const response = await apiClient.get<DatasetListResponse>(`/api/v1/projects/${projectId}/datasets`, {
+      params: { skip, limit },
+    })
+    return response.data
+  },
+
+  async getDataset(id: string): Promise<Dataset> {
+    const response = await apiClient.get<Dataset>(`/api/v1/datasets/${id}`)
+    return response.data
+  },
+
+  async getDatasetProfile(id: string): Promise<DatasetProfile> {
+    const response = await apiClient.get<DatasetProfile>(`/api/v1/datasets/${id}/profile`)
+    return response.data
+  },
+
+  async uploadDataset(
+    projectId: string,
+    file: File,
+    name?: string,
+    crs?: string
+  ): Promise<Dataset> {
+    const formData = new FormData()
+    formData.append('file', file)
+    if (name && name.trim()) {
+      formData.append('name', name.trim())
+    }
+    if (crs && crs.trim()) {
+      formData.append('crs', crs.trim())
+    }
+
+    const response = await apiClient.post<Dataset>(
+      `/api/v1/projects/${projectId}/datasets`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    )
+    return response.data
+  },
+
+  async deleteDataset(id: string): Promise<void> {
+    await apiClient.delete(`/api/v1/datasets/${id}`)
+  },
+
+  // Spatial Features & Map Layers
+  async getProjectLayers(projectId: string): Promise<ProjectLayersResponse> {
+    const response = await apiClient.get<ProjectLayersResponse>(`/api/v1/projects/${projectId}/layers`)
+    return response.data
+  },
+
+  async getDatasetFeaturesGeoJSON(
+    datasetId: string,
+    representation: 'canonical' | 'source' = 'canonical',
+    limit = 5000
+  ): Promise<GeoJSONFeatureCollection> {
+    const response = await apiClient.get<GeoJSONFeatureCollection>(
+      `/api/v1/datasets/${datasetId}/features/geojson`,
+      { params: { representation, limit } }
+    )
+    return response.data
+  },
+
+  async getProjectCombinedGeoJSON(projectId: string): Promise<GeoJSONFeatureCollection> {
+    const response = await apiClient.get<GeoJSONFeatureCollection>(
+      `/api/v1/projects/${projectId}/features/geojson`
+    )
+    return response.data
+  },
+
+  async getDatasetFeatures(
+    datasetId: string,
+    representation: 'canonical' | 'source' = 'canonical',
+    skip = 0,
+    limit = 50
+  ): Promise<FeatureListResponse> {
+    const response = await apiClient.get<FeatureListResponse>(
+      `/api/v1/datasets/${datasetId}/features`,
+      { params: { representation, skip, limit } }
+    )
+    return response.data
+  },
+
+  // Milestone 3: Feature Matching & Spatial Reconciliation
+  async startMatchingRun(projectId: string, input: MatchingRunCreateInput): Promise<MatchRun> {
+    const response = await apiClient.post<MatchRun>(
+      `/api/v1/projects/${projectId}/matching-runs`,
+      input
+    )
+    return response.data
+  },
+
+  async getMatchingRuns(projectId: string, skip = 0, limit = 50): Promise<MatchRunListResponse> {
+    const response = await apiClient.get<MatchRunListResponse>(
+      `/api/v1/projects/${projectId}/matching-runs`,
+      { params: { skip, limit } }
+    )
+    return response.data
+  },
+
+  async getMatchingRun(runId: string): Promise<MatchRun> {
+    const response = await apiClient.get<MatchRun>(`/api/v1/matching-runs/${runId}`)
+    return response.data
+  },
+
+  async getRunMatches(
+    runId: string,
+    params?: {
+      status?: string
+      candidate_role?: string
+      review_status?: string
+      is_best_only?: boolean
+      min_confidence?: number
+      max_confidence?: number
+      source_dataset_id?: string
+      candidate_dataset_id?: string
+      skip?: number
+      limit?: number
+    }
+  ): Promise<FeatureMatchListResponse> {
+    const response = await apiClient.get<FeatureMatchListResponse>(
+      `/api/v1/matching-runs/${runId}/matches`,
+      { params }
+    )
+    return response.data
+  },
+
+  async getReviewQueue(
+    runId: string,
+    params?: {
+      category?: string
+      skip?: number
+      limit?: number
+    }
+  ): Promise<ReviewQueueResponse> {
+    const response = await apiClient.get<ReviewQueueResponse>(
+      `/api/v1/matching-runs/${runId}/review-queue`,
+      { params }
+    )
+    return response.data
+  },
+
+  async getReviewStatistics(runId: string): Promise<ReviewStatisticsResponse> {
+    const response = await apiClient.get<ReviewStatisticsResponse>(
+      `/api/v1/matching-runs/${runId}/review-statistics`
+    )
+    return response.data
+  },
+
+  async submitMatchReview(
+    matchId: string,
+    input: MatchReviewCreateInput
+  ): Promise<MatchDetailResponse> {
+    const response = await apiClient.post<MatchDetailResponse>(
+      `/api/v1/matches/${matchId}/review`,
+      input
+    )
+    return response.data
+  },
+
+  async seedDemoReviews(runId: string): Promise<{ message: string; seeded_count: number }> {
+    const response = await apiClient.post<{ message: string; seeded_count: number }>(
+      `/api/v1/matching-runs/${runId}/seed-demo-reviews`
+    )
+    return response.data
+  },
+
+  async getSourceFeatureCandidates(
+    runId: string,
+    sourceFeatureId: string
+  ): Promise<SourceFeatureCandidateItem[]> {
+    const response = await apiClient.get<SourceFeatureCandidateItem[]>(
+      `/api/v1/matching-runs/${runId}/source-features/${sourceFeatureId}/candidates`
+    )
+    return response.data
+  },
+
+  async getSourceFeatureSummary(
+    runId: string,
+    sourceFeatureId: string
+  ): Promise<SourceFeatureSummaryResponse> {
+    const response = await apiClient.get<SourceFeatureSummaryResponse>(
+      `/api/v1/matching-runs/${runId}/source-features/${sourceFeatureId}/summary`
+    )
+    return response.data
+  },
+
+  async getMatchDetail(matchId: string): Promise<MatchDetailResponse> {
+    const response = await apiClient.get<MatchDetailResponse>(`/api/v1/matches/${matchId}`)
+    return response.data
+  },
+
+  // ---------------------------------------------------------------------------
+  // Milestone 5: Unified Land Records
+  // ---------------------------------------------------------------------------
+
+  async buildUnifiedRecords(projectId: string): Promise<UnifiedRecordBuildResponse> {
+    const response = await apiClient.post<UnifiedRecordBuildResponse>(
+      `/api/v1/projects/${projectId}/unified-records/build`
+    )
+    return response.data
+  },
+
+  async getUnifiedRecords(
+    projectId: string,
+    params?: { status?: string; skip?: number; limit?: number }
+  ): Promise<UnifiedRecordListResponse> {
+    const response = await apiClient.get<UnifiedRecordListResponse>(
+      `/api/v1/projects/${projectId}/unified-records`,
+      { params }
+    )
+    return response.data
+  },
+
+  async getUnifiedRecordStatistics(projectId: string): Promise<UnifiedRecordStatistics> {
+    const response = await apiClient.get<UnifiedRecordStatistics>(
+      `/api/v1/projects/${projectId}/unified-records/statistics`
+    )
+    return response.data
+  },
+
+  async getUnifiedRecordDetail(recordId: string): Promise<UnifiedRecordDetail> {
+    const response = await apiClient.get<UnifiedRecordDetail>(
+      `/api/v1/unified-records/${recordId}`
+    )
+    return response.data
+  },
+
+  async getUnifiedRecordSources(recordId: string): Promise<UnifiedRecordSource[]> {
+    const response = await apiClient.get<UnifiedRecordSource[]>(
+      `/api/v1/unified-records/${recordId}/sources`
+    )
+    return response.data
+  },
+}
+
+
+

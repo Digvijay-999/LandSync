@@ -1,0 +1,2938 @@
+{
+  "type": "FeatureCollection",
+  "name": "drone_structures_synthetic",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "EPSG:4326"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2001",
+        "parcel_ref": "CP-1001",
+        "structure_name": "Ramesh Sharma Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85012,
+              18.52009
+            ],
+            [
+              73.85068,
+              18.52009
+            ],
+            [
+              73.85068,
+              18.52051
+            ],
+            [
+              73.85012,
+              18.52051
+            ],
+            [
+              73.85012,
+              18.52009
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2002",
+        "parcel_ref": "CP-1002",
+        "structure_name": "Priya Patel Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85107,
+              18.52009
+            ],
+            [
+              73.85163,
+              18.52009
+            ],
+            [
+              73.85163,
+              18.52051
+            ],
+            [
+              73.85107,
+              18.52051
+            ],
+            [
+              73.85107,
+              18.52009
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2003",
+        "parcel_ref": "CP-1003",
+        "structure_name": "Anil Kulkarni Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85202,
+              18.52009
+            ],
+            [
+              73.85258,
+              18.52009
+            ],
+            [
+              73.85258,
+              18.52051
+            ],
+            [
+              73.85202,
+              18.52051
+            ],
+            [
+              73.85202,
+              18.52009
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2004",
+        "parcel_ref": "CP-1004",
+        "structure_name": "Sunita Deshmukh Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85297,
+              18.52009
+            ],
+            [
+              73.85353,
+              18.52009
+            ],
+            [
+              73.85353,
+              18.52051
+            ],
+            [
+              73.85297,
+              18.52051
+            ],
+            [
+              73.85297,
+              18.52009
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2005",
+        "parcel_ref": "CP-1005",
+        "structure_name": "Vikram Joshi Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85392,
+              18.52009
+            ],
+            [
+              73.85448,
+              18.52009
+            ],
+            [
+              73.85448,
+              18.52051
+            ],
+            [
+              73.85392,
+              18.52051
+            ],
+            [
+              73.85392,
+              18.52009
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2006",
+        "parcel_ref": "CP-1006",
+        "structure_name": "Meera Nair Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85487,
+              18.52009
+            ],
+            [
+              73.85543,
+              18.52009
+            ],
+            [
+              73.85543,
+              18.52051
+            ],
+            [
+              73.85487,
+              18.52051
+            ],
+            [
+              73.85487,
+              18.52009
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2007",
+        "parcel_ref": "CP-1007",
+        "structure_name": "Rajesh Gupta Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85582,
+              18.52009
+            ],
+            [
+              73.85638,
+              18.52009
+            ],
+            [
+              73.85638,
+              18.52051
+            ],
+            [
+              73.85582,
+              18.52051
+            ],
+            [
+              73.85582,
+              18.52009
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2008",
+        "parcel_ref": "CP-1008",
+        "structure_name": "Kavita Rao Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85677,
+              18.52009
+            ],
+            [
+              73.85733,
+              18.52009
+            ],
+            [
+              73.85733,
+              18.52051
+            ],
+            [
+              73.85677,
+              18.52051
+            ],
+            [
+              73.85677,
+              18.52009
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2009",
+        "parcel_ref": "CP-1009",
+        "structure_name": "Suresh Patil Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85772,
+              18.52009
+            ],
+            [
+              73.85828,
+              18.52009
+            ],
+            [
+              73.85828,
+              18.52051
+            ],
+            [
+              73.85772,
+              18.52051
+            ],
+            [
+              73.85772,
+              18.52009
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2010",
+        "parcel_ref": "CP-1010",
+        "structure_name": "Neha Verma Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85867,
+              18.52009
+            ],
+            [
+              73.85923,
+              18.52009
+            ],
+            [
+              73.85923,
+              18.52051
+            ],
+            [
+              73.85867,
+              18.52051
+            ],
+            [
+              73.85867,
+              18.52009
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2011",
+        "parcel_ref": "CP-1011",
+        "structure_name": "Deepak Shinde Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85012,
+              18.52084
+            ],
+            [
+              73.85068,
+              18.52084
+            ],
+            [
+              73.85068,
+              18.52126
+            ],
+            [
+              73.85012,
+              18.52126
+            ],
+            [
+              73.85012,
+              18.52084
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2012",
+        "parcel_ref": "CP-1012",
+        "structure_name": "Pooja Mehta Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85107,
+              18.52084
+            ],
+            [
+              73.85163,
+              18.52084
+            ],
+            [
+              73.85163,
+              18.52126
+            ],
+            [
+              73.85107,
+              18.52126
+            ],
+            [
+              73.85107,
+              18.52084
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2013",
+        "parcel_ref": "CP-1013",
+        "structure_name": "Ramesh Sharma Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85202,
+              18.52084
+            ],
+            [
+              73.85258,
+              18.52084
+            ],
+            [
+              73.85258,
+              18.52126
+            ],
+            [
+              73.85202,
+              18.52126
+            ],
+            [
+              73.85202,
+              18.52084
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2014",
+        "parcel_ref": "CP-1014",
+        "structure_name": "Priya Patel Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85297,
+              18.52084
+            ],
+            [
+              73.85353,
+              18.52084
+            ],
+            [
+              73.85353,
+              18.52126
+            ],
+            [
+              73.85297,
+              18.52126
+            ],
+            [
+              73.85297,
+              18.52084
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2015",
+        "parcel_ref": "CP-1015",
+        "structure_name": "Anil Kulkarni Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85392,
+              18.52084
+            ],
+            [
+              73.85448,
+              18.52084
+            ],
+            [
+              73.85448,
+              18.52126
+            ],
+            [
+              73.85392,
+              18.52126
+            ],
+            [
+              73.85392,
+              18.52084
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2016",
+        "parcel_ref": "CP-1016",
+        "structure_name": "Sunita Deshmukh Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85487,
+              18.52084
+            ],
+            [
+              73.85543,
+              18.52084
+            ],
+            [
+              73.85543,
+              18.52126
+            ],
+            [
+              73.85487,
+              18.52126
+            ],
+            [
+              73.85487,
+              18.52084
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2017",
+        "parcel_ref": "CP-1017",
+        "structure_name": "Vikram Joshi Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85582,
+              18.52084
+            ],
+            [
+              73.85638,
+              18.52084
+            ],
+            [
+              73.85638,
+              18.52126
+            ],
+            [
+              73.85582,
+              18.52126
+            ],
+            [
+              73.85582,
+              18.52084
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2018",
+        "parcel_ref": "CP-1018",
+        "structure_name": "Meera Nair Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85677,
+              18.52084
+            ],
+            [
+              73.85733,
+              18.52084
+            ],
+            [
+              73.85733,
+              18.52126
+            ],
+            [
+              73.85677,
+              18.52126
+            ],
+            [
+              73.85677,
+              18.52084
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2019",
+        "parcel_ref": "CP-1019",
+        "structure_name": "Rajesh Gupta Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85772,
+              18.52084
+            ],
+            [
+              73.85828,
+              18.52084
+            ],
+            [
+              73.85828,
+              18.52126
+            ],
+            [
+              73.85772,
+              18.52126
+            ],
+            [
+              73.85772,
+              18.52084
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2020",
+        "parcel_ref": "CP-1020",
+        "structure_name": "Kavita Rao Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85867,
+              18.52084
+            ],
+            [
+              73.85923,
+              18.52084
+            ],
+            [
+              73.85923,
+              18.52126
+            ],
+            [
+              73.85867,
+              18.52126
+            ],
+            [
+              73.85867,
+              18.52084
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2021",
+        "parcel_ref": "CP-1021",
+        "structure_name": "Suresh Patil Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85012,
+              18.52159
+            ],
+            [
+              73.85068,
+              18.52159
+            ],
+            [
+              73.85068,
+              18.52201
+            ],
+            [
+              73.85012,
+              18.52201
+            ],
+            [
+              73.85012,
+              18.52159
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2022",
+        "parcel_ref": "CP-1022",
+        "structure_name": "Neha Verma Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85107,
+              18.52159
+            ],
+            [
+              73.85163,
+              18.52159
+            ],
+            [
+              73.85163,
+              18.52201
+            ],
+            [
+              73.85107,
+              18.52201
+            ],
+            [
+              73.85107,
+              18.52159
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2023",
+        "parcel_ref": "CP-1023",
+        "structure_name": "Deepak Shinde Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85202,
+              18.52159
+            ],
+            [
+              73.85258,
+              18.52159
+            ],
+            [
+              73.85258,
+              18.52201
+            ],
+            [
+              73.85202,
+              18.52201
+            ],
+            [
+              73.85202,
+              18.52159
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2024",
+        "parcel_ref": "CP-1024",
+        "structure_name": "Pooja Mehta Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85297,
+              18.52159
+            ],
+            [
+              73.85353,
+              18.52159
+            ],
+            [
+              73.85353,
+              18.52201
+            ],
+            [
+              73.85297,
+              18.52201
+            ],
+            [
+              73.85297,
+              18.52159
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2025",
+        "parcel_ref": "CP-1025",
+        "structure_name": "Ramesh Sharma Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85392,
+              18.52159
+            ],
+            [
+              73.85448,
+              18.52159
+            ],
+            [
+              73.85448,
+              18.52201
+            ],
+            [
+              73.85392,
+              18.52201
+            ],
+            [
+              73.85392,
+              18.52159
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2026",
+        "parcel_ref": "CP-1026",
+        "structure_name": "Priya Patel Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85487,
+              18.52159
+            ],
+            [
+              73.85543,
+              18.52159
+            ],
+            [
+              73.85543,
+              18.52201
+            ],
+            [
+              73.85487,
+              18.52201
+            ],
+            [
+              73.85487,
+              18.52159
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2027",
+        "parcel_ref": "CP-1027",
+        "structure_name": "Anil Kulkarni Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85582,
+              18.52159
+            ],
+            [
+              73.85638,
+              18.52159
+            ],
+            [
+              73.85638,
+              18.52201
+            ],
+            [
+              73.85582,
+              18.52201
+            ],
+            [
+              73.85582,
+              18.52159
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2028",
+        "parcel_ref": "CP-1028",
+        "structure_name": "Sunita Deshmukh Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85677,
+              18.52159
+            ],
+            [
+              73.85733,
+              18.52159
+            ],
+            [
+              73.85733,
+              18.52201
+            ],
+            [
+              73.85677,
+              18.52201
+            ],
+            [
+              73.85677,
+              18.52159
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2029",
+        "parcel_ref": "CP-1029",
+        "structure_name": "Vikram Joshi Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85772,
+              18.52159
+            ],
+            [
+              73.85828,
+              18.52159
+            ],
+            [
+              73.85828,
+              18.52201
+            ],
+            [
+              73.85772,
+              18.52201
+            ],
+            [
+              73.85772,
+              18.52159
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2030",
+        "parcel_ref": "CP-1030",
+        "structure_name": "Meera Nair Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85867,
+              18.52159
+            ],
+            [
+              73.85923,
+              18.52159
+            ],
+            [
+              73.85923,
+              18.52201
+            ],
+            [
+              73.85867,
+              18.52201
+            ],
+            [
+              73.85867,
+              18.52159
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2031",
+        "parcel_ref": "CP-1031",
+        "structure_name": "Rajesh Gupta Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85012,
+              18.52234
+            ],
+            [
+              73.85068,
+              18.52234
+            ],
+            [
+              73.85068,
+              18.52276
+            ],
+            [
+              73.85012,
+              18.52276
+            ],
+            [
+              73.85012,
+              18.52234
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2032",
+        "parcel_ref": "CP-1032",
+        "structure_name": "Kavita Rao Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85107,
+              18.52234
+            ],
+            [
+              73.85163,
+              18.52234
+            ],
+            [
+              73.85163,
+              18.52276
+            ],
+            [
+              73.85107,
+              18.52276
+            ],
+            [
+              73.85107,
+              18.52234
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2033",
+        "parcel_ref": "CP-1033",
+        "structure_name": "Suresh Patil Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85202,
+              18.52234
+            ],
+            [
+              73.85258,
+              18.52234
+            ],
+            [
+              73.85258,
+              18.52276
+            ],
+            [
+              73.85202,
+              18.52276
+            ],
+            [
+              73.85202,
+              18.52234
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2034",
+        "parcel_ref": "CP-1034",
+        "structure_name": "Neha Verma Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85297,
+              18.52234
+            ],
+            [
+              73.85353,
+              18.52234
+            ],
+            [
+              73.85353,
+              18.52276
+            ],
+            [
+              73.85297,
+              18.52276
+            ],
+            [
+              73.85297,
+              18.52234
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2035",
+        "parcel_ref": "CP-1035",
+        "structure_name": "Deepak Shinde Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85392,
+              18.52234
+            ],
+            [
+              73.85448,
+              18.52234
+            ],
+            [
+              73.85448,
+              18.52276
+            ],
+            [
+              73.85392,
+              18.52276
+            ],
+            [
+              73.85392,
+              18.52234
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2036",
+        "parcel_ref": "CP-1036",
+        "structure_name": "Pooja Mehta Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85487,
+              18.52234
+            ],
+            [
+              73.85543,
+              18.52234
+            ],
+            [
+              73.85543,
+              18.52276
+            ],
+            [
+              73.85487,
+              18.52276
+            ],
+            [
+              73.85487,
+              18.52234
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2037",
+        "parcel_ref": "CP-1037",
+        "structure_name": "Ramesh Sharma Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85582,
+              18.52234
+            ],
+            [
+              73.85638,
+              18.52234
+            ],
+            [
+              73.85638,
+              18.52276
+            ],
+            [
+              73.85582,
+              18.52276
+            ],
+            [
+              73.85582,
+              18.52234
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2038",
+        "parcel_ref": "CP-1038",
+        "structure_name": "Priya Patel Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85677,
+              18.52234
+            ],
+            [
+              73.85733,
+              18.52234
+            ],
+            [
+              73.85733,
+              18.52276
+            ],
+            [
+              73.85677,
+              18.52276
+            ],
+            [
+              73.85677,
+              18.52234
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2039",
+        "parcel_ref": "CP-1039",
+        "structure_name": "Anil Kulkarni Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85772,
+              18.52234
+            ],
+            [
+              73.85828,
+              18.52234
+            ],
+            [
+              73.85828,
+              18.52276
+            ],
+            [
+              73.85772,
+              18.52276
+            ],
+            [
+              73.85772,
+              18.52234
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2040",
+        "parcel_ref": "CP-1040",
+        "structure_name": "Sunita Deshmukh Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85867,
+              18.52234
+            ],
+            [
+              73.85923,
+              18.52234
+            ],
+            [
+              73.85923,
+              18.52276
+            ],
+            [
+              73.85867,
+              18.52276
+            ],
+            [
+              73.85867,
+              18.52234
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2041",
+        "parcel_ref": "CP-1041",
+        "structure_name": "Vikram Joshi Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 4173.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.850024,
+              18.523048
+            ],
+            [
+              73.850696,
+              18.523048
+            ],
+            [
+              73.850696,
+              18.523552
+            ],
+            [
+              73.850024,
+              18.523552
+            ],
+            [
+              73.850024,
+              18.523048
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2042",
+        "parcel_ref": "CP-1042",
+        "structure_name": "Meera Nair Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 4173.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.850974,
+              18.523048
+            ],
+            [
+              73.851646,
+              18.523048
+            ],
+            [
+              73.851646,
+              18.523552
+            ],
+            [
+              73.850974,
+              18.523552
+            ],
+            [
+              73.850974,
+              18.523048
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2043",
+        "parcel_ref": "CP-1043",
+        "structure_name": "Rajesh Gupta Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85202,
+              18.52309
+            ],
+            [
+              73.85258,
+              18.52309
+            ],
+            [
+              73.85258,
+              18.52351
+            ],
+            [
+              73.85202,
+              18.52351
+            ],
+            [
+              73.85202,
+              18.52309
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2044",
+        "parcel_ref": "CP-1044",
+        "structure_name": "Kavita Rao Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85297,
+              18.52309
+            ],
+            [
+              73.85353,
+              18.52309
+            ],
+            [
+              73.85353,
+              18.52351
+            ],
+            [
+              73.85297,
+              18.52351
+            ],
+            [
+              73.85297,
+              18.52309
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2045",
+        "parcel_ref": "CP-1045",
+        "structure_name": "Suresh Patil Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85392,
+              18.52309
+            ],
+            [
+              73.85448,
+              18.52309
+            ],
+            [
+              73.85448,
+              18.52351
+            ],
+            [
+              73.85392,
+              18.52351
+            ],
+            [
+              73.85392,
+              18.52309
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2046",
+        "parcel_ref": "CP-1046",
+        "structure_name": "Neha Verma Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85487,
+              18.52309
+            ],
+            [
+              73.85543,
+              18.52309
+            ],
+            [
+              73.85543,
+              18.52351
+            ],
+            [
+              73.85487,
+              18.52351
+            ],
+            [
+              73.85487,
+              18.52309
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2047",
+        "parcel_ref": "CP-1047",
+        "structure_name": "Deepak Shinde Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85582,
+              18.52309
+            ],
+            [
+              73.85638,
+              18.52309
+            ],
+            [
+              73.85638,
+              18.52351
+            ],
+            [
+              73.85582,
+              18.52351
+            ],
+            [
+              73.85582,
+              18.52309
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2048",
+        "parcel_ref": "CP-1048",
+        "structure_name": "Pooja Mehta Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85677,
+              18.52309
+            ],
+            [
+              73.85733,
+              18.52309
+            ],
+            [
+              73.85733,
+              18.52351
+            ],
+            [
+              73.85677,
+              18.52351
+            ],
+            [
+              73.85677,
+              18.52309
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2049",
+        "parcel_ref": "CP-1049",
+        "structure_name": "Ramesh Sharma Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85772,
+              18.52309
+            ],
+            [
+              73.85828,
+              18.52309
+            ],
+            [
+              73.85828,
+              18.52351
+            ],
+            [
+              73.85772,
+              18.52351
+            ],
+            [
+              73.85772,
+              18.52309
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2050",
+        "parcel_ref": "CP-1050",
+        "structure_name": "Priya Patel Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85867,
+              18.52309
+            ],
+            [
+              73.85923,
+              18.52309
+            ],
+            [
+              73.85923,
+              18.52351
+            ],
+            [
+              73.85867,
+              18.52351
+            ],
+            [
+              73.85867,
+              18.52309
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2051",
+        "parcel_ref": "CP-1051",
+        "structure_name": "Anil Kulkarni Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85012,
+              18.52384
+            ],
+            [
+              73.85068,
+              18.52384
+            ],
+            [
+              73.85068,
+              18.52426
+            ],
+            [
+              73.85012,
+              18.52426
+            ],
+            [
+              73.85012,
+              18.52384
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2052",
+        "parcel_ref": "CP-1052",
+        "structure_name": "Sunita Deshmukh Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85107,
+              18.52384
+            ],
+            [
+              73.85163,
+              18.52384
+            ],
+            [
+              73.85163,
+              18.52426
+            ],
+            [
+              73.85107,
+              18.52426
+            ],
+            [
+              73.85107,
+              18.52384
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2053",
+        "parcel_ref": "CP-1053",
+        "structure_name": "Vikram Joshi Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85202,
+              18.52384
+            ],
+            [
+              73.85258,
+              18.52384
+            ],
+            [
+              73.85258,
+              18.52426
+            ],
+            [
+              73.85202,
+              18.52426
+            ],
+            [
+              73.85202,
+              18.52384
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2054",
+        "parcel_ref": "CP-1054",
+        "structure_name": "Meera Nair Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 3416.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85309,
+              18.523912
+            ],
+            [
+              73.853698,
+              18.523912
+            ],
+            [
+              73.853698,
+              18.524368
+            ],
+            [
+              73.85309,
+              18.524368
+            ],
+            [
+              73.85309,
+              18.523912
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2055",
+        "parcel_ref": "CP-1055",
+        "structure_name": "Rajesh Gupta Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 3416.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85404,
+              18.523912
+            ],
+            [
+              73.854648,
+              18.523912
+            ],
+            [
+              73.854648,
+              18.524368
+            ],
+            [
+              73.85404,
+              18.524368
+            ],
+            [
+              73.85404,
+              18.523912
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2056",
+        "parcel_ref": "CP-1056",
+        "structure_name": "Kavita Rao Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 3416.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85499,
+              18.523912
+            ],
+            [
+              73.855598,
+              18.523912
+            ],
+            [
+              73.855598,
+              18.524368
+            ],
+            [
+              73.85499,
+              18.524368
+            ],
+            [
+              73.85499,
+              18.523912
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2057",
+        "parcel_ref": "CP-1057",
+        "structure_name": "Suresh Patil Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 3416.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85594,
+              18.523912
+            ],
+            [
+              73.856548,
+              18.523912
+            ],
+            [
+              73.856548,
+              18.524368
+            ],
+            [
+              73.85594,
+              18.524368
+            ],
+            [
+              73.85594,
+              18.523912
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2058",
+        "parcel_ref": "CP-1058",
+        "structure_name": "Neha Verma Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 3416.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85689,
+              18.523912
+            ],
+            [
+              73.857498,
+              18.523912
+            ],
+            [
+              73.857498,
+              18.524368
+            ],
+            [
+              73.85689,
+              18.524368
+            ],
+            [
+              73.85689,
+              18.523912
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2059",
+        "parcel_ref": "CP-1059",
+        "structure_name": "Deepak Shinde Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 3416.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85784,
+              18.523912
+            ],
+            [
+              73.858448,
+              18.523912
+            ],
+            [
+              73.858448,
+              18.524368
+            ],
+            [
+              73.85784,
+              18.524368
+            ],
+            [
+              73.85784,
+              18.523912
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2060",
+        "parcel_ref": "CP-1060",
+        "structure_name": "Pooja Mehta Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 3416.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85879,
+              18.523912
+            ],
+            [
+              73.859398,
+              18.523912
+            ],
+            [
+              73.859398,
+              18.524368
+            ],
+            [
+              73.85879,
+              18.524368
+            ],
+            [
+              73.85879,
+              18.523912
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2061",
+        "parcel_ref": "CP-1061",
+        "structure_name": "Ramesh Sharma Structure",
+        "structure_type": "Commercial",
+        "footprint_area_sqm": 3416.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85024,
+              18.524662
+            ],
+            [
+              73.850848,
+              18.524662
+            ],
+            [
+              73.850848,
+              18.525118
+            ],
+            [
+              73.85024,
+              18.525118
+            ],
+            [
+              73.85024,
+              18.524662
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2062",
+        "parcel_ref": "CP-1062",
+        "structure_name": "Priya Patel Structure",
+        "structure_type": "Mixed Use",
+        "footprint_area_sqm": 3416.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85119,
+              18.524662
+            ],
+            [
+              73.851798,
+              18.524662
+            ],
+            [
+              73.851798,
+              18.525118
+            ],
+            [
+              73.85119,
+              18.525118
+            ],
+            [
+              73.85119,
+              18.524662
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2063",
+        "parcel_ref": "CP-1063",
+        "structure_name": "Anil Kulkarni Structure",
+        "structure_type": "Civic",
+        "footprint_area_sqm": 3416.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85214,
+              18.524662
+            ],
+            [
+              73.852748,
+              18.524662
+            ],
+            [
+              73.852748,
+              18.525118
+            ],
+            [
+              73.85214,
+              18.525118
+            ],
+            [
+              73.85214,
+              18.524662
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2064",
+        "parcel_ref": "DISPUTED-UNKNOWN-63",
+        "structure_name": "UNAUTHORIZED OCCUPANT / SQUATTER CORP Structure",
+        "structure_type": "Commercial Warehouse",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85297,
+              18.52459
+            ],
+            [
+              73.85353,
+              18.52459
+            ],
+            [
+              73.85353,
+              18.52501
+            ],
+            [
+              73.85297,
+              18.52501
+            ],
+            [
+              73.85297,
+              18.52459
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2065",
+        "parcel_ref": "DISPUTED-UNKNOWN-64",
+        "structure_name": "UNAUTHORIZED OCCUPANT / SQUATTER CORP Structure",
+        "structure_type": "Commercial Warehouse",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85392,
+              18.52459
+            ],
+            [
+              73.85448,
+              18.52459
+            ],
+            [
+              73.85448,
+              18.52501
+            ],
+            [
+              73.85392,
+              18.52501
+            ],
+            [
+              73.85392,
+              18.52459
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2066",
+        "parcel_ref": "DISPUTED-UNKNOWN-65",
+        "structure_name": "UNAUTHORIZED OCCUPANT / SQUATTER CORP Structure",
+        "structure_type": "Commercial Warehouse",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85487,
+              18.52459
+            ],
+            [
+              73.85543,
+              18.52459
+            ],
+            [
+              73.85543,
+              18.52501
+            ],
+            [
+              73.85487,
+              18.52501
+            ],
+            [
+              73.85487,
+              18.52459
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2067",
+        "parcel_ref": "DISPUTED-UNKNOWN-66",
+        "structure_name": "UNAUTHORIZED OCCUPANT / SQUATTER CORP Structure",
+        "structure_type": "Commercial Warehouse",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85582,
+              18.52459
+            ],
+            [
+              73.85638,
+              18.52459
+            ],
+            [
+              73.85638,
+              18.52501
+            ],
+            [
+              73.85582,
+              18.52501
+            ],
+            [
+              73.85582,
+              18.52459
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2068",
+        "parcel_ref": "DISPUTED-UNKNOWN-67",
+        "structure_name": "UNAUTHORIZED OCCUPANT / SQUATTER CORP Structure",
+        "structure_type": "Commercial Warehouse",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85677,
+              18.52459
+            ],
+            [
+              73.85733,
+              18.52459
+            ],
+            [
+              73.85733,
+              18.52501
+            ],
+            [
+              73.85677,
+              18.52501
+            ],
+            [
+              73.85677,
+              18.52459
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2069",
+        "parcel_ref": "DISPUTED-UNKNOWN-68",
+        "structure_name": "UNAUTHORIZED OCCUPANT / SQUATTER CORP Structure",
+        "structure_type": "Commercial Warehouse",
+        "footprint_area_sqm": 2897.9,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.85772,
+              18.52459
+            ],
+            [
+              73.85828,
+              18.52459
+            ],
+            [
+              73.85828,
+              18.52501
+            ],
+            [
+              73.85772,
+              18.52501
+            ],
+            [
+              73.85772,
+              18.52459
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2070",
+        "parcel_ref": "OFFGRID-69",
+        "structure_name": "Isolated Remote Asset Structure",
+        "structure_type": "Telecom Facility",
+        "footprint_area_sqm": 1478.5,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.91,
+              18.58
+            ],
+            [
+              73.9104,
+              18.58
+            ],
+            [
+              73.9104,
+              18.5803
+            ],
+            [
+              73.91,
+              18.5803
+            ],
+            [
+              73.91,
+              18.58
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2071",
+        "parcel_ref": "OFFGRID-70",
+        "structure_name": "Isolated Remote Asset Structure",
+        "structure_type": "Telecom Facility",
+        "footprint_area_sqm": 1478.5,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.912,
+              18.582
+            ],
+            [
+              73.9124,
+              18.582
+            ],
+            [
+              73.9124,
+              18.5823
+            ],
+            [
+              73.912,
+              18.5823
+            ],
+            [
+              73.912,
+              18.582
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2072",
+        "parcel_ref": "OFFGRID-71",
+        "structure_name": "Isolated Remote Asset Structure",
+        "structure_type": "Telecom Facility",
+        "footprint_area_sqm": 1478.5,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.914,
+              18.584
+            ],
+            [
+              73.9144,
+              18.584
+            ],
+            [
+              73.9144,
+              18.5843
+            ],
+            [
+              73.914,
+              18.5843
+            ],
+            [
+              73.914,
+              18.584
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2073",
+        "parcel_ref": "OFFGRID-72",
+        "structure_name": "Isolated Remote Asset Structure",
+        "structure_type": "Telecom Facility",
+        "footprint_area_sqm": 1478.5,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.916,
+              18.586
+            ],
+            [
+              73.9164,
+              18.586
+            ],
+            [
+              73.9164,
+              18.5863
+            ],
+            [
+              73.916,
+              18.5863
+            ],
+            [
+              73.916,
+              18.586
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2074",
+        "parcel_ref": "OFFGRID-73",
+        "structure_name": "Isolated Remote Asset Structure",
+        "structure_type": "Telecom Facility",
+        "footprint_area_sqm": 1478.5,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.918,
+              18.588
+            ],
+            [
+              73.9184,
+              18.588
+            ],
+            [
+              73.9184,
+              18.5883
+            ],
+            [
+              73.918,
+              18.5883
+            ],
+            [
+              73.918,
+              18.588
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2075",
+        "parcel_ref": "OFFGRID-74",
+        "structure_name": "Isolated Remote Asset Structure",
+        "structure_type": "Telecom Facility",
+        "footprint_area_sqm": 1478.5,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.92,
+              18.59
+            ],
+            [
+              73.9204,
+              18.59
+            ],
+            [
+              73.9204,
+              18.5903
+            ],
+            [
+              73.92,
+              18.5903
+            ],
+            [
+              73.92,
+              18.59
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2076",
+        "parcel_ref": "CP-1041",
+        "structure_name": "Vikram Joshi Structure",
+        "structure_type": "Institutional",
+        "footprint_area_sqm": 4173.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.850104,
+              18.523048
+            ],
+            [
+              73.850776,
+              18.523048
+            ],
+            [
+              73.850776,
+              18.523552
+            ],
+            [
+              73.850104,
+              18.523552
+            ],
+            [
+              73.850104,
+              18.523048
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "structure_id": "DRN-2077",
+        "parcel_ref": "CP-1042",
+        "structure_name": "Meera Nair Structure",
+        "structure_type": "Residential",
+        "footprint_area_sqm": 4173.0,
+        "survey_method": "DRONE_LIDAR_ORTHO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.851054,
+              18.523048
+            ],
+            [
+              73.851726,
+              18.523048
+            ],
+            [
+              73.851726,
+              18.523552
+            ],
+            [
+              73.851054,
+              18.523552
+            ],
+            [
+              73.851054,
+              18.523048
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
