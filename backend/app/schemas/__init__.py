@@ -43,6 +43,35 @@ from app.schemas.unified import (
     UnifiedRecordBuildResponse,
     UnifiedRecordStatisticsResponse,
 )
+from app.schemas.provenance import (
+    ProvenanceSourceItem,
+    ProvenanceRelationshipItem,
+    ProvenanceReviewHistoryItem,
+    ProvenanceTimelineItem,
+    UnifiedRecordProvenanceResponse,
+    ProjectProvenanceSummaryResponse,
+)
+from app.schemas.conflict import (
+    ConflictSourceValue,
+    ConflictResolutionRead,
+    AttributeConflictRead,
+    ConflictResolveInput,
+    ConflictDismissInput,
+    ConflictListResponse,
+    ConflictSummaryResponse,
+)
+from app.schemas.assistant import (
+    AssistantIntent,
+    AssistantEvidenceSource,
+    AssistantQueryRequest,
+    AssistantQueryResponse,
+    SuggestedQuestionsResponse,
+    AssistantHealthResponse,
+    SemanticDocumentCategory,
+    SemanticDocumentRead,
+    SemanticSearchResult,
+    ReindexResponse,
+)
 
 __all__ = [
     "HealthResponse",
@@ -85,6 +114,25 @@ __all__ = [
     "UnifiedRecordDetailResponse",
     "UnifiedRecordBuildResponse",
     "UnifiedRecordStatisticsResponse",
+    "ProvenanceSourceItem",
+    "ProvenanceRelationshipItem",
+    "ProvenanceReviewHistoryItem",
+    "ProvenanceTimelineItem",
+    "UnifiedRecordProvenanceResponse",
+    "ProjectProvenanceSummaryResponse",
+    "ConflictSourceValue",
+    "ConflictResolutionRead",
+    "AttributeConflictRead",
+    "ConflictResolveInput",
+    "ConflictDismissInput",
+    "ConflictListResponse",
+    "ConflictSummaryResponse",
+    "AssistantIntent",
+    "AssistantEvidenceSource",
+    "AssistantQueryRequest",
+    "AssistantQueryResponse",
+    "SuggestedQuestionsResponse",
+    "AssistantHealthResponse",
 ]
 
 

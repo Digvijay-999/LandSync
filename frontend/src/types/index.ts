@@ -580,3 +580,263 @@ export interface UnifiedRecordStatistics {
   records_with_drone: number
   records_with_municipal: number
 }
+
+// ============================================================================
+// Milestone 6: Provenance, Audit Trails & Multi-Format Export Types
+// ============================================================================
+
+export interface ProvenanceSourceItem {
+  role: string
+  dataset_id?: string | null
+  dataset_name: string
+  dataset_version?: number | null
+  dataset_format?: string | null
+  feature_id: string
+  feature_identifier: string
+  source_feature_id?: string | null
+  properties: Record<string, any>
+  geometry_type: string
+}
+
+export interface ProvenanceRelationshipItem {
+  match_id: string
+  source_feature_id: string
+  candidate_feature_id?: string | null
+  target_feature_id?: string | null
+  machine_score: number
+  classification: string
+  match_tier?: string | null
+  candidate_rank?: number | null
+  candidate_role?: string | null
+  is_best_candidate: boolean
+  is_ambiguous: boolean
+  human_decision: string
+  reasons?: Record<string, any>
+}
+
+export interface ProvenanceReviewHistoryItem {
+  id: string
+  match_id: string
+  decision: string
+  comment?: string | null
+  reviewer_id?: string | null
+  created_at: string
+}
+
+export interface ProvenanceTimelineItem {
+  event_type: string
+  title: string
+  description: string
+  timestamp: string
+  entity_type: string
+  entity_id?: string | null
+  metadata: Record<string, any>
+}
+
+export interface UnifiedRecordProvenance {
+  record_id: string
+  record_uuid: string
+  project_id: string
+  status: UnifiedRecordStatus
+  canonical_geometry_source: {
+    role?: string
+    feature_id?: string | null
+    feature_identifier?: string | null
+    dataset_name?: string | null
+  }
+  area_sqm?: number | null
+  sources: ProvenanceSourceItem[]
+  relationships: ProvenanceRelationshipItem[]
+  review_history: ProvenanceReviewHistoryItem[]
+  timeline: ProvenanceTimelineItem[]
+  conflicts: Array<Record<string, any>>
+}
+
+export interface ProjectProvenanceSummary {
+  project_id: string
+  project_name: string
+  total_unified_records: number
+  total_sources: number
+  total_accepted_matches: number
+  total_reviews: number
+  datasets: Array<{
+    id: string
+    name: string
+    format: string
+    feature_count: number
+    versions_count: number
+  }>
+  latest_events: Array<{
+    id: string
+    event_type: string
+    source_type?: string | null
+    metadata: Record<string, any>
+    created_at: string
+  }>
+}
+
+// ---------------------------------------------------------------------------
+// Milestone 7: Attribute Conflict Detection & Reconciliation Types
+// ---------------------------------------------------------------------------
+
+export type ConflictType = 'VALUE_MISMATCH' | 'NUMERIC_DIFFERENCE' | 'NULL_VALUE_CONFLICT'
+export type ConflictSeverity = 'HIGH' | 'MEDIUM' | 'LOW'
+export type ConflictStatus = 'UNRESOLVED' | 'RESOLVED' | 'DISMISSED'
+export type ConflictResolutionType = 'SOURCE_SELECTION' | 'MANUAL_VALUE' | 'DISMISSED'
+
+export interface ConflictSourceValue {
+  source_role: string
+  dataset_id?: string | null
+  dataset_name: string
+  dataset_version: number
+  feature_id: string
+  feature_identifier: string
+  value: any
+}
+
+export interface ConflictResolution {
+  id: string
+  conflict_id: string
+  resolution_type: ConflictResolutionType
+  selected_source_feature_id?: string | null
+  selected_source_role?: string | null
+  resolved_value: any
+  comment: string
+  resolved_by?: string | null
+  resolved_at: string
+}
+
+export interface AttributeConflict {
+  id: string
+  project_id: string
+  unified_land_record_id: string
+  record_identifier?: string | null
+  attribute_name: string
+  conflict_type: ConflictType
+  severity: ConflictSeverity
+  status: ConflictStatus
+  detected_values: ConflictSourceValue[]
+  resolution?: ConflictResolution | null
+  dismissal_reason?: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ConflictResolveInput {
+  resolution_type: 'SOURCE_SELECTION' | 'MANUAL_VALUE'
+  selected_source_feature_id?: string | null
+  manual_value?: any
+  comment: string
+  resolved_by?: string | null
+}
+
+export interface ConflictDismissInput {
+  reason: string
+  resolved_by?: string | null
+}
+
+export interface ConflictListResponse {
+  items: AttributeConflict[]
+  total: number
+  unresolved_count: number
+  resolved_count: number
+  dismissed_count: number
+  skip: number
+  limit: number
+}
+
+export interface ConflictSummary {
+  project_id: string
+  total_conflicts: number
+  unresolved_conflicts: number
+  resolved_conflicts: number
+  dismissed_conflicts: number
+  records_with_conflicts: number
+  conflicts_by_type: Record<string, number>
+  conflicts_by_attribute: Record<string, number>
+}
+
+// ============================================================================
+// Milestone 8 — AI Geospatial Reasoning & Evidence Assistant Types
+// ============================================================================
+
+export type AssistantIntent =
+  | 'PROJECT_OVERVIEW'
+  | 'RECORD_INVESTIGATION'
+  | 'CONFLICT_EXPLANATION'
+  | 'SPATIAL_PROXIMITY'
+  | 'DATASET_COMPARISON'
+  | 'PROVENANCE_TRACE'
+  | 'ATTRIBUTE_SEARCH'
+  | 'SEMANTIC_SEARCH'
+  | 'COMPLEX_INVESTIGATION'
+  | 'GENERAL_GIS_QUERY'
+
+export interface AssistantEvidenceSource {
+  source_type: string
+  identifier: string
+  title: string
+  dataset_name?: string | null
+  role?: string | null
+  properties: Record<string, any>
+  relevance_note: string
+}
+
+export interface AssistantQueryRequest {
+  query: string
+  project_id: string
+  context_record_id?: string | null
+  context_conflict_id?: string | null
+  context_match_id?: string | null
+}
+
+export interface AssistantQueryResponse {
+  query: string
+  project_id: string
+  intent: AssistantIntent
+  answer: string
+  reasoning_steps: string[]
+  evidence_sources: AssistantEvidenceSource[]
+  suggested_followups: string[]
+  grounded_score: number
+  execution_time_ms: number
+}
+
+export interface SuggestedQuestionsResponse {
+  project_id: string
+  context_record_id?: string | null
+  suggested_questions: string[]
+}
+
+export interface AssistantHealthResponse {
+  status: string
+  ai_enabled: boolean
+  configured_provider: string
+  model_name: string
+  embedding_provider: string
+  embedding_dimension: number
+  available_tools: string[]
+}
+
+export interface SemanticDocumentRead {
+  id: string
+  project_id: string
+  document_category: string
+  entity_id: string
+  title: string
+  content: string
+  metadata: Record<string, any>
+  created_at?: string
+}
+
+export interface SemanticSearchResult {
+  document: SemanticDocumentRead
+  similarity_score: number
+}
+
+export interface ReindexResponse {
+  project_id: string
+  documents_indexed: number
+  categories_indexed: Record<string, number>
+  duration_ms: number
+}

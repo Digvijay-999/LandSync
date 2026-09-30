@@ -1,6 +1,6 @@
 from functools import lru_cache
 import json
-from typing import List, Union
+from typing import List, Union, Optional
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -15,7 +15,6 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-
     # Project metadata
     PROJECT_NAME: str = "LandSync AI"
     VERSION: str = "0.1.0"
@@ -23,6 +22,18 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
     LOG_LEVEL: str = "INFO"
+
+    # Milestone 8: AI Intelligence & Evidence Assistant
+    AI_ENABLED: bool = True
+    AI_PROVIDER: str = "auto"  # "auto", "openai", "gemini", "anthropic", "deterministic"
+    AI_MODEL_NAME: str = "gpt-4o-mini"
+    AI_TEMPERATURE: float = 0.0
+    AI_EMBEDDING_PROVIDER: str = "auto"
+    AI_EMBEDDING_MODEL: str = "text-embedding-3-small"
+    AI_EMBEDDING_DIMENSION: int = 384
+    OPENAI_API_KEY: Optional[str] = None
+    GEMINI_API_KEY: Optional[str] = None
+    ANTHROPIC_API_KEY: Optional[str] = None
 
     # Server binding
     BACKEND_HOST: str = "0.0.0.0"

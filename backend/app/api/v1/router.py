@@ -5,6 +5,10 @@ from app.api.v1.endpoints import (
     datasets_router,
     matching_router,
     unified_router,
+    provenance_router,
+    export_router,
+    conflict_router,
+    assistant_router,
 )
 
 api_v1_router = APIRouter()
@@ -15,5 +19,9 @@ api_v1_router.include_router(projects_router, prefix="/projects", tags=["Project
 api_v1_router.include_router(datasets_router, tags=["Datasets"])
 api_v1_router.include_router(matching_router, tags=["Matching"])
 api_v1_router.include_router(unified_router, tags=["Unified Land Records"])
+api_v1_router.include_router(provenance_router, tags=["Provenance & Audit"])
+api_v1_router.include_router(export_router, tags=["Exports"])
+api_v1_router.include_router(conflict_router, tags=["Attribute Conflicts"])
+api_v1_router.include_router(assistant_router, prefix="/assistant", tags=["Evidence Assistant"])
 
 

@@ -66,3 +66,19 @@ export function useBuildUnifiedRecords(projectId: string) {
     },
   })
 }
+
+export function useUnifiedRecordProvenance(recordId?: string) {
+  return useQuery({
+    queryKey: ['unified-record-provenance', recordId],
+    queryFn: () => api.getUnifiedRecordProvenance(recordId!),
+    enabled: Boolean(recordId),
+  })
+}
+
+export function useProjectProvenanceSummary(projectId?: string) {
+  return useQuery({
+    queryKey: ['project-provenance-summary', projectId],
+    queryFn: () => api.getProjectProvenanceSummary(projectId!),
+    enabled: Boolean(projectId),
+  })
+}

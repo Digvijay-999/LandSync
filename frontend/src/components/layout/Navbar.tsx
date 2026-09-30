@@ -1,10 +1,12 @@
 import React from 'react'
-import { Layers, Activity, Database, Server, RefreshCw } from 'lucide-react'
+import { Layers, Activity, Database, Server, RefreshCw, Sparkles } from 'lucide-react'
 import { useHealth } from '../../hooks/useHealth'
 import { StatusBadge } from '../common/StatusBadge'
+import { useAppStore } from '../../stores/useAppStore'
 
 export const Navbar: React.FC = () => {
   const { data: health, isLoading, isError, refetch } = useHealth()
+  const { assistantOpen, toggleAssistant } = useAppStore()
 
   return (
     <header className="h-14 border-b border-border bg-surface-900/95 backdrop-blur px-4 flex items-center justify-between sticky top-0 z-30">
@@ -63,6 +65,20 @@ export const Navbar: React.FC = () => {
           className="p-1.5 rounded text-slate-400 hover:text-slate-200 hover:bg-surface-800 transition-colors"
         >
           <RefreshCw className="w-3.5 h-3.5" />
+        </button>
+
+        {/* AI Assistant Toggle Button */}
+        <button
+          onClick={toggleAssistant}
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono transition-all ${
+            assistantOpen
+              ? 'bg-cyan-600 text-white shadow-sm shadow-cyan-500/30 border border-cyan-400'
+              : 'bg-cyan-950/80 text-cyan-300 hover:bg-cyan-900 border border-cyan-800 hover:border-cyan-600'
+          }`}
+          title="Toggle LandSync AI Geospatial Assistant"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+          <span className="font-semibold">Ask AI</span>
         </button>
       </div>
     </header>

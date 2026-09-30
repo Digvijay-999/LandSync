@@ -26,6 +26,19 @@ import type {
   UnifiedRecordBuildResponse,
   UnifiedRecordStatistics,
   UnifiedRecordSource,
+  UnifiedRecordProvenance,
+  ProjectProvenanceSummary,
+  AttributeConflict,
+  ConflictResolveInput,
+  ConflictDismissInput,
+  ConflictListResponse,
+  ConflictSummary,
+  AssistantQueryRequest,
+  AssistantQueryResponse,
+  SuggestedQuestionsResponse,
+  AssistantHealthResponse,
+  ReindexResponse,
+  SemanticSearchResult,
 } from '../types'
 
 
@@ -318,6 +331,185 @@ export const api = {
   async getUnifiedRecordSources(recordId: string): Promise<UnifiedRecordSource[]> {
     const response = await apiClient.get<UnifiedRecordSource[]>(
       `/api/v1/unified-records/${recordId}/sources`
+    )
+    return response.data
+  },
+
+  // ---------------------------------------------------------------------------
+  // Milestone 6: Provenance, Audit Trails & Multi-Format Export
+  // ---------------------------------------------------------------------------
+
+  async getUnifiedRecordProvenance(recordId: string): Promise<UnifiedRecordProvenance> {
+    const response = await apiClient.get<UnifiedRecordProvenance>(
+      `/api/v1/unified-records/${recordId}/provenance`
+    )
+    return response.data
+  },
+
+  async getProjectProvenanceSummary(projectId: string): Promise<ProjectProvenanceSummary> {
+    const response = await apiClient.get<ProjectProvenanceSummary>(
+      `/api/v1/projects/${projectId}/provenance`
+    )
+    return response.data
+  },
+
+  async exportProjectGeoJSON(projectId: string): Promise<Blob> {
+    const response = await apiClient.get(
+      `/api/v1/projects/${projectId}/exports/unified-records.geojson`,
+      { responseType: 'blob' }
+    )
+    return response.data
+  },
+
+  async exportProjectCSV(projectId: string): Promise<Blob> {
+    const response = await apiClient.get(
+      `/api/v1/projects/${projectId}/exports/unified-records.csv`,
+      { responseType: 'blob' }
+    )
+    return response.data
+  },
+
+  async exportRecordGeoJSON(recordId: string): Promise<Blob> {
+    const response = await apiClient.get(
+      `/api/v1/unified-records/${recordId}/export.geojson`,
+      { responseType: 'blob' }
+    )
+    return response.data
+  },
+
+  async exportRecordCSV(recordId: string): Promise<Blob> {
+    const response = await apiClient.get(
+      `/api/v1/unified-records/${recordId}/export.csv`,
+      { responseType: 'blob' }
+    )
+    return response.data
+  },
+
+  // ---------------------------------------------------------------------------
+  // Milestone 7: Attribute Conflict Detection & Reconciliation
+  // ---------------------------------------------------------------------------
+
+  async getRecordConflicts(recordId: string): Promise<AttributeConflict[]> {
+    const response = await apiClient.get<AttributeConflict[]>(
+      `/api/v1/unified-records/${recordId}/conflicts`
+    )
+    return response.data
+  },
+
+  async getProjectConflicts(
+    projectId: string,
+    params?: {
+      status?: string
+      attribute_name?: string
+      severity?: string
+      skip?: number
+      limit?: number
+    }
+  ): Promise<ConflictListResponse> {
+    const response = await apiClient.get<ConflictListResponse>(
+      `/api/v1/projects/${projectId}/conflicts`,
+      { params }
+    )
+    return response.data
+  },
+
+  async getProjectConflictSummary(projectId: string): Promise<ConflictSummary> {
+    const response = await apiClient.get<ConflictSummary>(
+      `/api/v1/projects/${projectId}/conflicts/summary`
+    )
+    return response.data
+  },
+
+  async getConflictDetail(conflictId: string): Promise<AttributeConflict> {
+    const response = await apiClient.get<AttributeConflict>(
+      `/api/v1/conflicts/${conflictId}`
+    )
+    return response.data
+  },
+
+  async resolveConflict(
+    conflictId: string,
+    input: ConflictResolveInput
+  ): Promise<AttributeConflict> {
+    const response = await apiClient.post<AttributeConflict>(
+      `/api/v1/conflicts/${conflictId}/resolve`,
+      input
+    )
+    return response.data
+  },
+
+  async dismissConflict(
+    conflictId: string,
+    input: ConflictDismissInput
+  ): Promise<AttributeConflict> {
+    const response = await apiClient.post<AttributeConflict>(
+      `/api/v1/conflicts/${conflictId}/dismiss`,
+      input
+    )
+    return response.data
+  },
+}
+
+// ============================================================================
+// Milestone 8 — AI Geospatial Reasoning & Evidence Assistant API
+// ============================================================================
+
+export const assistantApi = {
+  async queryAssistant(
+    request: AssistantQueryRequest
+  ): Promise<AssistantQueryResponse> {
+    const response = await apiClient.post<AssistantQueryResponse>(
+      '/api/v1/assistant/query',
+      request
+    )
+    return response.data
+  },
+
+  async getSuggestedQuestions(
+    projectId: string,
+    contextRecordId?: string | null
+  ): Promise<SuggestedQuestionsResponse> {
+    const response = await apiClient.get<SuggestedQuestionsResponse>(
+      '/api/v1/assistant/suggested-questions',
+      {
+        params: {
+          project_id: projectId,
+          context_record_id: contextRecordId || undefined,
+        },
+      }
+    )
+    return response.data
+  },
+
+  async getAssistantHealth(): Promise<AssistantHealthResponse> {
+    const response = await apiClient.get<AssistantHealthResponse>(
+      '/api/v1/assistant/health'
+    )
+    return response.data
+  },
+
+  async reindexProject(projectId: string): Promise<ReindexResponse> {
+    const response = await apiClient.post<ReindexResponse>(
+      `/api/v1/assistant/projects/${projectId}/reindex`
+    )
+    return response.data
+  },
+
+  async semanticSearch(
+    projectId: string,
+    query: string,
+    limit?: number,
+    category?: string
+  ): Promise<SemanticSearchResult[]> {
+    const response = await apiClient.get<SemanticSearchResult[]>(
+      `/api/v1/assistant/projects/${projectId}/semantic-search`,
+      {
+        params: {
+          query,
+          limit: limit || 5,
+          category: category || undefined,
+        },
+      }
     )
     return response.data
   },

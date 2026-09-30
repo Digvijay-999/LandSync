@@ -2,6 +2,7 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import { Navbar } from '../components/layout/Navbar'
 import { Sidebar } from '../components/layout/Sidebar'
+import { AssistantDrawer } from '../components/assistant/AssistantDrawer'
 import { useAppStore } from '../stores/useAppStore'
 import { X, CheckCircle, AlertTriangle, Info } from 'lucide-react'
 import { cn } from '../lib/utils'
@@ -14,7 +15,7 @@ export const AppLayout: React.FC = () => {
     <div className="flex flex-col h-screen bg-background text-slate-100 font-sans">
       <Navbar />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
         <Sidebar />
 
         <main className="flex-1 overflow-y-auto p-6 bg-surface-950/40">
@@ -45,6 +46,9 @@ export const AppLayout: React.FC = () => {
 
           <Outlet />
         </main>
+
+        {/* Global AI Assistant Drawer */}
+        <AssistantDrawer />
       </div>
     </div>
   )

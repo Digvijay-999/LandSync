@@ -308,20 +308,52 @@ class UnifiedRecordService:
                 selected_feature.geometry_type if selected_feature else "Unknown",
             )
 
-            # Check if values changed for idempotency tracking
-            geom_changed = (
-                target_record.geometry_source_feature_id != (selected_feature.id if selected_feature else None)
-            )
-            status_changed = target_record.status != status
-            area_changed = target_record.area != computed_area
-            attrs_changed = target_record.canonical_attributes != canonical_attrs
+            # Record initial state for idempotency tracking
+            initial_status = target_record.status
+            initial_geom_src = target_record.geometry_source_feature_id
+            initial_area = target_record.area
+            initial_attrs = dict(target_record.canonical_attributes or {})
+
+            # Preserve existing human resolutions on rebuild
+            if not is_new and target_record.canonical_attributes:
+                for k, v in target_record.canonical_attributes.items():
+                    if k.endswith("_resolution"):
+                        base_attr = k[:-11]
+                        if base_attr in target_record.canonical_attributes:
+                            canonical_attrs[base_attr] = target_record.canonical_attributes[base_attr]
+                        canonical_attrs[k] = v
 
             target_record.geometry_source_feature_id = selected_feature.id if selected_feature else None
             target_record.geometry_source_role = selected_role
             target_record.canonical_geometry = selected_feature.geometry if selected_feature else None
             target_record.area = computed_area
-            target_record.status = status
+            if is_new or not target_record.status:
+                target_record.status = status
             target_record.canonical_attributes = canonical_attrs
+
+            # Milestone 7: First-class Conflict Detection & Synchronization
+            from app.services.conflict.service import ConflictDetectionService
+            comp_source_roles = {
+                cf.id: detect_source_role(
+                    cf.dataset_version.dataset.name if cf.dataset_version and cf.dataset_version.dataset else None,
+                    cf.canonical_properties,
+                )
+                for cf in comp_feature_objs
+            }
+            await ConflictDetectionService.detect_and_sync_conflicts_for_record(
+                db,
+                target_record,
+                features=comp_feature_objs,
+                source_roles=comp_source_roles,
+            )
+
+            # Check if values actually changed after conflict detection & sync
+            geom_changed = (
+                target_record.geometry_source_feature_id != initial_geom_src
+            )
+            status_changed = target_record.status != initial_status
+            area_changed = target_record.area != initial_area
+            attrs_changed = target_record.canonical_attributes != initial_attrs
 
             if not is_new:
                 if new_sources_added or geom_changed or status_changed or area_changed or attrs_changed:
