@@ -16,6 +16,9 @@ import {
   CheckCircle2,
   Sliders,
   Filter,
+  Download,
+  FileCode,
+  FileSpreadsheet,
 } from 'lucide-react'
 import { useProject } from '../hooks/useProjects'
 import {
@@ -24,6 +27,10 @@ import {
   useUnifiedRecord,
   useBuildUnifiedRecords,
 } from '../hooks/useUnified'
+import { useProjectConflictSummary } from '../hooks/useConflicts'
+import { api } from '../services/api'
+import { useAppStore } from '../stores/useAppStore'
+import { downloadBlob } from '../lib/utils'
 import type { UnifiedRecordListItem, UnifiedRecordStatus } from '../types'
 import { UnifiedRecordMap } from '../components/unified/UnifiedRecordMap'
 import { UnifiedDetailPanel } from '../components/unified/UnifiedDetailPanel'
@@ -56,6 +63,9 @@ export const UnifiedRecordsPage: React.FC = () => {
     refetch: refetchStats,
   } = useUnifiedRecordStatistics(safeProjectId)
 
+  // Conflict Summary Query
+  const { data: conflictSummary, refetch: refetchConflicts } = useProjectConflictSummary(safeProjectId)
+
   // Selected Record
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null)
 
@@ -77,9 +87,33 @@ export const UnifiedRecordsPage: React.FC = () => {
   // Map toggle for Source Footprints
   const [showSourceFootprints, setShowSourceFootprints] = useState(true)
 
+  // Export State
+  const [exportingFormat, setExportingFormat] = useState<string | null>(null)
+  const showNotification = useAppStore((state) => state.showNotification)
+
+  const handleExportProject = async (format: 'geojson' | 'csv') => {
+    setExportingFormat(format)
+    try {
+      const dateStr = new Date().toISOString().slice(0, 10)
+      if (format === 'geojson') {
+        const blob = await api.exportProjectGeoJSON(safeProjectId)
+        downloadBlob(blob, `landsync-unified-records-${dateStr}.geojson`)
+      } else {
+        const blob = await api.exportProjectCSV(safeProjectId)
+        downloadBlob(blob, `landsync-unified-records-${dateStr}.csv`)
+      }
+      showNotification('success', `Exported project unified records as ${format.toUpperCase()}`)
+    } catch (err: any) {
+      showNotification('error', `Failed to export ${format.toUpperCase()}: ${err.message}`)
+    } finally {
+      setExportingFormat(null)
+    }
+  }
+
   const handleRefreshAll = () => {
     refetchRecords()
     refetchStats()
+    refetchConflicts()
   }
 
   if (projectLoading) {
@@ -162,6 +196,37 @@ export const UnifiedRecordsPage: React.FC = () => {
             )}
             <span>Build / Refresh Records</span>
           </button>
+
+          {/* Project Exports */}
+          <div className="flex items-center gap-1.5 border-l border-border pl-2.5">
+            <button
+              onClick={() => handleExportProject('geojson')}
+              disabled={Boolean(exportingFormat) || records.length === 0}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-surface-850 hover:bg-surface-800 border border-border text-emerald-400 hover:text-emerald-300 text-xs font-semibold transition-colors disabled:opacity-50"
+              title="Export all unified records as GeoJSON"
+            >
+              {exportingFormat === 'geojson' ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <FileCode className="w-3.5 h-3.5" />
+              )}
+              <span>Export GeoJSON</span>
+            </button>
+
+            <button
+              onClick={() => handleExportProject('csv')}
+              disabled={Boolean(exportingFormat) || records.length === 0}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-surface-850 hover:bg-surface-800 border border-border text-cyan-400 hover:text-cyan-300 text-xs font-semibold transition-colors disabled:opacity-50"
+              title="Export all unified records as CSV"
+            >
+              {exportingFormat === 'csv' ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+              )}
+              <span>Export CSV</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -189,6 +254,16 @@ export const UnifiedRecordsPage: React.FC = () => {
             <span className="font-bold text-red-300 font-mono">
               {stats?.conflict ?? 0}
             </span>
+            {conflictSummary && conflictSummary.unresolved_conflicts > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[9px] bg-red-950 text-red-300 border border-red-700 animate-pulse font-bold">
+                {conflictSummary.unresolved_conflicts} Open
+              </span>
+            )}
+            {conflictSummary && conflictSummary.resolved_conflicts > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold">
+                {conflictSummary.resolved_conflicts} Resolved
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5">

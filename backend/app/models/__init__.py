@@ -4,6 +4,9 @@ from app.models.dataset import Dataset, DatasetVersion
 from app.models.feature import SourceFeature, CanonicalFeature, SpatialGeometry
 from app.models.matching import MatchRun, FeatureMatch, MatchReview
 from app.models.unified import UnifiedLandRecord, UnifiedLandRecordSource
+from app.models.provenance import ProvenanceEvent
+from app.models.conflict import AttributeConflict, ConflictResolution
+from app.models.assistant import AssistantDocument
 
 __all__ = [
     "Base",
@@ -19,6 +22,10 @@ __all__ = [
     "MatchReview",
     "UnifiedLandRecord",
     "UnifiedLandRecordSource",
+    "ProvenanceEvent",
+    "AttributeConflict",
+    "ConflictResolution",
+    "AssistantDocument",
 ]
 
 
