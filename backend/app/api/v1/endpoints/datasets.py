@@ -34,6 +34,7 @@ from app.services.ingestion.exceptions import (
     MissingCoordinateColumnsError,
     EmptyDatasetError,
     InvalidCoordinateError,
+    ProjectNotFoundError,
 )
 from app.services.crs.normalizer import (
     MissingCRSError,
@@ -67,8 +68,10 @@ async def upload_dataset(
             custom_name=name,
             custom_crs=crs,
         )
+    except ProjectNotFoundError as pne:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=pne.message)
     except ValueError as ve:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(ve))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ve))
     except FileTooLargeError as fe:
         raise HTTPException(status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail=fe.message)
     except (

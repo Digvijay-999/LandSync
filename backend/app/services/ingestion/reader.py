@@ -8,6 +8,7 @@ from app.services.ingestion.exceptions import (
     EmptyDatasetError,
     InvalidCoordinateError,
 )
+from app.services.crs.normalizer import CRSNormalizer, MissingCRSError, InvalidCRSError
 
 
 class DatasetReader:
@@ -34,13 +35,21 @@ class DatasetReader:
                 # GeoJSON, Shapefile (.shp), GeoPackage (.gpkg)
                 gdf = gpd.read_file(str(main_file))
 
-        except (EmptyDatasetError, InvalidCoordinateError):
+                # If custom_crs is supplied, validate and assign
+                if custom_crs:
+                    CRSNormalizer.parse_crs(custom_crs)
+                    gdf = gdf.set_crs(custom_crs, allow_override=True)
+                elif fmt == "geojson" and gdf.crs is None:
+                    # RFC 7946 GeoJSON defaults to EPSG:4326
+                    gdf = gdf.set_crs("EPSG:4326")
+
+        except (EmptyDatasetError, InvalidCoordinateError, MissingCRSError, InvalidCRSError):
             raise
         except Exception as exc:
             raise CorruptedFileError(f"Failed to parse geospatial data using GeoPandas/GDAL: {str(exc)}")
 
-        if len(gdf) == 0:
-            raise EmptyDatasetError("The dataset contains 0 features or data rows.")
+        if gdf is None or gdf.empty or len(gdf) == 0:
+            raise EmptyDatasetError("Dataset contains no valid spatial features.")
 
         return gdf
 
@@ -61,8 +70,8 @@ class DatasetReader:
         except Exception as exc:
             raise CorruptedFileError(f"Error parsing CSV file: {str(exc)}")
 
-        if len(df) == 0:
-            raise EmptyDatasetError("The CSV file contains no data rows.")
+        if df is None or df.empty or len(df) == 0:
+            raise EmptyDatasetError("Dataset contains no valid spatial features.")
 
         # Ensure coordinate columns exist
         if lat_col not in df.columns or lon_col not in df.columns:

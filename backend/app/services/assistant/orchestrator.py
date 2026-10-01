@@ -3,6 +3,7 @@ import time
 import uuid
 import logging
 from typing import Dict, Any, List, Optional, TypedDict
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from langgraph.graph import StateGraph, START, END
 
@@ -12,6 +13,17 @@ from app.schemas.assistant import (
     AssistantQueryRequest,
     AssistantQueryResponse,
 )
+from app.schemas.spatial_analysis import (
+    SpatialAnalysisResult,
+    ProximityAnalysisRequest,
+    IntersectionAnalysisRequest,
+    DatasetComparisonRequest,
+    SpatialConflictAnalysisRequest,
+    VersionComparisonRequest,
+)
+from app.services.spatial_analysis.service import SpatialAnalysisService
+from app.services.assistant.semantic_resolver import DatasetSemanticResolver, SpatialIntentPlan
+from app.services.assistant.conflict_advisor import ConflictAdvisorService
 from app.services.assistant.tools import (
     get_project_summary,
     get_unified_record_evidence,
@@ -45,6 +57,9 @@ class AssistantState(TypedDict, total=False):
     evidence_pool: List[AssistantEvidenceSource]
     retrieved_documents: List[Dict[str, Any]]
     reasoning_steps: List[str]
+    spatial_plan: Optional[SpatialIntentPlan]
+    spatial_result: Optional[SpatialAnalysisResult]
+    conflict_proposal: Optional[Any]
     raw_answer: str
     final_answer: str
     cited_sources: List[AssistantEvidenceSource]
@@ -53,19 +68,44 @@ class AssistantState(TypedDict, total=False):
     error: Optional[str]
 
 
-def planner_node(state: AssistantState) -> Dict[str, Any]:
+async def planner_node(state: AssistantState) -> Dict[str, Any]:
     """
     Supervisor / Planner Node:
     Analyzes user query and context parameters, classifies intent, and constructs
     a sequential multi-worker investigation plan.
     """
     query = state.get("query", "").lower()
+    project_id = state["project_id"]
+    db = state["db"]
     ctx_conflict = state.get("context_conflict_id")
     ctx_record = state.get("context_record_id")
 
     reasoning_steps = list(state.get("reasoning_steps", []))
 
     # Determine intent & multi-step plan
+    is_spatial_complex = (
+        any(k in query for k in ["within", "near", "proximity", "200m", "100m", "distance", "radius"])
+        and any(k in query for k in ["conflict", "unresolved", "sources disagree", "what sources", "discrepancies"])
+    )
+
+    is_spatial_conflict = any(k in query for k in [
+        "where are unresolved conflicts concentrated", "where are conflicts concentrated",
+        "conflict concentration", "conflict density", "high-conflict areas",
+        "conflict hotspots", "conflicts concentrated",
+    ])
+
+    is_dataset_comp = any(k in query for k in [
+        "compare the cadastral and drone", "compare cadastral and drone",
+        "compare datasets", "dataset comparison", "cadastral vs drone",
+        "overlap difference", "cadastral and drone datasets",
+    ]) or ("compare" in query and "dataset" in query)
+
+    is_spatial_analysis = any(k in query for k in [
+        "overlap drone structures", "parcels overlap", "which cadastral parcels overlap",
+        "find parcels within", "within 100 meters", "municipal assets", "buffer analysis",
+        "find intersections", "containment analysis",
+    ])
+
     is_complex = any(k in query for k in [
         "final value determined", "complete investigation", "detailed report",
         "lineage and conflict", "discrepancies and provenance", "multi-step",
@@ -75,7 +115,27 @@ def planner_node(state: AssistantState) -> Dict[str, Any]:
         and any(k in query for k in ["final value", "how was it determined", "lineage", "timeline and conflict"])
     )
 
-    if is_complex:
+    if is_spatial_complex:
+        intent = AssistantIntent.COMPLEX_SPATIAL_INVESTIGATION
+        plan = ["spatial_worker", "db_worker", "rag_worker"]
+        reasoning_steps.append("Supervisor: Intent classified as COMPLEX_SPATIAL_INVESTIGATION. Formulated plan [spatial_worker -> db_worker -> rag_worker].")
+
+    elif is_spatial_conflict:
+        intent = AssistantIntent.SPATIAL_CONFLICT_ANALYSIS
+        plan = ["spatial_worker", "db_worker"]
+        reasoning_steps.append("Supervisor: Intent classified as SPATIAL_CONFLICT_ANALYSIS. Formulated plan [spatial_worker -> db_worker].")
+
+    elif is_dataset_comp:
+        intent = AssistantIntent.DATASET_COMPARISON
+        plan = ["spatial_worker", "db_worker"]
+        reasoning_steps.append("Supervisor: Intent classified as DATASET_COMPARISON. Formulated plan [spatial_worker -> db_worker].")
+
+    elif is_spatial_analysis:
+        intent = AssistantIntent.SPATIAL_ANALYSIS
+        plan = ["spatial_worker", "db_worker"]
+        reasoning_steps.append("Supervisor: Intent classified as SPATIAL_ANALYSIS. Formulated plan [spatial_worker -> db_worker].")
+
+    elif is_complex:
         intent = AssistantIntent.COMPLEX_INVESTIGATION
         plan = ["db_worker", "spatial_worker", "rag_worker"]
         reasoning_steps.append("Supervisor: Intent classified as COMPLEX_INVESTIGATION. Formulated 3-step investigation plan [db_worker -> spatial_worker -> rag_worker].")
@@ -97,11 +157,6 @@ def planner_node(state: AssistantState) -> Dict[str, Any]:
         intent = AssistantIntent.PROVENANCE_TRACE
         plan = ["db_worker", "rag_worker"]
         reasoning_steps.append("Supervisor: Intent classified as PROVENANCE_TRACE. Formulated plan [db_worker -> rag_worker].")
-
-    elif any(k in query for k in ["compare", "comparison", "iou", "overlap difference", "area delta", "cadastral vs drone", "cadastral vs", "drone vs"]):
-        intent = AssistantIntent.DATASET_COMPARISON
-        plan = ["spatial_worker", "db_worker"]
-        reasoning_steps.append("Supervisor: Intent classified as DATASET_COMPARISON. Formulated plan [spatial_worker -> db_worker].")
 
     elif any(k in query for k in ["semantic", "rag", "concept", "meaning", "related documents", "knowledge base"]):
         intent = AssistantIntent.SEMANTIC_SEARCH
@@ -128,6 +183,14 @@ def planner_node(state: AssistantState) -> Dict[str, Any]:
         plan = ["db_worker", "rag_worker"]
         reasoning_steps.append("Supervisor: Intent classified as GENERAL_GIS_QUERY. Formulated plan [db_worker -> rag_worker].")
 
+    spatial_plan = None
+    if is_spatial_complex or is_spatial_analysis or any(k in query for k in ["near", "nearby", "proximity", "distance", "within", "radius", "meters", "around"]):
+        spatial_plan = await DatasetSemanticResolver.resolve_spatial_query_plan(db, project_id, query)
+        reasoning_steps.append(
+            f"Supervisor: Formulated structured spatial plan - Target='{spatial_plan.target_dataset_name}', "
+            f"Reference='{spatial_plan.reference_dataset_name}', Distance={spatial_plan.distance}m (Confidence={spatial_plan.confidence:.2f})."
+        )
+
     return {
         "intent": intent,
         "plan": plan,
@@ -136,6 +199,7 @@ def planner_node(state: AssistantState) -> Dict[str, Any]:
         "evidence_pool": list(state.get("evidence_pool", [])),
         "retrieved_documents": list(state.get("retrieved_documents", [])),
         "reasoning_steps": reasoning_steps,
+        "spatial_plan": spatial_plan,
     }
 
 
@@ -235,7 +299,12 @@ async def db_worker_node(state: AssistantState) -> Dict[str, Any]:
         reasoning_steps.append(f"DB Worker: Retrieved provenance timeline ({prov_trail.get('events_count', 0)} events).")
 
     # Conflict specific lookup
-    if intent in (AssistantIntent.CONFLICT_EXPLANATION, AssistantIntent.COMPLEX_INVESTIGATION) or ctx_conflict_id:
+    if intent in (
+        AssistantIntent.CONFLICT_EXPLANATION,
+        AssistantIntent.COMPLEX_INVESTIGATION,
+        AssistantIntent.COMPLEX_SPATIAL_INVESTIGATION,
+        AssistantIntent.SPATIAL_CONFLICT_ANALYSIS,
+    ) or ctx_conflict_id:
         target_conf = str(ctx_conflict_id) if ctx_conflict_id else "land_use"
         for attr in ["land_use", "area", "zoning", "address", "owner", "elevation"]:
             if attr in query:
@@ -278,12 +347,48 @@ async def db_worker_node(state: AssistantState) -> Dict[str, Any]:
                 )
             )
 
+    # Advisory Conflict Resolution Proposal (strictly read-only)
+    conflict_proposal = state.get("conflict_proposal")
+    if ctx_conflict_id or any(k in query.lower() for k in ["suggest", "propose", "recommendation", "what should be reviewed", "review proposal"]):
+        target_cid = ctx_conflict_id
+        if not target_cid:
+            from app.models.conflict import AttributeConflict
+            from app.models.unified import UnifiedLandRecord
+            c_stmt = (
+                select(AttributeConflict.id)
+                .join(UnifiedLandRecord, AttributeConflict.unified_land_record_id == UnifiedLandRecord.id)
+                .where(UnifiedLandRecord.project_id == project_id, AttributeConflict.status == "UNRESOLVED")
+                .limit(1)
+            )
+            c_res = await db.execute(c_stmt)
+            target_cid = c_res.scalar_one_or_none()
+
+        if target_cid:
+            proposal = await ConflictAdvisorService.generate_proposal(db, project_id, target_cid)
+            if proposal:
+                conflict_proposal = proposal
+                raw_results["conflict_proposal"] = proposal.model_dump()
+                reasoning_steps.append(
+                    f"DB Worker: Formulated advisory conflict resolution proposal for {proposal.record_identifier} "
+                    f"({proposal.attribute_name}) with confidence {proposal.confidence:.2f}."
+                )
+                evidence_pool.append(
+                    AssistantEvidenceSource(
+                        source_type="ATTRIBUTE_CONFLICT",
+                        identifier=f"PROPOSAL-{str(proposal.proposal_id)[:8]}",
+                        title=f"Advisory Proposal: {proposal.attribute_name} on {proposal.record_identifier}",
+                        properties=proposal.model_dump(),
+                        relevance_note=f"Advisory Recommendation: {proposal.recommendation_statement} (Advisory only; requires human approval).",
+                    )
+                )
+
     executed_workers.append("db_worker")
     return {
         "raw_tool_results": raw_results,
         "evidence_pool": evidence_pool,
         "executed_workers": executed_workers,
         "reasoning_steps": reasoning_steps,
+        "conflict_proposal": conflict_proposal,
     }
 
 
@@ -291,56 +396,263 @@ async def spatial_worker_node(state: AssistantState) -> Dict[str, Any]:
     """
     Spatial Worker Specialist:
     Executes PostGIS and Shapely geometric operations (coordinate proximity,
-    bounding box filtering, pairwise IoU and centroid distance comparison).
+    bounding box filtering, pairwise IoU, dataset comparison, and conflict clustering).
     """
     db: AsyncSession = state["db"]
     project_id: uuid.UUID = state["project_id"]
     query: str = state.get("query", "")
+    intent: AssistantIntent = state.get("intent", AssistantIntent.GENERAL_GIS_QUERY)
     ctx_record_id: Optional[uuid.UUID] = state.get("context_record_id")
 
     reasoning_steps = list(state.get("reasoning_steps", []))
     raw_results = dict(state.get("raw_tool_results", {}))
     evidence_pool = list(state.get("evidence_pool", []))
     executed_workers = list(state.get("executed_workers", []))
+    spatial_result = state.get("spatial_result")
 
-    # Parse coordinates or use context record centroid
-    coord_match = re.search(r"([-+]?\d+\.\d+)[\s,]+([-+]?\d+\.\d+)", query)
-    lat = 18.520
-    lon = 73.850
-    radius = 150.0
+    # 1. Dataset Comparison
+    if intent == AssistantIntent.DATASET_COMPARISON or ("compare" in query.lower() and "dataset" in query.lower()):
+        from app.models.dataset import Dataset
+        ds_res = await db.execute(select(Dataset).where(Dataset.project_id == project_id))
+        datasets = ds_res.scalars().all()
+        if len(datasets) >= 2:
+            ds_a = datasets[0]
+            ds_b = datasets[1]
+            for d in datasets:
+                if "cadastral" in d.name.lower():
+                    ds_a = d
+                elif "drone" in d.name.lower():
+                    ds_b = d
 
-    if coord_match:
-        lat = float(coord_match.group(1))
-        lon = float(coord_match.group(2))
-        reasoning_steps.append(f"Spatial Worker: Parsed coordinates [{lat}, {lon}].")
-    elif ctx_record_id:
-        r_ev = raw_results.get("record_evidence") or await get_unified_record_evidence(db, project_id, str(ctx_record_id))
-        if "error" not in r_ev and r_ev.get("canonical_attributes", {}).get("_centroid"):
-            c = r_ev["canonical_attributes"]["_centroid"]
-            lat, lon = c[0], c[1]
-            reasoning_steps.append(f"Spatial Worker: Using context record centroid [{lat}, {lon}].")
-
-    prox_res = await find_records_near_coordinates(db, project_id, lat, lon, radius_meters=radius)
-    raw_results["spatial_proximity"] = prox_res
-    reasoning_steps.append(f"Spatial Worker: Executed proximity search within {radius}m (matches={prox_res.get('results_count', 0)}).")
-
-    for r in prox_res.get("records", []):
-        evidence_pool.append(
-            AssistantEvidenceSource(
-                source_type="UNIFIED_RECORD",
-                identifier=r["record_identifier"],
-                title=f"Nearby Record {r['record_identifier']} ({r.get('distance_meters')}m)",
-                properties=r,
-                relevance_note=f"Located {r.get('distance_meters')}m away with status {r.get('status')}.",
+            comp_res = await SpatialAnalysisService.compare_datasets_spatially(
+                db,
+                DatasetComparisonRequest(
+                    project_id=project_id,
+                    dataset_a_id=ds_a.id,
+                    dataset_b_id=ds_b.id,
+                ),
             )
+            spatial_result = comp_res.analysis
+            raw_results["dataset_comparison"] = comp_res.model_dump()
+            raw_results["spatial_analysis"] = comp_res.analysis
+            reasoning_steps.append(
+                f"Spatial Worker: Executed PostGIS dataset spatial comparison ({ds_a.name} vs {ds_b.name}, overlap={comp_res.overlap_percentage:.1f}%)."
+            )
+
+            evidence_pool.append(
+                AssistantEvidenceSource(
+                    source_type="DATASET",
+                    identifier=f"{ds_a.name} ∩ {ds_b.name}",
+                    title=f"Dataset Comparison: {ds_a.name} vs {ds_b.name}",
+                    properties=comp_res.analysis.statistics,
+                    relevance_note=f"Calculated spatial overlap of {comp_res.overlap_percentage:.1f}% with {comp_res.intersecting_count} intersecting features.",
+                )
+            )
+
+    # 2. Spatial Conflict Concentration
+    elif intent == AssistantIntent.SPATIAL_CONFLICT_ANALYSIS or ("concentrated" in query.lower() and "conflict" in query.lower()):
+        conf_res = await SpatialAnalysisService.analyze_conflicts_spatially(
+            db, SpatialConflictAnalysisRequest(project_id=project_id)
+        )
+        spatial_result = conf_res.analysis
+        raw_results["spatial_conflicts"] = conf_res.model_dump()
+        raw_results["spatial_analysis"] = conf_res.analysis
+        reasoning_steps.append(
+            f"Spatial Worker: PostGIS conflict clustering detected {conf_res.cluster_count} hotspot cluster(s) covering {conf_res.total_conflicts} unresolved conflicts."
         )
 
-    # Check for pairwise comparison
-    f_matches = re.findall(r"\b(CAD-[A-Za-z0-9_-]+|DRN-[A-Za-z0-9_-]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\b", query, re.IGNORECASE)
-    if len(f_matches) >= 2:
+        for cl in conf_res.clusters:
+            evidence_pool.append(
+                AssistantEvidenceSource(
+                    source_type="ATTRIBUTE_CONFLICT",
+                    identifier=cl.cluster_id,
+                    title=f"Conflict Cluster {cl.cluster_id} ({cl.conflict_count} Conflicts)",
+                    properties={
+                        "affected_records": cl.affected_record_ids,
+                        "dominant_fields": cl.dominant_fields,
+                    },
+                    relevance_note=f"High-density conflict concentration affecting records {', '.join(cl.affected_record_ids[:3])}.",
+                )
+            )
+
+    # 3. Intersections / Overlap
+    elif "overlap" in query.lower() and ("structure" in query.lower() or "parcel" in query.lower()):
+        from app.models.dataset import Dataset
+        ds_res = await db.execute(select(Dataset).where(Dataset.project_id == project_id))
+        datasets = ds_res.scalars().all()
+        if len(datasets) >= 2:
+            ds_a = datasets[0]
+            ds_b = datasets[1]
+            for d in datasets:
+                if "cadastral" in d.name.lower():
+                    ds_a = d
+                elif "drone" in d.name.lower():
+                    ds_b = d
+            inter_res = await SpatialAnalysisService.find_intersections(
+                db,
+                IntersectionAnalysisRequest(
+                    project_id=project_id,
+                    dataset_a_id=ds_a.id,
+                    dataset_b_id=ds_b.id,
+                ),
+            )
+            spatial_result = inter_res
+            raw_results["spatial_analysis"] = inter_res
+            reasoning_steps.append(
+                f"Spatial Worker: PostGIS intersection computed {inter_res.result_count} intersecting feature pair(s)."
+            )
+
+            for p in inter_res.statistics.get("pairs", [])[:10]:
+                evidence_pool.append(
+                    AssistantEvidenceSource(
+                        source_type="CANONICAL_FEATURE",
+                        identifier=f"{p['feature_a_ident']} ∩ {p['feature_b_ident']}",
+                        title=f"Intersection: {p['feature_a_ident']} and {p['feature_b_ident']}",
+                        properties=p,
+                        relevance_note=f"Overlaps with {p['intersection_area_sqm']} m² intersection area ({p['overlap_pct_a']}% overlap).",
+                    )
+                )
+
+    # 4. Version Comparison (Temporal Intelligence)
+    elif intent == AssistantIntent.VERSION_COMPARISON or any(k in query.lower() for k in ["what changed between", "compare versions", "version comparison", "dataset versions", "versions of"]):
+        from app.models.dataset import Dataset
+        ds_match = await DatasetSemanticResolver.resolve_dataset_for_term(db, project_id, query)
+        target_id = ds_match.dataset_id if ds_match else None
+        if not target_id:
+            all_ds = (await db.execute(select(Dataset).where(Dataset.project_id == project_id))).scalars().all()
+            target_id = all_ds[0].id if all_ds else None
+
+        if target_id:
+            ver_comp = await SpatialAnalysisService.compare_dataset_versions(
+                db,
+                VersionComparisonRequest(
+                    project_id=project_id,
+                    dataset_id=target_id,
+                    version_a_number=1,
+                ),
+            )
+            raw_results["version_comparison"] = ver_comp.model_dump()
+            if ver_comp.analysis:
+                spatial_result = ver_comp.analysis
+                raw_results["spatial_analysis"] = ver_comp.analysis
+            reasoning_steps.append(
+                f"Spatial Worker: Dataset version comparison for '{ver_comp.dataset_name}' returned status='{ver_comp.status}' "
+                f"({ver_comp.added_count} added, {ver_comp.removed_count} removed, {ver_comp.changed_count} changed)."
+            )
+            evidence_pool.append(
+                AssistantEvidenceSource(
+                    source_type="DATASET",
+                    identifier=f"{ver_comp.dataset_name}_v1_vs_v2",
+                    title=f"Version Comparison: {ver_comp.dataset_name}",
+                    properties=ver_comp.model_dump(exclude={"analysis"}),
+                    relevance_note=ver_comp.message or f"Detected {ver_comp.changed_count} changed and {ver_comp.added_count} added features.",
+                )
+            )
+
+    # 5. Proximity / Coordinates / Buffers / Complex Spatial Investigation
+    else:
+        # Check if spatial plan exists with resolved target and reference datasets
+        spatial_plan = state.get("spatial_plan")
+        target_ds_id = getattr(spatial_plan, "target_dataset_id", None) if spatial_plan else None
+        ref_ds_id = getattr(spatial_plan, "reference_dataset_id", None) if spatial_plan else None
+
+        # Parse distance from plan or query
+        radius = getattr(spatial_plan, "distance", None) if spatial_plan else None
+        if not radius:
+            dist_match = re.search(r"(\d+)\s*(?:m|meters)", query.lower())
+            radius = float(dist_match.group(1)) if dist_match else 150.0
+
+        # Parse coordinates or use context record centroid
+        coord_match = re.search(r"([-+]?\d+\.\d+)[\s,]+([-+]?\d+\.\d+)", query)
+        lat = 18.520
+        lon = 73.850
+
+        if coord_match:
+            lat = float(coord_match.group(1))
+            lon = float(coord_match.group(2))
+            reasoning_steps.append(f"Spatial Worker: Parsed coordinates [{lat}, {lon}].")
+        elif ctx_record_id:
+            r_ev = raw_results.get("record_evidence") or await get_unified_record_evidence(db, project_id, str(ctx_record_id))
+            if "error" not in r_ev and r_ev.get("canonical_attributes", {}).get("_centroid"):
+                c = r_ev["canonical_attributes"]["_centroid"]
+                lat, lon = c[0], c[1]
+                reasoning_steps.append(f"Spatial Worker: Using context record centroid [{lat}, {lon}].")
+
+        prox_analysis = await SpatialAnalysisService.find_features_within_distance(
+            db,
+            ProximityAnalysisRequest(
+                project_id=project_id,
+                target_dataset_id=target_ds_id,
+                reference_dataset_id=ref_ds_id,
+                latitude=lat if not ref_ds_id else None,
+                longitude=lon if not ref_ds_id else None,
+                distance_meters=radius,
+                limit=20,
+            ),
+        )
+        spatial_result = prox_analysis
+        raw_results["spatial_analysis"] = prox_analysis
+        raw_results["spatial_proximity"] = {
+            "query_point": {"latitude": lat, "longitude": lon} if not ref_ds_id else None,
+            "search_radius_meters": radius,
+            "target_dataset": getattr(spatial_plan, "target_dataset_name", None),
+            "reference_dataset": getattr(spatial_plan, "reference_dataset_name", None),
+            "results_count": prox_analysis.result_count,
+            "records": [
+                {
+                    "record_identifier": f.get("properties", {}).get("identifier", "Feature"),
+                    "distance_meters": f.get("properties", {}).get("distance_meters", 0.0),
+                    "status": f.get("properties", {}).get("status", "ACTIVE"),
+                }
+                for f in prox_analysis.result_geojson.get("features", [])
+                if f.get("properties", {}).get("_role") == "proximity_match"
+            ],
+        }
+        ref_desc = f"reference dataset '{getattr(spatial_plan, 'reference_dataset_name', 'target')}'" if ref_ds_id else f"coords [{lat}, {lon}]"
+        reasoning_steps.append(
+            f"Spatial Worker: PostGIS proximity search identified {prox_analysis.result_count} target feature(s) "
+            f"within {radius}m of {ref_desc}."
+        )
+
+        for f in prox_analysis.result_geojson.get("features", []):
+            props = f.get("properties", {})
+            if props.get("_role") == "proximity_match":
+                ident = props.get("identifier") or props.get("id") or "Feature"
+                evidence_pool.append(
+                    AssistantEvidenceSource(
+                        source_type="UNIFIED_RECORD" if "ULR" in str(ident) else "CANONICAL_FEATURE",
+                        identifier=str(ident),
+                        title=f"Proximity Match: {ident} ({props.get('distance_meters')}m)",
+                        dataset_name=props.get("dataset_name"),
+                        properties=props,
+                        relevance_note=f"Located {props.get('distance_meters')}m from reference within {radius}m radius.",
+                    )
+                )
+            elif props.get("_role") == "proximity_reference":
+                ident = props.get("identifier") or props.get("id") or "Reference"
+                evidence_pool.append(
+                    AssistantEvidenceSource(
+                        source_type="CANONICAL_FEATURE",
+                        identifier=str(ident),
+                        title=f"Reference Landmark: {ident}",
+                        dataset_name=props.get("dataset_name"),
+                        properties=props,
+                        relevance_note=f"Reference landmark used to establish {radius}m spatial radius.",
+                    )
+                )
+
+    # Check for pairwise comparison if 2 specific feature IDs mentioned
+    f_matches = re.findall(
+        r"\b(CAD-[A-Za-z0-9_-]+|DRN-[A-Za-z0-9_-]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\b",
+        query,
+        re.IGNORECASE,
+    )
+    if len(f_matches) >= 2 and "compare" in query.lower():
         comp_res = await compare_feature_geometries(db, project_id, f_matches[0], f_matches[1])
         raw_results["spatial_comparison"] = comp_res
-        reasoning_steps.append(f"Spatial Worker: Computed geometric delta between '{f_matches[0]}' and '{f_matches[1]}' (IoU: {comp_res.get('spatial_metrics', {}).get('intersection_over_union')}).")
+        reasoning_steps.append(
+            f"Spatial Worker: Computed geometric delta between '{f_matches[0]}' and '{f_matches[1]}' (IoU: {comp_res.get('spatial_metrics', {}).get('intersection_over_union')})."
+        )
 
     executed_workers.append("spatial_worker")
     return {
@@ -348,6 +660,7 @@ async def spatial_worker_node(state: AssistantState) -> Dict[str, Any]:
         "evidence_pool": evidence_pool,
         "executed_workers": executed_workers,
         "reasoning_steps": reasoning_steps,
+        "spatial_result": spatial_result,
     }
 
 
@@ -539,6 +852,12 @@ class AssistantOrchestrator:
             final_state = await _assistant_graph.ainvoke(initial_state)
             latency_ms = round((time.perf_counter() - start_time) * 1000.0, 2)
 
+            prop = final_state.get("conflict_proposal")
+            prop_dict = prop.model_dump() if hasattr(prop, "model_dump") else (prop if isinstance(prop, dict) else None)
+
+            s_plan = final_state.get("spatial_plan")
+            plan_dict = s_plan.model_dump() if hasattr(s_plan, "model_dump") else (s_plan if isinstance(s_plan, dict) else None)
+
             return AssistantQueryResponse(
                 query=request.query,
                 project_id=request.project_id,
@@ -549,6 +868,9 @@ class AssistantOrchestrator:
                 suggested_followups=final_state.get("suggested_followups", []),
                 grounded_score=final_state.get("grounded_score", 1.0),
                 execution_time_ms=latency_ms,
+                spatial_result=final_state.get("spatial_result"),
+                conflict_proposal=prop_dict,
+                spatial_plan=plan_dict,
             )
 
         except Exception as e:
@@ -564,6 +886,9 @@ class AssistantOrchestrator:
                 suggested_followups=["Try asking about the project overview or specific parcel identifier."],
                 grounded_score=0.0,
                 execution_time_ms=latency_ms,
+                spatial_result=None,
+                conflict_proposal=None,
+                spatial_plan=None,
             )
 
     @classmethod
@@ -586,7 +911,7 @@ class AssistantOrchestrator:
                 f"What is the complete provenance and audit trail for {ident}?",
             ]
             if status == "CONFLICT" or rec_res.get("conflicts_count", 0) > 0:
-                questions.append(f"Why is {ident} flagged with attribute conflicts and how can it be resolved?")
+                questions.append(f"Why is {ident} flagged with attribute conflicts and suggest how it should be resolved?")
             else:
                 questions.append(f"Find other unified records within 100 meters of {ident}.")
             return questions
@@ -597,14 +922,18 @@ class AssistantOrchestrator:
 
         questions = [
             "Provide an executive overview of this LandSync project and harmonization status.",
+            "Find parcels within 100 meters of municipal assets.",
+            "Which cadastral parcels overlap drone structures?",
+            "Where are unresolved conflicts concentrated?",
+            "Compare the cadastral and drone datasets.",
+            "What changed between dataset versions?",
         ]
 
         if unresolved_conflicts > 0:
-            questions.append(f"Why are {unresolved_conflicts} attribute conflicts unresolved and what actions are recommended?")
+            questions.append("Find parcels within 200m of municipal assets with conflicts and suggest what should be reviewed.")
 
         if total_records > 0:
             questions.append("Find all parcels with commercial or residential land use.")
-            questions.append("Compare parcel boundaries and geometry deltas between cadastral and drone datasets.")
         else:
             questions.append("What datasets have been ingested and what are their spatial coordinate reference systems?")
 

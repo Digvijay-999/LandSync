@@ -73,6 +73,32 @@ from app.schemas.assistant import (
     ReindexResponse,
 )
 
+from app.schemas.spatial_analysis import (
+    SpatialAnalysisType,
+    ProximityAnalysisRequest,
+    BufferAnalysisRequest,
+    IntersectionAnalysisRequest,
+    ContainmentAnalysisRequest,
+    OverlapAnalysisRequest,
+    NearestFeaturesRequest,
+    SpatialStatisticsRequest,
+    DatasetComparisonRequest,
+    SpatialConflictAnalysisRequest,
+    SpatialFeatureItem,
+    SpatialAnalysisResult,
+    DatasetComparisonResult,
+    SpatialConflictCluster,
+    SpatialConflictAnalysisResult,
+    VersionComparisonRequest,
+    VersionDifferenceItem,
+    VersionComparisonResult,
+    AnalysisHistorySummary,
+)
+from app.schemas.conflict_proposal import (
+    ConflictResolutionProposal,
+    ConflictSourceReference,
+)
+
 __all__ = [
     "HealthResponse",
     "DatabaseHealth",
@@ -133,6 +159,27 @@ __all__ = [
     "AssistantQueryResponse",
     "SuggestedQuestionsResponse",
     "AssistantHealthResponse",
+    "SpatialAnalysisType",
+    "ProximityAnalysisRequest",
+    "BufferAnalysisRequest",
+    "IntersectionAnalysisRequest",
+    "ContainmentAnalysisRequest",
+    "OverlapAnalysisRequest",
+    "NearestFeaturesRequest",
+    "SpatialStatisticsRequest",
+    "DatasetComparisonRequest",
+    "SpatialConflictAnalysisRequest",
+    "SpatialFeatureItem",
+    "SpatialAnalysisResult",
+    "DatasetComparisonResult",
+    "SpatialConflictCluster",
+    "SpatialConflictAnalysisResult",
+    "VersionComparisonRequest",
+    "VersionDifferenceItem",
+    "VersionComparisonResult",
+    "AnalysisHistorySummary",
+    "ConflictResolutionProposal",
+    "ConflictSourceReference",
 ]
 
 

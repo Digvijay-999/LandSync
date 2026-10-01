@@ -1,0 +1,1428 @@
+{
+  "type": "FeatureCollection",
+  "name": "landsync_pune_haveli_demo_parcels",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "properties": {
+    "dataset_status": "SYNTHETIC DEMO DATA",
+    "region": "Pune / Haveli, Maharashtra, India",
+    "target_crs": "EPSG:4326",
+    "note": "Synthetic parcels for LandSync development/testing. Not official cadastral boundaries, ownership records, or survey data."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-001",
+        "survey_number": "GAT-100",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Loni Kalbhor",
+        "area_hectares": 0.76,
+        "land_use": "Agricultural",
+        "irrigation": "Borewell",
+        "soil_type": "Black Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.92,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15006971339923,
+              18.48976250537761
+            ],
+            [
+              74.15145722805842,
+              18.489800340771875
+            ],
+            [
+              74.1514925679559,
+              18.490924110746683
+            ],
+            [
+              74.15013246213006,
+              18.490882804629944
+            ],
+            [
+              74.15006971339923,
+              18.48976250537761
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-002",
+        "survey_number": "GAT-104",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Kadam Wak Wasti",
+        "area_hectares": 2.14,
+        "land_use": "Agricultural",
+        "irrigation": "Canal",
+        "soil_type": "Alluvial Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.9,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15230066248681,
+              18.48995975991048
+            ],
+            [
+              74.15377526700995,
+              18.490018847961807
+            ],
+            [
+              74.15382702848338,
+              18.491148855264594
+            ],
+            [
+              74.15224620797743,
+              18.49114111670441
+            ],
+            [
+              74.15230066248681,
+              18.48995975991048
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-003",
+        "survey_number": "GAT-106",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Kunjirwadi",
+        "area_hectares": 4.74,
+        "land_use": "Industrial",
+        "irrigation": "Canal",
+        "soil_type": "Red-Brown Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Medium",
+        "risk_flags": [
+          "Boundary Review"
+        ],
+        "ai_confidence": 0.95,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15455356413665,
+              18.490114865893347
+            ],
+            [
+              74.15607167818237,
+              18.4900954313937
+            ],
+            [
+              74.15608208630863,
+              18.491651423775338
+            ],
+            [
+              74.15460626888293,
+              18.491663275750575
+            ],
+            [
+              74.15455356413665,
+              18.490114865893347
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-004",
+        "survey_number": "GAT-111",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Theur",
+        "area_hectares": 2.22,
+        "land_use": "Agricultural",
+        "irrigation": "Canal",
+        "soil_type": "Red-Brown Soil",
+        "mutation_status": "Pending",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.92,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15654006311253,
+              18.489976705151182
+            ],
+            [
+              74.15820711832585,
+              18.48995354846322
+            ],
+            [
+              74.15824115336072,
+              18.49110803219976
+            ],
+            [
+              74.15657235436268,
+              18.491126386966314
+            ],
+            [
+              74.15654006311253,
+              18.489976705151182
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-005",
+        "survey_number": "GAT-113",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Manjari Kh.",
+        "area_hectares": 4.45,
+        "land_use": "Mixed Use",
+        "irrigation": "Rainfed",
+        "soil_type": "Black Soil",
+        "mutation_status": "Pending",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.81,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15865980758699,
+              18.489912141367206
+            ],
+            [
+              74.16029396437578,
+              18.48996362978225
+            ],
+            [
+              74.16035497353593,
+              18.49099011034098
+            ],
+            [
+              74.15864399395291,
+              18.490946729201504
+            ],
+            [
+              74.15865980758699,
+              18.489912141367206
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-006",
+        "survey_number": "GAT-117",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Loni Kalbhor",
+        "area_hectares": 1.31,
+        "land_use": "Agricultural",
+        "irrigation": "None",
+        "soil_type": "Black Soil",
+        "mutation_status": "Pending",
+        "risk_level": "High",
+        "risk_flags": [
+          "Mutation Pending",
+          "Land-use Review"
+        ],
+        "ai_confidence": 0.86,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.16081981515977,
+              18.490122494491043
+            ],
+            [
+              74.1623393038046,
+              18.49011104390341
+            ],
+            [
+              74.16235601038959,
+              18.49154600139687
+            ],
+            [
+              74.16079773459076,
+              18.49159573397467
+            ],
+            [
+              74.16081981515977,
+              18.490122494491043
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-007",
+        "survey_number": "GAT-118",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Kadam Wak Wasti",
+        "area_hectares": 1.31,
+        "land_use": "Residential",
+        "irrigation": "Rainfed",
+        "soil_type": "Red-Brown Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.97,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.14978176385308,
+              18.49194080964325
+            ],
+            [
+              74.1515298245432,
+              18.49201618218367
+            ],
+            [
+              74.15160198048365,
+              18.4932553668158
+            ],
+            [
+              74.1497036008166,
+              18.493277438997733
+            ],
+            [
+              74.14978176385308,
+              18.49194080964325
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-008",
+        "survey_number": "GAT-123",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Kunjirwadi",
+        "area_hectares": 3.88,
+        "land_use": "Residential",
+        "irrigation": "Canal",
+        "soil_type": "Alluvial Soil",
+        "mutation_status": "Pending",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.96,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.1523879264702,
+              18.49188169452537
+            ],
+            [
+              74.15388821952672,
+              18.491947714979666
+            ],
+            [
+              74.15396232324069,
+              18.493021020465637
+            ],
+            [
+              74.15235567763683,
+              18.493034915415123
+            ],
+            [
+              74.1523879264702,
+              18.49188169452537
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-009",
+        "survey_number": "GAT-124",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Theur",
+        "area_hectares": 3.83,
+        "land_use": "Agricultural",
+        "irrigation": "Borewell",
+        "soil_type": "Black Soil",
+        "mutation_status": "Pending",
+        "risk_level": "Medium",
+        "risk_flags": [
+          "Land-use Review"
+        ],
+        "ai_confidence": 0.91,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15444947229224,
+              18.49199430285401
+            ],
+            [
+              74.15575540615491,
+              18.492071954274643
+            ],
+            [
+              74.15581676111587,
+              18.493225793237603
+            ],
+            [
+              74.1544077846619,
+              18.493199880396848
+            ],
+            [
+              74.15444947229224,
+              18.49199430285401
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-010",
+        "survey_number": "GAT-127",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Manjari Kh.",
+        "area_hectares": 2.8,
+        "land_use": "Residential",
+        "irrigation": "None",
+        "soil_type": "Red-Brown Soil",
+        "mutation_status": "Pending",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.83,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15682342433986,
+              18.491832563479484
+            ],
+            [
+              74.15833726123357,
+              18.491906861544447
+            ],
+            [
+              74.15842304393217,
+              18.493185860438224
+            ],
+            [
+              74.15686426677132,
+              18.493204847201433
+            ],
+            [
+              74.15682342433986,
+              18.491832563479484
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-011",
+        "survey_number": "GAT-132",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Loni Kalbhor",
+        "area_hectares": 2.66,
+        "land_use": "Agricultural",
+        "irrigation": "Rainfed",
+        "soil_type": "Black Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.81,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15858201294816,
+              18.49176051713
+            ],
+            [
+              74.16010897370937,
+              18.49168166766424
+            ],
+            [
+              74.16015054189867,
+              18.493104737187206
+            ],
+            [
+              74.15851143275086,
+              18.493061477220017
+            ],
+            [
+              74.15858201294816,
+              18.49176051713
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-012",
+        "survey_number": "GAT-134",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Kadam Wak Wasti",
+        "area_hectares": 1.06,
+        "land_use": "Agricultural",
+        "irrigation": "None",
+        "soil_type": "Red-Brown Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Medium",
+        "risk_flags": [
+          "Land-use Review"
+        ],
+        "ai_confidence": 0.93,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.1612177571203,
+              18.49203552154666
+            ],
+            [
+              74.16270409263345,
+              18.492084721066306
+            ],
+            [
+              74.16264217461632,
+              18.493477831258808
+            ],
+            [
+              74.16115326605058,
+              18.493470936377047
+            ],
+            [
+              74.1612177571203,
+              18.49203552154666
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-013",
+        "survey_number": "GAT-136",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Kunjirwadi",
+        "area_hectares": 0.71,
+        "land_use": "Agricultural",
+        "irrigation": "Borewell",
+        "soil_type": "Black Soil",
+        "mutation_status": "Pending",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.97,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15015029625543,
+              18.49380463451612
+            ],
+            [
+              74.1514960912915,
+              18.493747063683657
+            ],
+            [
+              74.15143278889866,
+              18.495122777393075
+            ],
+            [
+              74.15014431674638,
+              18.49516022598848
+            ],
+            [
+              74.15015029625543,
+              18.49380463451612
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-014",
+        "survey_number": "GAT-139",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Theur",
+        "area_hectares": 1.44,
+        "land_use": "Agricultural",
+        "irrigation": "None",
+        "soil_type": "Alluvial Soil",
+        "mutation_status": "Verified",
+        "risk_level": "High",
+        "risk_flags": [
+          "Flood Exposure",
+          "Boundary Overlap"
+        ],
+        "ai_confidence": 0.97,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15237434786721,
+              18.4938331555553
+            ],
+            [
+              74.15386716842994,
+              18.49381732200211
+            ],
+            [
+              74.15377889550993,
+              18.4949900292049
+            ],
+            [
+              74.15235498356624,
+              18.495038560089277
+            ],
+            [
+              74.15237434786721,
+              18.4938331555553
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-015",
+        "survey_number": "GAT-143",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Manjari Kh.",
+        "area_hectares": 4.23,
+        "land_use": "Mixed Use",
+        "irrigation": "Borewell",
+        "soil_type": "Black Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.8,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15443959014542,
+              18.494021097600687
+            ],
+            [
+              74.15606357792561,
+              18.4940345660158
+            ],
+            [
+              74.15606414800219,
+              18.49509968023714
+            ],
+            [
+              74.15449602532814,
+              18.49506542350993
+            ],
+            [
+              74.15443959014542,
+              18.494021097600687
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-016",
+        "survey_number": "GAT-146",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Loni Kalbhor",
+        "area_hectares": 3.33,
+        "land_use": "Agricultural",
+        "irrigation": "Rainfed",
+        "soil_type": "Black Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.84,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15679514365708,
+              18.493873107673895
+            ],
+            [
+              74.15834240323385,
+              18.49386018366035
+            ],
+            [
+              74.1583591376917,
+              18.49523279842906
+            ],
+            [
+              74.15679878889156,
+              18.495276269054834
+            ],
+            [
+              74.15679514365708,
+              18.493873107673895
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-017",
+        "survey_number": "GAT-150",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Kadam Wak Wasti",
+        "area_hectares": 4.11,
+        "land_use": "Mixed Use",
+        "irrigation": "Borewell",
+        "soil_type": "Black Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.84,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.1589259322462,
+              18.493786271557248
+            ],
+            [
+              74.16040507500752,
+              18.493865646988905
+            ],
+            [
+              74.16031972715173,
+              18.495335498777674
+            ],
+            [
+              74.15888003693617,
+              18.49531201881915
+            ],
+            [
+              74.1589259322462,
+              18.493786271557248
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-018",
+        "survey_number": "GAT-153",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Kunjirwadi",
+        "area_hectares": 3.16,
+        "land_use": "Agricultural",
+        "irrigation": "Borewell",
+        "soil_type": "Red-Brown Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.85,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.16124192665512,
+              18.49415354997163
+            ],
+            [
+              74.16275639700143,
+              18.49416228633683
+            ],
+            [
+              74.16284274820931,
+              18.49553748157349
+            ],
+            [
+              74.16117850049542,
+              18.495575294269987
+            ],
+            [
+              74.16124192665512,
+              18.49415354997163
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-019",
+        "survey_number": "GAT-156",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Theur",
+        "area_hectares": 3.73,
+        "land_use": "Agricultural",
+        "irrigation": "Rainfed",
+        "soil_type": "Black Soil",
+        "mutation_status": "Pending",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.92,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.1500937485644,
+              18.496176456407696
+            ],
+            [
+              74.15159645309345,
+              18.496241761855092
+            ],
+            [
+              74.15150661287218,
+              18.49735201703373
+            ],
+            [
+              74.15011523407597,
+              18.49738495184267
+            ],
+            [
+              74.1500937485644,
+              18.496176456407696
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-020",
+        "survey_number": "GAT-157",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Manjari Kh.",
+        "area_hectares": 1.52,
+        "land_use": "Agricultural",
+        "irrigation": "Borewell",
+        "soil_type": "Alluvial Soil",
+        "mutation_status": "Verified",
+        "risk_level": "High",
+        "risk_flags": [
+          "Boundary Overlap",
+          "Mutation Pending"
+        ],
+        "ai_confidence": 0.91,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.1522304534324,
+              18.495805936940293
+            ],
+            [
+              74.15395297890191,
+              18.49574978562597
+            ],
+            [
+              74.15386018452952,
+              18.49720144675217
+            ],
+            [
+              74.15220952798991,
+              18.497206699261845
+            ],
+            [
+              74.1522304534324,
+              18.495805936940293
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-021",
+        "survey_number": "GAT-161",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Loni Kalbhor",
+        "area_hectares": 3.9,
+        "land_use": "Residential",
+        "irrigation": "Canal",
+        "soil_type": "Alluvial Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Medium",
+        "risk_flags": [
+          "Boundary Review"
+        ],
+        "ai_confidence": 0.94,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15432683931732,
+              18.49602994175957
+            ],
+            [
+              74.15601419567909,
+              18.496069858177353
+            ],
+            [
+              74.1560993484436,
+              18.49756686027089
+            ],
+            [
+              74.15428471729048,
+              18.4975331104476
+            ],
+            [
+              74.15432683931732,
+              18.49602994175957
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-022",
+        "survey_number": "GAT-165",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Kadam Wak Wasti",
+        "area_hectares": 1.58,
+        "land_use": "Industrial",
+        "irrigation": "None",
+        "soil_type": "Alluvial Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Medium",
+        "risk_flags": [
+          "Mutation Pending"
+        ],
+        "ai_confidence": 0.82,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.1567820320142,
+              18.496155374658287
+            ],
+            [
+              74.158165434869,
+              18.49609266995851
+            ],
+            [
+              74.15823986822559,
+              18.497599061912855
+            ],
+            [
+              74.15683940693442,
+              18.49757130528461
+            ],
+            [
+              74.1567820320142,
+              18.496155374658287
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-023",
+        "survey_number": "GAT-167",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Kunjirwadi",
+        "area_hectares": 1.1,
+        "land_use": "Mixed Use",
+        "irrigation": "Borewell",
+        "soil_type": "Alluvial Soil",
+        "mutation_status": "Verified",
+        "risk_level": "High",
+        "risk_flags": [
+          "Land-use Review",
+          "Boundary Overlap"
+        ],
+        "ai_confidence": 0.85,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.1587141309756,
+              18.496182176471013
+            ],
+            [
+              74.16044757552763,
+              18.49620481354919
+            ],
+            [
+              74.1604275112045,
+              18.497371738967374
+            ],
+            [
+              74.15879111492555,
+              18.497375360540623
+            ],
+            [
+              74.1587141309756,
+              18.496182176471013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-024",
+        "survey_number": "GAT-169",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Theur",
+        "area_hectares": 1.95,
+        "land_use": "Agricultural",
+        "irrigation": "Canal",
+        "soil_type": "Alluvial Soil",
+        "mutation_status": "Verified",
+        "risk_level": "High",
+        "risk_flags": [
+          "Land-use Review",
+          "Flood Exposure"
+        ],
+        "ai_confidence": 0.92,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.16114321408911,
+              18.495968196941934
+            ],
+            [
+              74.16288533201377,
+              18.4960321176992
+            ],
+            [
+              74.16282334776868,
+              18.497076019833948
+            ],
+            [
+              74.16107031593451,
+              18.497069625585493
+            ],
+            [
+              74.16114321408911,
+              18.495968196941934
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-025",
+        "survey_number": "GAT-173",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Manjari Kh.",
+        "area_hectares": 4.11,
+        "land_use": "Residential",
+        "irrigation": "Canal",
+        "soil_type": "Red-Brown Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.84,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.14990016113411,
+              18.4979046423311
+            ],
+            [
+              74.15135435758842,
+              18.497871947163503
+            ],
+            [
+              74.15127981514823,
+              18.49915584252463
+            ],
+            [
+              74.14988743254752,
+              18.4991998788917
+            ],
+            [
+              74.14990016113411,
+              18.4979046423311
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-026",
+        "survey_number": "GAT-176",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Loni Kalbhor",
+        "area_hectares": 3.28,
+        "land_use": "Residential",
+        "irrigation": "Canal",
+        "soil_type": "Red-Brown Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.8,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.152164944075,
+              18.498039992390595
+            ],
+            [
+              74.15374229688685,
+              18.498030737958484
+            ],
+            [
+              74.15368503716705,
+              18.499322486485717
+            ],
+            [
+              74.15216065386474,
+              18.4993626045683
+            ],
+            [
+              74.152164944075,
+              18.498039992390595
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-027",
+        "survey_number": "GAT-179",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Kadam Wak Wasti",
+        "area_hectares": 3.54,
+        "land_use": "Residential",
+        "irrigation": "None",
+        "soil_type": "Alluvial Soil",
+        "mutation_status": "Under Review",
+        "risk_level": "Medium",
+        "risk_flags": [
+          "Land-use Review"
+        ],
+        "ai_confidence": 0.86,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15462599983124,
+              18.497867434299263
+            ],
+            [
+              74.15603120956338,
+              18.497811010933223
+            ],
+            [
+              74.155940452307,
+              18.49932071574655
+            ],
+            [
+              74.15470342959489,
+              18.499331843143857
+            ],
+            [
+              74.15462599983124,
+              18.497867434299263
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-028",
+        "survey_number": "GAT-182",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Kunjirwadi",
+        "area_hectares": 1.2,
+        "land_use": "Residential",
+        "irrigation": "None",
+        "soil_type": "Black Soil",
+        "mutation_status": "Verified",
+        "risk_level": "High",
+        "risk_flags": [
+          "Boundary Overlap",
+          "Mutation Pending"
+        ],
+        "ai_confidence": 0.91,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15642378567256,
+              18.498093811206537
+            ],
+            [
+              74.15812011558566,
+              18.49815548563942
+            ],
+            [
+              74.15817579966702,
+              18.49957403148925
+            ],
+            [
+              74.15637880025444,
+              18.499604442474865
+            ],
+            [
+              74.15642378567256,
+              18.498093811206537
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-029",
+        "survey_number": "GAT-186",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Theur",
+        "area_hectares": 3.77,
+        "land_use": "Agricultural",
+        "irrigation": "Canal",
+        "soil_type": "Red-Brown Soil",
+        "mutation_status": "Under Review",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.84,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.15904394622653,
+              18.498047726159232
+            ],
+            [
+              74.16076896603076,
+              18.498065750530873
+            ],
+            [
+              74.16081282082301,
+              18.49954343912214
+            ],
+            [
+              74.1590447107329,
+              18.49957649603911
+            ],
+            [
+              74.15904394622653,
+              18.498047726159232
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "LS-PUN-HAV-030",
+        "survey_number": "GAT-188",
+        "district": "Pune",
+        "taluka": "Haveli",
+        "village": "Manjari Kh.",
+        "area_hectares": 1.54,
+        "land_use": "Agricultural",
+        "irrigation": "Canal",
+        "soil_type": "Black Soil",
+        "mutation_status": "Verified",
+        "risk_level": "Low",
+        "risk_flags": [],
+        "ai_confidence": 0.86,
+        "data_status": "SYNTHETIC_DEMO"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.16113883741767,
+              18.49799229850853
+            ],
+            [
+              74.16250846034957,
+              18.49802646568655
+            ],
+            [
+              74.16245535906518,
+              18.499262234805165
+            ],
+            [
+              74.16111257302353,
+              18.499301537488446
+            ],
+            [
+              74.16113883741767,
+              18.49799229850853
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import type { SpatialAnalysisResult } from '../types'
 
 interface AppState {
   sidebarOpen: boolean
@@ -13,6 +14,11 @@ interface AppState {
   assistantContextRecordId: string | null
   assistantContextConflictId: string | null
 
+  // Spatial Analysis State
+  activeSpatialAnalysis: SpatialAnalysisResult | null
+  analysisPanelOpen: boolean
+  highlightedFeatureId: string | null
+
   // Actions
   toggleSidebar: () => void
   setSidebarOpen: (open: boolean) => void
@@ -26,6 +32,13 @@ interface AppState {
   openAssistantWithRecord: (recordId: string) => void
   openAssistantWithConflict: (conflictId: string) => void
   closeAssistant: () => void
+
+  // Spatial Analysis Actions
+  setActiveSpatialAnalysis: (analysis: SpatialAnalysisResult | null) => void
+  clearActiveSpatialAnalysis: () => void
+  setAnalysisPanelOpen: (open: boolean) => void
+  toggleAnalysisPanel: () => void
+  setHighlightedFeatureId: (id: string | null) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -36,6 +49,10 @@ export const useAppStore = create<AppState>((set) => ({
   assistantOpen: false,
   assistantContextRecordId: null,
   assistantContextConflictId: null,
+
+  activeSpatialAnalysis: null,
+  analysisPanelOpen: false,
+  highlightedFeatureId: null,
 
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
@@ -63,4 +80,15 @@ export const useAppStore = create<AppState>((set) => ({
       assistantContextRecordId: null,
       assistantContextConflictId: null,
     }),
+
+  setActiveSpatialAnalysis: (analysis) =>
+    set({
+      activeSpatialAnalysis: analysis,
+      // Auto open analysis panel if analysis is set
+      analysisPanelOpen: !!analysis,
+    }),
+  clearActiveSpatialAnalysis: () => set({ activeSpatialAnalysis: null }),
+  setAnalysisPanelOpen: (open) => set({ analysisPanelOpen: open }),
+  toggleAnalysisPanel: () => set((state) => ({ analysisPanelOpen: !state.analysisPanelOpen })),
+  setHighlightedFeatureId: (id) => set({ highlightedFeatureId: id }),
 }))

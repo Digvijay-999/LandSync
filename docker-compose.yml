@@ -22,6 +22,7 @@ services:
       - landsync-network
 
   backend:
+    image: landsync-backend:latest
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -62,6 +63,7 @@ services:
       - landsync-network
 
   frontend:
+    image: landsync-frontend:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile

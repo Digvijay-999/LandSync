@@ -39,6 +39,28 @@ import type {
   AssistantHealthResponse,
   ReindexResponse,
   SemanticSearchResult,
+  SpatialAnalysisResult,
+  DatasetComparisonResult,
+  SpatialConflictAnalysisResult,
+  ProximityAnalysisParams,
+  BufferAnalysisParams,
+  IntersectionAnalysisParams,
+  ContainmentAnalysisParams,
+  DatasetComparisonParams,
+  SpatialConflictAnalysisParams,
+  VersionComparisonParams,
+  VersionComparisonResult,
+  AnalysisHistorySummary,
+  ConflictResolutionProposal,
+  PipelineStageItem,
+  PipelineStatusResponse,
+  CandidateGenerationRequest,
+  CandidateGenerationResponse,
+  FeatureMatchingRunRequest,
+  FeatureMatchingRunResponse,
+  HarmonizationRunRequest,
+  HarmonizedRecordPreviewItem,
+  HarmonizationRunResponse,
 } from '../types'
 
 
@@ -65,7 +87,140 @@ apiClient.interceptors.response.use(
   }
 )
 
+// ============================================================================
+// Milestone 9 — Geospatial Intelligence & Spatial Analysis API
+// ============================================================================
+
+export const spatialAnalysisApi = {
+  async executeProximityAnalysis(params: ProximityAnalysisParams): Promise<SpatialAnalysisResult> {
+    const response = await apiClient.post<SpatialAnalysisResult>('/api/v1/analysis/proximity', params)
+    return response.data
+  },
+
+  async executeBufferAnalysis(params: BufferAnalysisParams): Promise<SpatialAnalysisResult> {
+    const response = await apiClient.post<SpatialAnalysisResult>('/api/v1/analysis/buffer', params)
+    return response.data
+  },
+
+  async executeIntersectionAnalysis(params: IntersectionAnalysisParams): Promise<SpatialAnalysisResult> {
+    const response = await apiClient.post<SpatialAnalysisResult>('/api/v1/analysis/intersection', params)
+    return response.data
+  },
+
+  async executeContainmentAnalysis(params: ContainmentAnalysisParams): Promise<SpatialAnalysisResult> {
+    const response = await apiClient.post<SpatialAnalysisResult>('/api/v1/analysis/containment', params)
+    return response.data
+  },
+
+  async executeDatasetComparison(params: DatasetComparisonParams): Promise<DatasetComparisonResult> {
+    const response = await apiClient.post<DatasetComparisonResult>('/api/v1/analysis/compare', params)
+    return response.data
+  },
+
+  async executeSpatialStatistics(projectId: string, datasetId?: string): Promise<SpatialAnalysisResult> {
+    const response = await apiClient.post<SpatialAnalysisResult>('/api/v1/analysis/statistics', {
+      project_id: projectId,
+      dataset_id: datasetId || undefined,
+    })
+    return response.data
+  },
+
+  async executeSpatialConflictAnalysis(params: SpatialConflictAnalysisParams): Promise<SpatialConflictAnalysisResult> {
+    const response = await apiClient.post<SpatialConflictAnalysisResult>('/api/v1/analysis/conflicts', params)
+    return response.data
+  },
+
+  async executeVersionComparison(params: VersionComparisonParams): Promise<VersionComparisonResult> {
+    const response = await apiClient.post<VersionComparisonResult>('/api/v1/analysis/versions/compare', params)
+    return response.data
+  },
+
+  async getAnalysisHistory(projectId?: string): Promise<AnalysisHistorySummary[]> {
+    const response = await apiClient.get<AnalysisHistorySummary[]>('/api/v1/analysis/history', {
+      params: { project_id: projectId },
+    })
+    return response.data
+  },
+
+  async getAnalysisById(analysisId: string): Promise<SpatialAnalysisResult> {
+    const response = await apiClient.get<SpatialAnalysisResult>(`/api/v1/analysis/${analysisId}`)
+    return response.data
+  },
+
+  async exportAnalysisResult(result: SpatialAnalysisResult, format: 'geojson' | 'csv' = 'geojson'): Promise<Blob> {
+    const response = await apiClient.post(`/api/v1/analysis/export?format=${format}`, result, {
+      responseType: 'blob',
+    })
+    return response.data
+  },
+
+  async exportAnalysisById(analysisId: string, format: 'geojson' | 'csv' = 'geojson'): Promise<Blob> {
+    const response = await apiClient.get(`/api/v1/analysis/${analysisId}/export?format=${format}`, {
+      responseType: 'blob',
+    })
+    return response.data
+  },
+
+  async proposeConflictResolution(conflictId: string, projectId: string): Promise<ConflictResolutionProposal> {
+    const response = await apiClient.post<ConflictResolutionProposal>(
+      `/api/v1/conflicts/${conflictId}/propose-resolution`,
+      null,
+      { params: { project_id: projectId } }
+    )
+    return response.data
+  },
+}
+
+// ============================================================================
+// Pipeline Workflow & Harmonization Execution API
+// ============================================================================
+
+export const pipelineApi = {
+  async getPipelineStatus(projectId: string): Promise<PipelineStatusResponse> {
+    const response = await apiClient.get<PipelineStatusResponse>(
+      `/api/v1/projects/${projectId}/pipeline/status`
+    )
+    return response.data
+  },
+
+  async runCandidateGeneration(
+    projectId: string,
+    params?: CandidateGenerationRequest
+  ): Promise<CandidateGenerationResponse> {
+    const response = await apiClient.post<CandidateGenerationResponse>(
+      `/api/v1/projects/${projectId}/pipeline/candidate-generation/run`,
+      params || {}
+    )
+    return response.data
+  },
+
+  async runFeatureMatching(
+    projectId: string,
+    params?: FeatureMatchingRunRequest
+  ): Promise<FeatureMatchingRunResponse> {
+    const response = await apiClient.post<FeatureMatchingRunResponse>(
+      `/api/v1/projects/${projectId}/pipeline/feature-matching/run`,
+      params || {}
+    )
+    return response.data
+  },
+
+  async runHarmonization(
+    projectId: string,
+    params?: HarmonizationRunRequest
+  ): Promise<HarmonizationRunResponse> {
+    const response = await apiClient.post<HarmonizationRunResponse>(
+      `/api/v1/projects/${projectId}/pipeline/harmonization/run`,
+      params || {}
+    )
+    return response.data
+  },
+}
+
 export const api = {
+  ...spatialAnalysisApi,
+  ...pipelineApi,
+
   // System Health
   async getHealth(checkDb = true): Promise<HealthResponse> {
     const response = await apiClient.get<HealthResponse>('/api/health', {

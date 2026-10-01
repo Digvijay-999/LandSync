@@ -12,6 +12,9 @@ from app.schemas.conflict import (
     ConflictListResponse,
     ConflictSummaryResponse,
 )
+from app.schemas.conflict_proposal import ConflictResolutionProposal
+from app.models.conflict import AttributeConflict
+from app.services.assistant.conflict_advisor import ConflictAdvisorService
 
 router = APIRouter()
 
@@ -159,3 +162,33 @@ async def dismiss_conflict(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to dismiss conflict: {str(e)}",
         )
+
+
+@router.post(
+    "/conflicts/{conflict_id}/propose-resolution",
+    response_model=ConflictResolutionProposal,
+    status_code=status.HTTP_200_OK,
+    summary="Generate advisory AI conflict-resolution proposal",
+    description="Analyzes conflicting source values, domain authorities, and provenance to produce a strictly advisory recommendation without mutating the database.",
+)
+async def propose_conflict_resolution(
+    conflict_id: uuid.UUID,
+    project_id: Optional[uuid.UUID] = Query(None, description="Optional project workspace ID"),
+    db: AsyncSession = SessionDep,
+) -> ConflictResolutionProposal:
+    if not project_id:
+        conf_obj = await db.get(AttributeConflict, conflict_id)
+        if not conf_obj:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Conflict {conflict_id} not found",
+            )
+        project_id = conf_obj.project_id
+
+    proposal = await ConflictAdvisorService.generate_proposal(db, project_id, conflict_id)
+    if not proposal:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Conflict {conflict_id} not found in project {project_id}",
+        )
+    return proposal

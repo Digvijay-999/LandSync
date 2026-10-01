@@ -17,9 +17,12 @@ import {
   MapPin,
   RefreshCw,
   Compass,
+  Sparkles,
 } from 'lucide-react'
 import { useProjectLayers } from '../../hooks/useDatasets'
 import { api } from '../../services/api'
+import { useAppStore } from '../../stores/useAppStore'
+import { SpatialAnalysisPanel } from '../analysis/SpatialAnalysisPanel'
 import type { ProjectLayer, BoundingBox } from '../../types'
 
 interface MapWorkspaceProps {
@@ -84,6 +87,14 @@ export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
   // Panel collapsed state
   const [isLayersPanelOpen, setIsLayersPanelOpen] = useState(true)
   const [isLoadingData, setIsLoadingData] = useState(false)
+
+  const {
+    activeSpatialAnalysis,
+    clearActiveSpatialAnalysis,
+    analysisPanelOpen,
+    setAnalysisPanelOpen,
+    toggleAnalysisPanel,
+  } = useAppStore()
 
   const { data: layersData, isLoading: layersLoading, refetch: refetchLayers } = useProjectLayers(projectId)
   const layers = layersData?.layers || []
@@ -302,6 +313,176 @@ export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
     }
   }, [mapLoaded, layersData])
 
+  // Sync Spatial Analysis Result Layer on MapLibre
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !mapLoaded) return
+
+    const sourceId = 'spatial-analysis-source'
+    const fillLayerId = 'layer-analysis-fill'
+    const lineLayerId = 'layer-analysis-line'
+    const circleLayerId = 'layer-analysis-circle'
+
+    if (!activeSpatialAnalysis || !activeSpatialAnalysis.result_geojson) {
+      if (map.getLayer(fillLayerId)) map.removeLayer(fillLayerId)
+      if (map.getLayer(lineLayerId)) map.removeLayer(lineLayerId)
+      if (map.getLayer(circleLayerId)) map.removeLayer(circleLayerId)
+      if (map.getSource(sourceId)) map.removeSource(sourceId)
+      return
+    }
+
+    const geojson = activeSpatialAnalysis.result_geojson
+
+    if (map.getSource(sourceId)) {
+      ;(map.getSource(sourceId) as maplibregl.GeoJSONSource).setData(geojson as any)
+    } else {
+      map.addSource(sourceId, {
+        type: 'geojson',
+        data: geojson as any,
+      })
+
+      map.addLayer({
+        id: fillLayerId,
+        type: 'fill',
+        source: sourceId,
+        paint: {
+          'fill-color': [
+            'match',
+            ['get', '_role'],
+            'overlap_intersection', '#f59e0b',
+            'analysis_buffer', '#6366f1',
+            'conflict_zone', '#f43f5e',
+            'comparison_overlap', '#eab308',
+            'comparison_a_only', '#06b6d4',
+            'comparison_b_only', '#10b981',
+            'version_added', '#10b981',
+            'version_removed', '#f43f5e',
+            'version_changed', '#f59e0b',
+            'version_unchanged', '#64748b',
+            'proximity_match', '#06b6d4',
+            'proximity_reference', '#818cf8',
+            '#06b6d4'
+          ],
+          'fill-opacity': 0.35,
+        },
+      })
+
+      map.addLayer({
+        id: lineLayerId,
+        type: 'line',
+        source: sourceId,
+        paint: {
+          'line-color': [
+            'match',
+            ['get', '_role'],
+            'overlap_intersection', '#fbbf24',
+            'analysis_buffer', '#818cf8',
+            'conflict_zone', '#fb7185',
+            'version_added', '#34d399',
+            'version_removed', '#fb7185',
+            'version_changed', '#fbbf24',
+            'version_unchanged', '#94a3b8',
+            'proximity_match', '#22d3ee',
+            'proximity_reference', '#a5b4fc',
+            '#22d3ee'
+          ],
+          'line-width': 2.5,
+          'line-opacity': 0.95,
+        },
+      })
+
+      map.addLayer({
+        id: circleLayerId,
+        type: 'circle',
+        source: sourceId,
+        filter: ['in', ['geometry-type'], ['literal', ['Point', 'MultiPoint']]],
+        paint: {
+          'circle-radius': [
+            'match',
+            ['get', '_role'],
+            'conflict_hotspot', 10,
+            'search_target', 8,
+            'version_added', 8,
+            'version_removed', 8,
+            'version_changed', 8,
+            'proximity_reference', 9,
+            'proximity_match', 7,
+            6
+          ],
+          'circle-color': [
+            'match',
+            ['get', '_role'],
+            'conflict_hotspot', '#ef4444',
+            'search_target', '#eab308',
+            'version_added', '#10b981',
+            'version_removed', '#f43f5e',
+            'version_changed', '#f59e0b',
+            'version_unchanged', '#64748b',
+            'proximity_reference', '#818cf8',
+            'proximity_match', '#06b6d4',
+            '#06b6d4'
+          ],
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#ffffff',
+          'circle-opacity': 0.95,
+        },
+      })
+
+      ;[fillLayerId, lineLayerId, circleLayerId].forEach((lid) => {
+        map.on('click', lid, (e: maplibregl.MapLayerMouseEvent) => {
+          if (!e.features || e.features.length === 0) return
+          const feat = e.features[0]
+          setSelectedFeature({
+            id: String(feat.id || feat.properties?.id || feat.properties?.identifier || 'Analysis Feature'),
+            layerName: activeSpatialAnalysis.title,
+            geometryType: String(feat.geometry.type),
+            sourceCrs: 'EPSG:4326',
+            targetCrs: targetCrs,
+            properties: feat.properties || {},
+            coordinatesSummary: `${feat.geometry.type} Spatial Result`,
+          })
+        })
+
+        map.on('mouseenter', lid, () => {
+          map.getCanvas().style.cursor = 'pointer'
+        })
+        map.on('mouseleave', lid, () => {
+          map.getCanvas().style.cursor = ''
+        })
+      })
+    }
+
+    // Auto-fit to analysis result extent
+    const features = geojson.features || []
+    if (features.length > 0) {
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+      features.forEach((f: any) => {
+        const coords = f.geometry?.coordinates
+        const extractPoints = (c: any) => {
+          if (typeof c[0] === 'number') {
+            minX = Math.min(minX, c[0])
+            maxX = Math.max(maxX, c[0])
+            minY = Math.min(minY, c[1])
+            maxY = Math.max(maxY, c[1])
+          } else if (Array.isArray(c)) {
+            c.forEach(extractPoints)
+          }
+        }
+        if (coords) extractPoints(coords)
+      })
+
+      if (isFinite(minX) && isFinite(minY) && isFinite(maxX) && isFinite(maxY) && (minX !== maxX || minY !== maxY)) {
+        map.fitBounds(
+          [
+            [minX, minY],
+            [maxX, maxY],
+          ],
+          { padding: 80, maxZoom: 16, duration: 1000 }
+        )
+      }
+    }
+  }, [mapLoaded, activeSpatialAnalysis, targetCrs])
+
   // 3. Handle layer visibility toggling
   const toggleLayer = useCallback(
     (layerId: string) => {
@@ -408,6 +589,21 @@ export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
           </button>
 
           <button
+            onClick={() => toggleAnalysisPanel()}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded border text-[11px] transition-colors ${
+              analysisPanelOpen
+                ? 'bg-cyan-950/80 border-cyan-800 text-cyan-300 font-bold'
+                : 'bg-surface-850 border-border text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Compass className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Spatial Analysis</span>
+            {activeSpatialAnalysis && (
+              <span className="w-2 h-2 rounded-full bg-cyan-400" />
+            )}
+          </button>
+
+          <button
             onClick={() => setIsLayersPanelOpen(!isLayersPanelOpen)}
             className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded border text-[11px] transition-colors ${
               isLayersPanelOpen
@@ -425,6 +621,34 @@ export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
       <div className="relative flex-1 w-full h-full overflow-hidden">
         {/* MapLibre DOM Container */}
         <div ref={mapContainerRef} className="absolute inset-0 w-full h-full" />
+
+        {/* Floating Active Spatial Analysis Status Banner */}
+        {activeSpatialAnalysis && (
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-surface-900/95 backdrop-blur-md border border-cyan-600/80 rounded-full px-4 py-1.5 shadow-2xl flex items-center gap-3 z-20 text-xs">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="font-bold text-cyan-300 truncate max-w-xs">{activeSpatialAnalysis.title}</span>
+            <span className="px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-[10px] text-cyan-300 font-bold">
+              {activeSpatialAnalysis.result_count} items
+            </span>
+            <button
+              onClick={() => clearActiveSpatialAnalysis()}
+              className="p-0.5 rounded-full text-slate-400 hover:text-rose-400 transition-colors"
+              title="Clear analysis overlay"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
+        {/* Floating Spatial Analysis Panel Drawer */}
+        {analysisPanelOpen && (
+          <div className="absolute top-3 right-3 w-96 max-h-[640px] z-30 shadow-2xl">
+            <SpatialAnalysisPanel
+              projectId={projectId}
+              onClose={() => setAnalysisPanelOpen(false)}
+            />
+          </div>
+        )}
 
         {/* Floating Layer Control Panel */}
         {isLayersPanelOpen && (
