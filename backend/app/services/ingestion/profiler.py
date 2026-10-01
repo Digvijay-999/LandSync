@@ -55,29 +55,37 @@ class DatasetProfiler:
 
     @classmethod
     def _profile_geometry(cls, gdf: gpd.GeoDataFrame) -> GeometryProfile:
-        geom_col = gdf.geometry
-        total = len(gdf)
+        geom_col = gdf.geometry if hasattr(gdf, "geometry") else None
+        total = len(gdf) if gdf is not None else 0
 
         type_dist: Dict[str, int] = {}
         empty_count = 0
         valid_count = 0
         invalid_count = 0
 
-        for geom in geom_col:
-            if geom is None or (isinstance(geom, BaseGeometry) and geom.is_empty):
-                empty_count += 1
-                type_dist["Empty/None"] = type_dist.get("Empty/None", 0) + 1
-            elif isinstance(geom, BaseGeometry):
-                gtype = geom.geom_type
-                type_dist[gtype] = type_dist.get(gtype, 0) + 1
+        if geom_col is not None:
+            for geom in geom_col:
+                if geom is None or (isinstance(geom, (float, np.floating)) and np.isnan(geom)):
+                    empty_count += 1
+                    type_dist["Empty/None"] = type_dist.get("Empty/None", 0) + 1
+                elif isinstance(geom, BaseGeometry):
+                    if geom.is_empty:
+                        empty_count += 1
+                        type_dist["Empty/None"] = type_dist.get("Empty/None", 0) + 1
+                    else:
+                        gtype = geom.geom_type
+                        type_dist[gtype] = type_dist.get(gtype, 0) + 1
 
-                if geom.is_valid:
-                    valid_count += 1
+                        if geom.is_valid:
+                            valid_count += 1
+                        else:
+                            invalid_count += 1
                 else:
-                    invalid_count += 1
-            else:
-                empty_count += 1
-                type_dist["Unknown"] = type_dist.get("Unknown", 0) + 1
+                    empty_count += 1
+                    type_dist["Empty/None"] = type_dist.get("Empty/None", 0) + 1
+        else:
+            empty_count = total
+            type_dist["Empty/None"] = total
 
         # Determine dominant geometry type
         non_empty_dist = {k: v for k, v in type_dist.items() if k not in ["Empty/None", "Unknown"]}
@@ -88,7 +96,8 @@ class DatasetProfiler:
         else:
             # Check if one type constitutes >80% or classify as Mixed
             sorted_types = sorted(non_empty_dist.items(), key=lambda x: x[1], reverse=True)
-            if sorted_types[0][1] / max(1, total - empty_count) >= 0.8:
+            non_empty_total = max(1, total - empty_count)
+            if sorted_types[0][1] / non_empty_total >= 0.8:
                 dominant_type = sorted_types[0][0]
             else:
                 dominant_type = "Mixed"
@@ -126,7 +135,7 @@ class DatasetProfiler:
         # Bounding Box calculation
         try:
             bounds = gdf.total_bounds  # [minx, miny, maxx, maxy]
-            if bounds is not None and len(bounds) == 4 and not np.isnan(bounds).any():
+            if bounds is not None and getattr(bounds, "size", 0) == 4 and not np.isnan(bounds).any():
                 bbox = BoundingBox(
                     min_x=round(float(bounds[0]), 6),
                     min_y=round(float(bounds[1]), 6),

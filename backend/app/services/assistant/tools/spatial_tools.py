@@ -229,3 +229,78 @@ async def compare_feature_geometries(
         }
     except Exception as e:
         return {"error": f"Failed to compute spatial comparison: {str(e)}"}
+
+
+async def run_proximity_analysis(
+    db: AsyncSession,
+    project_id: uuid.UUID,
+    latitude: Optional[float] = None,
+    longitude: Optional[float] = None,
+    reference_feature_id: Optional[str] = None,
+    distance_meters: float = 100.0,
+    target_dataset_id: Optional[uuid.UUID] = None,
+    limit: int = 50,
+):
+    from app.services.spatial_analysis.service import SpatialAnalysisService
+    from app.schemas.spatial_analysis import ProximityAnalysisRequest
+    req = ProximityAnalysisRequest(
+        project_id=project_id,
+        latitude=latitude,
+        longitude=longitude,
+        reference_feature_id=reference_feature_id,
+        distance_meters=distance_meters,
+        target_dataset_id=target_dataset_id,
+        limit=limit,
+    )
+    return await SpatialAnalysisService.find_features_within_distance(db, req)
+
+
+async def run_intersection_analysis(
+    db: AsyncSession,
+    project_id: uuid.UUID,
+    dataset_a_id: uuid.UUID,
+    dataset_b_id: uuid.UUID,
+    min_overlap_pct: float = 0.0,
+    limit: int = 100,
+):
+    from app.services.spatial_analysis.service import SpatialAnalysisService
+    from app.schemas.spatial_analysis import IntersectionAnalysisRequest
+    req = IntersectionAnalysisRequest(
+        project_id=project_id,
+        dataset_a_id=dataset_a_id,
+        dataset_b_id=dataset_b_id,
+        min_overlap_pct=min_overlap_pct,
+        limit=limit,
+    )
+    return await SpatialAnalysisService.find_intersections(db, req)
+
+
+async def run_dataset_comparison(
+    db: AsyncSession,
+    project_id: uuid.UUID,
+    dataset_a_id: uuid.UUID,
+    dataset_b_id: uuid.UUID,
+):
+    from app.services.spatial_analysis.service import SpatialAnalysisService
+    from app.schemas.spatial_analysis import DatasetComparisonRequest
+    req = DatasetComparisonRequest(
+        project_id=project_id,
+        dataset_a_id=dataset_a_id,
+        dataset_b_id=dataset_b_id,
+    )
+    return await SpatialAnalysisService.compare_datasets_spatially(db, req)
+
+
+async def run_spatial_conflict_analysis(
+    db: AsyncSession,
+    project_id: uuid.UUID,
+    limit: int = 50,
+):
+    from app.services.spatial_analysis.service import SpatialAnalysisService
+    from app.schemas.spatial_analysis import SpatialConflictAnalysisRequest
+    req = SpatialConflictAnalysisRequest(
+        project_id=project_id,
+        limit=limit,
+    )
+    return await SpatialAnalysisService.analyze_conflicts_spatially(db, req)
+

@@ -1,4 +1,5 @@
 import uuid
+import numpy as np
 import pandas as pd
 from typing import List, Tuple, Optional, Dict, Any
 from fastapi import UploadFile
@@ -10,6 +11,7 @@ from shapely.geometry.base import BaseGeometry
 from shapely import from_wkt
 from geoalchemy2.shape import to_shape
 
+from app.core.logging import logger
 from app.models.project import Project
 from app.models.dataset import Dataset, DatasetVersion
 from app.models.feature import SourceFeature, CanonicalFeature
@@ -17,6 +19,7 @@ from app.services.ingestion.storage import StorageService
 from app.services.ingestion.detector import FormatDetector
 from app.services.ingestion.reader import DatasetReader
 from app.services.ingestion.profiler import DatasetProfiler
+from app.services.ingestion.exceptions import ProjectNotFoundError, EmptyDatasetError
 from app.services.crs.normalizer import CRSNormalizer, MissingCRSError
 from app.schemas.dataset import DatasetProfile, BoundingBox
 from app.schemas.feature import (
@@ -50,20 +53,44 @@ def extract_shapely_geom(geom_val: Any) -> Optional[BaseGeometry]:
         return None
 
 
+def sanitize_value(val: Any) -> Any:
+    """Recursively converts property values to JSONB-safe primitives without triggering array truthiness errors."""
+    if val is None or val is pd.NA:
+        return None
+    if isinstance(val, (bool, int, str)):
+        return val
+    if isinstance(val, (float, np.floating)):
+        return None if (np.isnan(val) or np.isinf(val)) else float(val)
+    if isinstance(val, np.integer):
+        return int(val)
+    if isinstance(val, np.bool_):
+        return bool(val)
+    if isinstance(val, (list, tuple)):
+        return [sanitize_value(item) for item in val]
+    if isinstance(val, np.ndarray):
+        return [sanitize_value(item) for item in val.tolist()]
+    if isinstance(val, dict):
+        return {str(k): sanitize_value(v) for k, v in val.items()}
+    if hasattr(val, "isoformat"):
+        try:
+            return val.isoformat()
+        except Exception:
+            return str(val)
+    try:
+        if np.isscalar(val) and pd.isna(val):
+            return None
+    except (ValueError, TypeError):
+        pass
+    return str(val)
+
+
 def sanitize_properties(row_dict: Dict[str, Any], geom_col_name: str) -> Dict[str, Any]:
     """Sanitizes DataFrame row values into JSON-compliant primitives."""
     clean: Dict[str, Any] = {}
     for k, v in row_dict.items():
         if k == geom_col_name:
             continue
-        if pd.isna(v):
-            clean[k] = None
-        elif isinstance(v, (int, float, str, bool)):
-            clean[k] = v
-        elif hasattr(v, "isoformat"):
-            clean[k] = v.isoformat()
-        else:
-            clean[k] = str(v)
+        clean[k] = sanitize_value(v)
     return clean
 
 
@@ -89,7 +116,7 @@ class DatasetService:
         # 1. Verify project exists
         project = await db.get(Project, project_id)
         if not project:
-            raise ValueError(f"Project with ID '{project_id}' not found.")
+            raise ProjectNotFoundError(f"Project with ID '{project_id}' not found.")
 
         target_crs = project.target_crs or "EPSG:4326"
         dataset_id = uuid.uuid4()
@@ -122,15 +149,36 @@ class DatasetService:
                 file_size=file_size,
             )
 
+            # Ensure dataset contains at least one valid or non-empty geometry
+            non_empty_count = profile.geometry.valid_geometry_count + profile.geometry.invalid_geometry_count
+            if profile.general.feature_count == 0 or non_empty_count == 0:
+                raise EmptyDatasetError("Dataset contains no valid spatial features.")
+
             # 6. Verify and normalize CRS
-            source_crs = profile.spatial.crs or custom_crs
+            source_crs = custom_crs or (profile.spatial.crs if profile.spatial else None)
             if not source_crs:
-                raise MissingCRSError(
-                    "Dataset CRS could not be detected. Please specify an authoritative source CRS."
-                )
+                if format_info["format"] == "geojson":
+                    source_crs = "EPSG:4326"
+                else:
+                    raise MissingCRSError(
+                        "Dataset CRS could not be detected. Please specify an authoritative source CRS."
+                    )
 
             norm_source_crs = CRSNormalizer.normalize_crs_code(source_crs)
             norm_target_crs = CRSNormalizer.normalize_crs_code(target_crs)
+
+            # Log comprehensive profiling metrics
+            logger.info(
+                f"Dataset ingestion profiling completed for '{source_filename}':\n"
+                f"  - filename: {source_filename}\n"
+                f"  - detected format: {format_info['format']}\n"
+                f"  - feature count: {profile.general.feature_count}\n"
+                f"  - geometry types: {profile.geometry.geometry_type} ({profile.geometry.geometry_type_distribution})\n"
+                f"  - CRS: {norm_source_crs}\n"
+                f"  - valid geometry count: {profile.geometry.valid_geometry_count}\n"
+                f"  - empty geometry count: {profile.geometry.empty_geometry_count}\n"
+                f"  - target CRS: {norm_target_crs}"
+            )
 
             # 7. Prepare dataset entity
             dataset_name = custom_name.strip() if custom_name and custom_name.strip() else saved_path.stem
@@ -177,16 +225,20 @@ class DatasetService:
                 geom = row[geom_col_name]
                 clean_props = sanitize_properties(dict(row), geom_col_name)
 
-                # Identify feature identifier
+                # Identify feature identifier safely without evaluating containers in boolean context
                 fid = None
                 for key in ["id", "fid", "parcel_id", "structure_id", "asset_id", "facility_id", "code"]:
-                    if key in clean_props and clean_props[key]:
-                        fid = str(clean_props[key])
-                        break
+                    if key in clean_props:
+                        val = clean_props[key]
+                        if val is not None and not (isinstance(val, (list, tuple, dict, str)) and len(val) == 0):
+                            fid = str(val).strip()
+                            if fid:
+                                break
                 if not fid:
                     fid = f"feat_{idx}"
 
-                geom_type = geom.geom_type if geom is not None and not geom.is_empty else "Unknown"
+                is_geom_valid = isinstance(geom, BaseGeometry) and not geom.is_empty
+                geom_type = geom.geom_type if is_geom_valid else "Unknown"
                 src_feat_id = uuid.uuid4()
 
                 # Source Feature (immutable source CRS representation)
@@ -194,7 +246,7 @@ class DatasetService:
                     id=src_feat_id,
                     dataset_version_id=version_id,
                     source_feature_id=fid,
-                    geometry=geom,
+                    geometry=geom if is_geom_valid else None,
                     properties=clean_props,
                     source_crs=norm_source_crs,
                     geometry_type=geom_type,
@@ -202,16 +254,19 @@ class DatasetService:
                 source_features.append(src_feat)
 
                 # Canonical Feature (project target CRS representation)
-                if norm_source_crs == norm_target_crs:
+                if not is_geom_valid:
+                    can_geom = None
+                    can_geom_type = geom_type
+                elif norm_source_crs == norm_target_crs:
                     can_geom = geom
+                    can_geom_type = geom_type
                 else:
                     can_geom = CRSNormalizer.transform_geometry(
                         geom=geom,
                         source_crs_str=norm_source_crs,
                         target_crs_str=norm_target_crs,
                     )
-
-                can_geom_type = can_geom.geom_type if can_geom is not None and not can_geom.is_empty else geom_type
+                    can_geom_type = can_geom.geom_type if isinstance(can_geom, BaseGeometry) and not can_geom.is_empty else geom_type
 
                 can_feat = CanonicalFeature(
                     id=uuid.uuid4(),
@@ -231,6 +286,11 @@ class DatasetService:
             db.add_all(source_features)
             db.add_all(canonical_features)
             await db.commit()
+
+            logger.info(
+                f"PostGIS insertion result: Successfully persisted dataset '{dataset_name}' ({dataset_id}) "
+                f"with {len(source_features)} source features and {len(canonical_features)} canonical features."
+            )
 
             reloaded_query = (
                 select(Dataset)

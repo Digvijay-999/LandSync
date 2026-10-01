@@ -9,6 +9,8 @@ from app.api.v1.endpoints import (
     export_router,
     conflict_router,
     assistant_router,
+    spatial_analysis_router,
+    pipeline_router,
 )
 
 api_v1_router = APIRouter()
@@ -23,5 +25,7 @@ api_v1_router.include_router(provenance_router, tags=["Provenance & Audit"])
 api_v1_router.include_router(export_router, tags=["Exports"])
 api_v1_router.include_router(conflict_router, tags=["Attribute Conflicts"])
 api_v1_router.include_router(assistant_router, prefix="/assistant", tags=["Evidence Assistant"])
+api_v1_router.include_router(spatial_analysis_router, prefix="/analysis", tags=["Spatial Analysis"])
+api_v1_router.include_router(pipeline_router, tags=["Pipeline Workflow"])
 
 

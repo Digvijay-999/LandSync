@@ -46,3 +46,10 @@ class InvalidCoordinateError(IngestionError):
     """Raised when coordinate values in CSV cannot be parsed to valid numbers."""
     def __init__(self, message: str):
         super().__init__(message, code="INVALID_COORDINATES")
+
+
+class ProjectNotFoundError(IngestionError):
+    """Raised when the target project ID does not exist."""
+    def __init__(self, message: str = "Project not found."):
+        super().__init__(message, code="PROJECT_NOT_FOUND")
+

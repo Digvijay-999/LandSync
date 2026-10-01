@@ -1,8 +1,10 @@
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, TYPE_CHECKING
 from pydantic import BaseModel, Field, ConfigDict
+
+from app.schemas.spatial_analysis import SpatialAnalysisResult
 
 
 class AssistantIntent(str, Enum):
@@ -12,7 +14,11 @@ class AssistantIntent(str, Enum):
     RECORD_INVESTIGATION = "RECORD_INVESTIGATION"
     CONFLICT_EXPLANATION = "CONFLICT_EXPLANATION"
     SPATIAL_PROXIMITY = "SPATIAL_PROXIMITY"
+    SPATIAL_ANALYSIS = "SPATIAL_ANALYSIS"
+    COMPLEX_SPATIAL_INVESTIGATION = "COMPLEX_SPATIAL_INVESTIGATION"
+    SPATIAL_CONFLICT_ANALYSIS = "SPATIAL_CONFLICT_ANALYSIS"
     DATASET_COMPARISON = "DATASET_COMPARISON"
+    VERSION_COMPARISON = "VERSION_COMPARISON"
     PROVENANCE_TRACE = "PROVENANCE_TRACE"
     ATTRIBUTE_SEARCH = "ATTRIBUTE_SEARCH"
     SEMANTIC_SEARCH = "SEMANTIC_SEARCH"
@@ -92,6 +98,18 @@ class AssistantQueryResponse(BaseModel):
         description="Fraction of claims grounded in verified database evidence (1.0 = fully verified)",
     )
     execution_time_ms: float = Field(..., description="Total pipeline execution latency in milliseconds")
+    spatial_result: Optional[SpatialAnalysisResult] = Field(
+        None,
+        description="Structured spatial analysis result with GeoJSON for interactive map rendering",
+    )
+    conflict_proposal: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Advisory AI conflict-resolution proposal backed by domain authority and evidence",
+    )
+    spatial_plan: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Structured spatial query plan separating target from reference datasets",
+    )
 
 
 class SuggestedQuestionsResponse(BaseModel):

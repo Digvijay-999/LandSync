@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Server, Database, Globe, FolderGit2, ArrowUpRight, Cpu } from 'lucide-react'
+import { Server, Database, Globe, FolderGit2, ArrowUpRight, Cpu, Compass } from 'lucide-react'
 import { useHealth } from '../hooks/useHealth'
 import { useProjects } from '../hooks/useProjects'
 import { StatusBadge } from '../components/common/StatusBadge'
@@ -128,6 +128,55 @@ export const DashboardPage: React.FC = () => {
             <div className="text-[11px] font-mono text-slate-400">
               Harmonization project instances
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* M9 Geospatial Intelligence Engine Banner */}
+      <div className="bg-surface-900 border border-border rounded-lg p-5">
+        <div className="flex items-center justify-between border-b border-border/80 pb-3 mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 rounded bg-purple-950/60 border border-purple-800/80 text-purple-400">
+              <Compass className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold font-mono uppercase text-slate-200">
+                PostGIS Geospatial Intelligence Engine (M9)
+              </h2>
+              <p className="text-xs text-slate-400">
+                Controlled read-only spatial tools and AI-driven topological queries.
+              </p>
+            </div>
+          </div>
+          <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-purple-950/40 border border-purple-800 text-purple-300">
+            Real PostGIS 3.4+ Execution
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-mono">
+          <div className="p-3 rounded bg-surface-950 border border-border/70">
+            <span className="text-cyan-400 font-semibold block mb-1">ST_DWithin & Buffer</span>
+            <p className="text-[11px] text-slate-400 font-sans">
+              Proximity queries and analytical buffer overlays around parcels & municipal assets.
+            </p>
+          </div>
+          <div className="p-3 rounded bg-surface-950 border border-border/70">
+            <span className="text-amber-400 font-semibold block mb-1">ST_Intersects & Area</span>
+            <p className="text-[11px] text-slate-400 font-sans">
+              Topological intersections, polygon overlap percentages, and boundary alignments.
+            </p>
+          </div>
+          <div className="p-3 rounded bg-surface-950 border border-border/70">
+            <span className="text-rose-400 font-semibold block mb-1">Spatial Conflict Clusters</span>
+            <p className="text-[11px] text-slate-400 font-sans">
+              Geographic aggregation of unresolved multi-source attribute conflicts.
+            </p>
+          </div>
+          <div className="p-3 rounded bg-surface-950 border border-border/70">
+            <span className="text-emerald-400 font-semibold block mb-1">Dataset Comparison</span>
+            <p className="text-[11px] text-slate-400 font-sans">
+              Dual-source coverage audits, intersecting pairs, and unmatched boundary detection.
+            </p>
           </div>
         </div>
       </div>

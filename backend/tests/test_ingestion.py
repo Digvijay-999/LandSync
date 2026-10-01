@@ -281,3 +281,265 @@ async def test_delete_dataset(client: AsyncClient, sample_geojson_bytes: bytes):
     get_res = await client.get(f"/api/v1/datasets/{dataset_id}")
     assert get_res.status_code == 404
 
+
+@pytest.mark.asyncio
+async def test_empty_feature_collection_rejection(client: AsyncClient):
+    """Test uploading an empty FeatureCollection returns 400 Bad Request."""
+    proj_res = await client.post("/api/v1/projects", json={"name": "Empty FC Test"})
+    project_id = proj_res.json()["id"]
+
+    empty_fc = json.dumps({"type": "FeatureCollection", "features": []}).encode("utf-8")
+    files = {"file": ("empty.geojson", empty_fc, "application/geo+json")}
+    res = await client.post(f"/api/v1/projects/{project_id}/datasets", files=files)
+    assert res.status_code == 400
+    assert "no valid spatial features" in res.json()["error"]["message"].lower()
+
+
+@pytest.mark.asyncio
+async def test_all_null_or_empty_geometry_rejection(client: AsyncClient):
+    """Test uploading GeoJSON with only null or empty geometries returns 400 Bad Request."""
+    proj_res = await client.post("/api/v1/projects", json={"name": "Null Geoms Test"})
+    project_id = proj_res.json()["id"]
+
+    null_geom_fc = json.dumps({
+        "type": "FeatureCollection",
+        "features": [
+            {"type": "Feature", "geometry": None, "properties": {"id": "1"}},
+            {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": []}, "properties": {"id": "2"}}
+        ]
+    }).encode("utf-8")
+    files = {"file": ("null_geoms.geojson", null_geom_fc, "application/geo+json")}
+    res = await client.post(f"/api/v1/projects/{project_id}/datasets", files=files)
+    assert res.status_code == 400
+    assert "no valid spatial features" in res.json()["error"]["message"].lower()
+
+
+@pytest.mark.asyncio
+async def test_mixed_geometry_and_array_properties_ingestion(client: AsyncClient):
+    """
+    Test uploading GeoJSON with:
+    - Multiple geometry types: Polygon, MultiPolygon, Point, LineString
+    - Array/list properties (empty [] and populated ['tag1', 'tag2'])
+    - A feature with null geometry alongside valid features
+    Verifies that array truthiness errors do not occur and profiling classifies Mixed geometry.
+    """
+    proj_res = await client.post("/api/v1/projects", json={"name": "Mixed Geoms & Arrays Test"})
+    project_id = proj_res.json()["id"]
+
+    mixed_fc = json.dumps({
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {
+                    "parcel_id": "P-MIX-1",
+                    "tags": [],
+                    "notes": ["surveyed", "approved"],
+                    "meta": {"verified": True, "flags": []}
+                },
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[[73.85, 18.52], [73.86, 18.52], [73.86, 18.53], [73.85, 18.53], [73.85, 18.52]]]
+                }
+            },
+            {
+                "type": "Feature",
+                "properties": {
+                    "parcel_id": "P-MIX-2",
+                    "tags": ["structure"],
+                    "notes": []
+                },
+                "geometry": {
+                    "type": "MultiPolygon",
+                    "coordinates": [
+                        [[[73.87, 18.52], [73.88, 18.52], [73.88, 18.53], [73.87, 18.53], [73.87, 18.52]]]
+                    ]
+                }
+            },
+            {
+                "type": "Feature",
+                "properties": {
+                    "parcel_id": "P-MIX-3",
+                    "tags": ["tree", "landmark"]
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [73.855, 18.525]
+                }
+            },
+            {
+                "type": "Feature",
+                "properties": {
+                    "parcel_id": "P-MIX-4",
+                    "tags": []
+                },
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [[73.85, 18.52], [73.87, 18.54]]
+                }
+            },
+            {
+                "type": "Feature",
+                "properties": {
+                    "parcel_id": "P-MIX-5",
+                    "tags": ["no_geometry"]
+                },
+                "geometry": None
+            }
+        ]
+    }).encode("utf-8")
+
+    files = {"file": ("mixed_parcels.geojson", mixed_fc, "application/geo+json")}
+    res = await client.post(f"/api/v1/projects/{project_id}/datasets", files=files)
+    assert res.status_code == 201, res.text
+    ds = res.json()
+    assert ds["feature_count"] == 5
+    assert ds["detected_crs"] == "EPSG:4326"
+
+    profile = ds["profile"]
+    assert profile["geometry"]["valid_geometry_count"] == 4
+    assert profile["geometry"]["empty_geometry_count"] == 1
+    assert profile["geometry"]["invalid_geometry_count"] == 0
+    assert "Empty/None" in profile["geometry"]["geometry_type_distribution"]
+    assert "Polygon" in profile["geometry"]["geometry_type_distribution"]
+    assert "Point" in profile["geometry"]["geometry_type_distribution"]
+    assert "LineString" in profile["geometry"]["geometry_type_distribution"]
+
+
+@pytest.mark.asyncio
+async def test_geojson_default_epsg4326_without_crs(client: AsyncClient):
+    """Test GeoJSON without any CRS declaration defaults to EPSG:4326."""
+    proj_res = await client.post("/api/v1/projects", json={"name": "CRS Default Test"})
+    project_id = proj_res.json()["id"]
+
+    fc_no_crs = json.dumps({
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {"name": "Boundary"},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[[73.0, 18.0], [74.0, 18.0], [74.0, 19.0], [73.0, 19.0], [73.0, 18.0]]]
+                }
+            }
+        ]
+    }).encode("utf-8")
+
+    files = {"file": ("wgs84_boundary.geojson", fc_no_crs, "application/geo+json")}
+    res = await client.post(f"/api/v1/projects/{project_id}/datasets", files=files)
+    assert res.status_code == 201
+    ds = res.json()
+    assert ds["detected_crs"] == "EPSG:4326"
+
+
+@pytest.mark.asyncio
+async def test_pune_haveli_demo_parcels_full_ingestion(client: AsyncClient):
+    """Test ingesting the actual 30-polygon Pune/Haveli demo dataset containing empty array properties."""
+    from pathlib import Path
+    pune_path = Path(__file__).resolve().parent / "pune_haveli_demo_parcels.geojson"
+    if not pune_path.exists():
+        demo_dir = Path(__file__).resolve().parent.parent.parent / "demo-data" / "synthetic"
+        pune_path = demo_dir / "pune_haveli_demo_parcels.geojson"
+    if not pune_path.exists():
+        pune_path = Path(__file__).resolve().parent.parent / "pune_test.geojson"
+    if not pune_path.exists():
+        pune_path = Path("/app/pune_test.geojson")
+    if not pune_path.exists():
+        pytest.skip("pune_haveli_demo_parcels.geojson fixture not found.")
+
+    proj_res = await client.post("/api/v1/projects", json={"name": "Pune Haveli Project"})
+    assert proj_res.status_code == 201
+    project_id = proj_res.json()["id"]
+
+    with open(pune_path, "rb") as f:
+        files = {"file": ("pune_haveli_demo_parcels.geojson", f, "application/geo+json")}
+        res = await client.post(f"/api/v1/projects/{project_id}/datasets", files=files)
+
+    assert res.status_code == 201, res.text
+    ds = res.json()
+    assert ds["feature_count"] == 30
+    assert ds["geometry_type"] == "Polygon"
+    assert ds["detected_crs"] == "EPSG:4326"
+    assert ds["profile"]["geometry"]["valid_geometry_count"] == 30
+    assert ds["profile"]["geometry"]["invalid_geometry_count"] == 0
+    assert ds["profile"]["geometry"]["empty_geometry_count"] == 0
+
+
+@pytest.mark.asyncio
+async def test_pune_haveli_complete_read_path_regression(client: AsyncClient):
+    """
+    Regression test proving the complete read chain:
+    INGEST -> DATABASE -> GET DATASETS API -> GET PROJECT LAYERS API -> GET GEOJSON
+    Verifies:
+    - dataset count = 1
+    - feature count = 30
+    - map layer endpoint returns 1 spatial layer with bounds and features
+    """
+    from pathlib import Path
+    pune_path = Path(__file__).resolve().parent / "pune_haveli_demo_parcels.geojson"
+    if not pune_path.exists():
+        demo_dir = Path(__file__).resolve().parent.parent.parent / "demo-data" / "synthetic"
+        pune_path = demo_dir / "pune_haveli_demo_parcels.geojson"
+    if not pune_path.exists():
+        pune_path = Path(__file__).resolve().parent.parent / "pune_test.geojson"
+    if not pune_path.exists():
+        pune_path = Path("/app/pune_test.geojson")
+    if not pune_path.exists():
+        pytest.skip("pune_haveli_demo_parcels.geojson fixture not found.")
+
+    # 1. Create project
+    proj_res = await client.post(
+        "/api/v1/projects",
+        json={"name": "Pune Haveli Read Path Test", "target_crs": "EPSG:4326"}
+    )
+    assert proj_res.status_code == 201
+    project_id = proj_res.json()["id"]
+
+    # 2. Ingest dataset
+    with open(pune_path, "rb") as f:
+        files = {"file": ("pune_haveli_demo_parcels.geojson", f, "application/geo+json")}
+        ingest_res = await client.post(f"/api/v1/projects/{project_id}/datasets", files=files)
+    assert ingest_res.status_code == 201, ingest_res.text
+    ingested_ds = ingest_res.json()
+    dataset_id = ingested_ds["id"]
+
+    # 3. GET project datasets API
+    list_res = await client.get(f"/api/v1/projects/{project_id}/datasets")
+    assert list_res.status_code == 200
+    list_data = list_res.json()
+    assert list_data["total"] == 1
+    assert len(list_data["items"]) == 1
+    ds_item = list_data["items"][0]
+    assert ds_item["id"] == dataset_id
+    assert ds_item["name"] == "pune_haveli_demo_parcels"
+    assert ds_item["feature_count"] == 30
+    assert ds_item["geometry_type"] == "Polygon"
+    assert ds_item["status"] == "ready"
+    assert ds_item["detected_crs"] == "EPSG:4326"
+
+    # 4. GET project layers API (used by map workspace)
+    layers_res = await client.get(f"/api/v1/projects/{project_id}/layers")
+    assert layers_res.status_code == 200
+    layers_data = layers_res.json()
+    assert layers_data["project_id"] == project_id
+    assert len(layers_data["layers"]) == 1
+    layer = layers_data["layers"][0]
+    assert layer["dataset_id"] == dataset_id
+    assert layer["name"] == "pune_haveli_demo_parcels"
+    assert layer["feature_count"] == 30
+    assert layer["geometry_type"] == "Polygon"
+    assert layer["bounds"] is not None
+    assert layers_data["combined_bounds"] is not None
+
+    # 5. GET dataset canonical features GeoJSON (rendered on the map)
+    geojson_res = await client.get(f"/api/v1/datasets/{dataset_id}/features/geojson?representation=canonical")
+    assert geojson_res.status_code == 200
+    geojson_data = geojson_res.json()
+    assert geojson_data["type"] == "FeatureCollection"
+    assert len(geojson_data["features"]) == 30
+    assert geojson_data["total"] == 30
+    assert geojson_data["features"][0]["geometry"]["type"] == "Polygon"
+
+
+

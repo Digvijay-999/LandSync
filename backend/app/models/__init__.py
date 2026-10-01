@@ -7,6 +7,7 @@ from app.models.unified import UnifiedLandRecord, UnifiedLandRecordSource
 from app.models.provenance import ProvenanceEvent
 from app.models.conflict import AttributeConflict, ConflictResolution
 from app.models.assistant import AssistantDocument
+from app.models.pipeline import PipelineStageExecution
 
 __all__ = [
     "Base",
@@ -26,6 +27,7 @@ __all__ = [
     "AttributeConflict",
     "ConflictResolution",
     "AssistantDocument",
+    "PipelineStageExecution",
 ]
 
 

@@ -17,6 +17,7 @@ import {
   Database,
   History,
   Tag,
+  Scale,
 } from 'lucide-react'
 import { useAppStore } from '../../stores/useAppStore'
 import {
@@ -46,6 +47,7 @@ export const AssistantDrawer: React.FC = () => {
     activeProjectId,
     closeAssistant,
     openAssistantWithRecord,
+    setActiveSpatialAnalysis,
   } = useAppStore()
 
   const [inputQuery, setInputQuery] = useState('')
@@ -290,6 +292,94 @@ export const AssistantDrawer: React.FC = () => {
                   <div className="prose prose-invert prose-xs max-w-none text-slate-200 leading-relaxed font-sans space-y-2 whitespace-pre-wrap">
                     {msg.response?.answer}
                   </div>
+
+                  {/* Spatial Plan Badge */}
+                  {msg.response?.spatial_plan && (
+                    <div className="flex flex-wrap items-center gap-1.5 p-2 rounded bg-surface-900 border border-border text-[10px] text-slate-300">
+                      <span className="font-semibold text-cyan-400">Spatial Plan:</span>
+                      {msg.response.spatial_plan.target_dataset_name && (
+                        <span className="px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+                          Target: {msg.response.spatial_plan.target_dataset_name}
+                        </span>
+                      )}
+                      {msg.response.spatial_plan.reference_dataset_name && (
+                        <span className="px-1.5 py-0.5 rounded bg-surface-800 text-slate-300 border border-border">
+                          Ref: {msg.response.spatial_plan.reference_dataset_name}
+                        </span>
+                      )}
+                      <span className="text-slate-400 font-mono">
+                        {msg.response.spatial_plan.distance}m
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Advisory Conflict Resolution Proposal Card */}
+                  {msg.response?.conflict_proposal && (
+                    <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-800/70 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 text-amber-300 font-bold text-xs">
+                          <Scale className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Advisory Resolution Proposal</span>
+                        </div>
+                        <span className="px-1.5 py-0.5 rounded bg-amber-950 border border-amber-800 text-[10px] text-amber-400 font-mono">
+                          {Math.round(msg.response.conflict_proposal.confidence * 100)}% Confidence
+                        </span>
+                      </div>
+
+                      <div className="text-[11px] text-slate-200 space-y-1">
+                        <div>
+                          <span className="text-slate-400">Target Field: </span>
+                          <strong className="text-amber-300">{msg.response.conflict_proposal.attribute_name}</strong> on record <strong className="text-slate-100">{msg.response.conflict_proposal.record_identifier}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-400">Proposed Value: </span>
+                          <span className="font-mono px-1.5 py-0.5 rounded bg-surface-900 text-emerald-400 font-bold border border-border">
+                            {String(msg.response.conflict_proposal.recommended_value)}
+                          </span>
+                          <span className="text-slate-400 ml-1.5">via authority '{msg.response.conflict_proposal.recommended_source}'</span>
+                        </div>
+                      </div>
+
+                      <div className="text-[10px] text-slate-300 p-2 rounded bg-surface-950/80 border border-amber-900/40 space-y-1">
+                        <p><strong className="text-slate-400">Fact:</strong> {msg.response.conflict_proposal.fact_statement}</p>
+                        <p><strong className="text-slate-400">Inference:</strong> {msg.response.conflict_proposal.inference_statement}</p>
+                        <p><strong className="text-slate-400">Recommendation:</strong> {msg.response.conflict_proposal.recommendation_statement}</p>
+                      </div>
+
+                      <p className="text-[9px] text-amber-400/80 italic">
+                        {msg.response.conflict_proposal.disclaimer}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Interactive Spatial Analysis Map Result Card */}
+                  {msg.response?.spatial_result && (
+                    <div className="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-800/80 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 text-cyan-300 font-semibold text-xs">
+                          <Compass className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>{msg.response.spatial_result.title}</span>
+                        </div>
+                        <span className="px-1.5 py-0.5 rounded bg-cyan-950 border border-cyan-800 text-[10px] text-cyan-400 font-bold">
+                          {msg.response.spatial_result.result_count} items
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-300">
+                        {msg.response.spatial_result.description}
+                      </p>
+                      <button
+                        onClick={() => {
+                          if (msg.response?.spatial_result) {
+                            setActiveSpatialAnalysis(msg.response.spatial_result)
+                          }
+                        }}
+                        className="w-full py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                      >
+                        <MapPin className="w-3 h-3" />
+                        <span>Visualize Spatial Result on Map</span>
+                      </button>
+                    </div>
+                  )}
 
                   {/* Expandable Reasoning Trace */}
                   {msg.response && msg.response.reasoning_steps.length > 0 && (

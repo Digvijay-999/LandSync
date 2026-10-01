@@ -765,6 +765,9 @@ export type AssistantIntent =
   | 'RECORD_INVESTIGATION'
   | 'CONFLICT_EXPLANATION'
   | 'SPATIAL_PROXIMITY'
+  | 'SPATIAL_ANALYSIS'
+  | 'COMPLEX_SPATIAL_INVESTIGATION'
+  | 'SPATIAL_CONFLICT_ANALYSIS'
   | 'DATASET_COMPARISON'
   | 'PROVENANCE_TRACE'
   | 'ATTRIBUTE_SEARCH'
@@ -800,6 +803,9 @@ export interface AssistantQueryResponse {
   suggested_followups: string[]
   grounded_score: number
   execution_time_ms: number
+  spatial_result?: SpatialAnalysisResult | null
+  conflict_proposal?: ConflictResolutionProposal | null
+  spatial_plan?: any | null
 }
 
 export interface SuggestedQuestionsResponse {
@@ -840,3 +846,355 @@ export interface ReindexResponse {
   categories_indexed: Record<string, number>
   duration_ms: number
 }
+
+// ============================================================================
+// Milestone 9 — Advanced Geospatial Intelligence & Spatial Analysis Types
+// ============================================================================
+
+export type SpatialAnalysisType =
+  | 'PROXIMITY'
+  | 'BUFFER'
+  | 'INTERSECTION'
+  | 'CONTAINMENT'
+  | 'OVERLAP'
+  | 'NEAREST'
+  | 'STATISTICS'
+  | 'DATASET_COMPARISON'
+  | 'CONFLICT_CLUSTERS'
+  | 'VERSION_COMPARISON'
+
+export interface SpatialAnalysisResult {
+  analysis_id: string
+  project_id: string
+  analysis_type: SpatialAnalysisType
+  title: string
+  description: string
+  source_datasets: string[]
+  input_parameters: Record<string, any>
+  result_count: number
+  statistics: Record<string, any>
+  result_geojson: {
+    type: 'FeatureCollection'
+    features: any[]
+  }
+  execution_time_ms: number
+  created_at: string
+}
+
+export interface DatasetComparisonResult {
+  project_id: string
+  dataset_a_id: string
+  dataset_a_name: string
+  dataset_b_id: string
+  dataset_b_name: string
+  dataset_a_count: number
+  dataset_b_count: number
+  intersecting_count: number
+  unmatched_a_count: number
+  unmatched_b_count: number
+  overlap_area_sqm: number
+  overlap_percentage: number
+  spatial_extent_comparison: Record<string, any>
+  analysis: SpatialAnalysisResult
+}
+
+export interface SpatialConflictCluster {
+  cluster_id: string
+  conflict_count: number
+  affected_record_ids: string[]
+  centroid: [number, number]
+  bounding_box: [number, number, number, number]
+  dominant_fields: string[]
+  dataset_pairs: string[]
+}
+
+export interface SpatialConflictAnalysisResult {
+  project_id: string
+  total_conflicts: number
+  cluster_count: number
+  clusters: SpatialConflictCluster[]
+  dataset_pair_disagreements: Record<string, number>
+  high_conflict_areas: Array<{
+    cluster_id: string
+    conflict_count: number
+    centroid: [number, number]
+    affected_records: string[]
+  }>
+  analysis: SpatialAnalysisResult
+}
+
+export interface ProximityAnalysisParams {
+  project_id: string
+  target_dataset_id?: string
+  reference_dataset_id?: string
+  reference_feature_id?: string
+  latitude?: number
+  longitude?: number
+  distance_meters: number
+  limit?: number
+}
+
+export interface BufferAnalysisParams {
+  project_id: string
+  feature_id?: string
+  latitude?: number
+  longitude?: number
+  distance_meters: number
+  target_dataset_id?: string
+}
+
+export interface IntersectionAnalysisParams {
+  project_id: string
+  dataset_a_id: string
+  dataset_b_id: string
+  min_overlap_pct?: number
+  limit?: number
+}
+
+export interface ContainmentAnalysisParams {
+  project_id: string
+  container_dataset_id: string
+  contained_dataset_id: string
+  limit?: number
+}
+
+export interface DatasetComparisonParams {
+  project_id: string
+  dataset_a_id: string
+  dataset_b_id: string
+}
+
+export interface SpatialConflictAnalysisParams {
+  project_id: string
+  limit?: number
+}
+
+export interface VersionComparisonParams {
+  project_id: string
+  dataset_id: string
+  version_a_number?: number
+  version_b_number?: number
+}
+
+export interface VersionDifferenceItem {
+  feature_id: string
+  identifier: string
+  change_type: 'ADDED' | 'REMOVED' | 'CHANGED' | 'UNCHANGED'
+  geometry_change?: boolean
+  attribute_change?: boolean
+  area_delta_sqm?: number | null
+  centroid_shift_meters?: number | null
+  attribute_diffs?: Record<string, any>
+  properties?: Record<string, any>
+}
+
+export interface VersionComparisonResult {
+  project_id: string
+  dataset_id: string
+  dataset_name: string
+  version_a_number: number
+  version_b_number: number
+  status: 'success' | 'insufficient_versions'
+  message?: string | null
+  added_count: number
+  removed_count: number
+  changed_count: number
+  unchanged_count: number
+  changes: VersionDifferenceItem[]
+  analysis?: SpatialAnalysisResult | null
+}
+
+export interface AnalysisHistorySummary {
+  analysis_id: string
+  project_id: string
+  analysis_type: SpatialAnalysisType
+  title: string
+  description: string
+  result_count: number
+  execution_time_ms: number
+  created_at: string
+  status: string
+}
+
+export interface ConflictSourceReference {
+  source_name: string
+  feature_id?: string | null
+  value?: any
+  source_type?: string | null
+  authority_weight?: number | null
+}
+
+export interface ConflictResolutionProposal {
+  proposal_id: string
+  conflict_id: string
+  project_id: string
+  unified_land_record_id: string
+  record_identifier: string
+  attribute_name: string
+  conflicting_values: any[]
+  recommended_value: any
+  recommended_source: string
+  confidence: number
+  fact_statement: string
+  inference_statement: string
+  recommendation_statement: string
+  reasoning: string
+  supporting_evidence: string[]
+  source_references: ConflictSourceReference[]
+  requires_human_approval: boolean
+  is_advisory_only: boolean
+  disclaimer: string
+  created_at: string
+}
+
+// ==========================================
+// PIPELINE WORKFLOW & STAGE EXECUTION TYPES
+// ==========================================
+
+export interface PipelineStageItem {
+  stage_number: number
+  stage_id: string
+  name: string
+  status: 'completed' | 'ready' | 'running' | 'disabled' | 'failed'
+  is_runnable: boolean
+  prerequisites_met: boolean
+  prerequisites_message?: string | null
+  description: string
+  inputs_summary?: Record<string, any> | null
+  results_summary?: Record<string, any> | null
+  last_run_at?: string | null
+}
+
+export interface PipelineStatusResponse {
+  project_id: string
+  project_name: string
+  dataset_count: number
+  total_features: number
+  active_stage_number: number
+  stages: PipelineStageItem[]
+}
+
+export interface CandidatePairItem {
+  id: string
+  source_feature_id: string
+  candidate_feature_id: string
+  source_identifier: string
+  candidate_identifier: string
+  source_survey_number?: string | null
+  candidate_survey_number?: string | null
+  spatial_relationship: 'CONTAINMENT' | 'OVERLAP' | 'PROXIMITY'
+  distance_meters: number
+  overlap_sqm: number
+  overlap_pct: number
+}
+
+export interface CandidateGenerationRequest {
+  source_dataset_id?: string | null
+  candidate_dataset_ids?: string[] | null
+  distance_meters?: number
+}
+
+export interface CandidateGenerationResponse {
+  stage_id: string
+  stage_number: number
+  status: string
+  project_id: string
+  source_dataset_name: string
+  candidate_dataset_name: string
+  total_source_features: number
+  total_candidate_features: number
+  candidate_pair_count: number
+  features_with_candidates: number
+  features_without_candidates: number
+  overlap_pairs_count: number
+  containment_pairs_count: number
+  proximity_pairs_count: number
+  candidate_pairs: CandidatePairItem[]
+  execution_time_ms: number
+}
+
+export interface FeatureMatchingRunRequest {
+  source_dataset_id?: string | null
+  candidate_dataset_ids?: string[] | null
+  distance_meters?: number
+  matched_threshold?: number
+  possible_threshold?: number
+}
+
+export interface FeatureMatchPreviewItem {
+  id: string
+  source_identifier: string
+  candidate_identifier: string
+  source_survey_number?: string | null
+  candidate_survey_number?: string | null
+  status: string
+  overall_score: number
+  spatial_score: number
+  area_score: number
+  centroid_score: number
+  geometry_score: number
+  attribute_score: number
+  confidence_category: 'HIGH' | 'REVIEW_REQUIRED' | 'UNMATCHED'
+}
+
+export interface FeatureMatchingRunResponse {
+  stage_id: string
+  stage_number: number
+  status: string
+  project_id: string
+  match_run_id: string
+  total_source_features: number
+  total_candidates: number
+  matched_count: number
+  high_confidence_count: number
+  review_required_count: number
+  unmatched_count: number
+  matches_preview: FeatureMatchPreviewItem[]
+  execution_time_ms: number
+}
+
+export interface HarmonizationRunRequest {
+  match_run_id?: string | null
+  geometry_precedence?: string[]
+  area_tolerance_pct?: number
+}
+
+export interface HarmonizedRecordPreviewItem {
+  id: string
+  source_identifier: string
+  candidate_identifier: string
+  source_survey_number?: string | null
+  candidate_survey_number?: string | null
+  authoritative_geometry_source: string
+  geometry_status: string
+  source_area?: number | null
+  candidate_area?: number | null
+  harmonized_area: number
+  area_discrepancy_pct: number
+  source_land_use?: string | null
+  candidate_land_use?: string | null
+  harmonized_land_use?: string | null
+  source_mutation_status?: string | null
+  candidate_mutation_status?: string | null
+  harmonized_mutation_status?: string | null
+  source_risk_level?: string | null
+  candidate_risk_level?: string | null
+  harmonized_risk_level?: string | null
+  conflict_count: number
+  has_conflicts: boolean
+}
+
+export interface HarmonizationRunResponse {
+  stage_id: string
+  stage_number: number
+  status: string
+  project_id: string
+  matched_pairs_processed: number
+  harmonized_records_count: number
+  geometry_decisions_count: number
+  attributes_reconciled_count: number
+  conflicts_forwarded_count: number
+  records_preview: HarmonizedRecordPreviewItem[]
+  execution_time_ms: number
+}
+

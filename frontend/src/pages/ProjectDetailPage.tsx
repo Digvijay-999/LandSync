@@ -20,14 +20,18 @@ import {
   Activity,
   GitMerge,
   ShieldCheck,
+  Compass,
 } from 'lucide-react'
 import { useProject } from '../hooks/useProjects'
 import { useProjectDatasets, useDeleteDataset } from '../hooks/useDatasets'
 import { StatusBadge } from '../components/common/StatusBadge'
 import { PipelineIndicator } from '../components/common/PipelineIndicator'
+import { PipelineStagePanel } from '../components/pipeline/PipelineStagePanel'
 import { DatasetUploadModal } from '../components/datasets/DatasetUploadModal'
 import { DatasetProfileModal } from '../components/datasets/DatasetProfileModal'
 import { MapWorkspace } from '../components/map/MapWorkspace'
+import { SpatialAnalysisPanel } from '../components/analysis/SpatialAnalysisPanel'
+import { usePipelineStatus } from '../hooks/usePipeline'
 import { formatDate, formatBytes } from '../lib/utils'
 import type { Dataset } from '../types'
 
@@ -35,12 +39,19 @@ export const ProjectDetailPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>()
   const { data: project, isLoading: projectLoading, isError } = useProject(projectId)
   const { data: datasetsData, isLoading: datasetsLoading } = useProjectDatasets(projectId)
+  const { data: pipelineStatus } = usePipelineStatus(projectId)
   const deleteMutation = useDeleteDataset(projectId!)
 
-  const [activeTab, setActiveTab] = useState<'map' | 'datasets' | 'pipeline'>('map')
+  const [activeTab, setActiveTab] = useState<'map' | 'datasets' | 'pipeline' | 'analysis'>('map')
+  const [selectedStageNumber, setSelectedStageNumber] = useState<number>(5)
   const [isUploadOpen, setIsUploadOpen] = useState(false)
   const [selectedDatasetForProfile, setSelectedDatasetForProfile] = useState<Dataset | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  const activePipelineStage =
+    pipelineStatus?.stages?.find((s) => s.stage_number === selectedStageNumber) ||
+    pipelineStatus?.stages?.find((s) => s.stage_number === 5) ||
+    (pipelineStatus?.stages && pipelineStatus.stages.length > 0 ? pipelineStatus.stages[0] : null)
 
   if (projectLoading) {
     return (
@@ -142,6 +153,17 @@ export const ProjectDetailPage: React.FC = () => {
               <span>Unified Records</span>
             </Link>
             <button
+              onClick={() => setActiveTab('analysis')}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border font-semibold transition-all shadow-sm ${
+                activeTab === 'analysis'
+                  ? 'bg-purple-950/80 border-purple-500 text-purple-200'
+                  : 'bg-surface-950 hover:bg-surface-850 border-purple-700/80 text-purple-300'
+              }`}
+            >
+              <Compass className="w-3.5 h-3.5 text-purple-400" />
+              <span>Spatial Intelligence</span>
+            </button>
+            <button
               onClick={() => setIsUploadOpen(true)}
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-semibold transition-colors"
             >
@@ -217,6 +239,18 @@ export const ProjectDetailPage: React.FC = () => {
         >
           <GitMerge className="w-4 h-4" />
           <span>Pipeline & Harmonization</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('analysis')}
+          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all ${
+            activeTab === 'analysis'
+              ? 'bg-purple-600 text-white shadow-lg shadow-purple-950/40 border border-purple-500'
+              : 'bg-surface-900 border border-border text-slate-400 hover:text-slate-200 hover:bg-surface-850'
+          }`}
+        >
+          <Compass className="w-4 h-4" />
+          <span>Spatial Intelligence</span>
         </button>
       </div>
 
@@ -375,7 +409,21 @@ export const ProjectDetailPage: React.FC = () => {
       {/* TAB 3: PIPELINE STAGES & DOWNSTREAM ENGINES */}
       {activeTab === 'pipeline' && (
         <div className="space-y-6">
-          <PipelineIndicator />
+          <PipelineIndicator
+            stages={pipelineStatus?.stages}
+            selectedStageNumber={selectedStageNumber}
+            onSelectStage={(stageNum) => setSelectedStageNumber(stageNum)}
+          />
+
+          {activePipelineStage && (
+            <PipelineStagePanel
+              projectId={project.id}
+              projectName={project.name}
+              stage={activePipelineStage}
+              allStages={pipelineStatus?.stages || []}
+              onSelectStage={(stageNum) => setSelectedStageNumber(stageNum)}
+            />
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Spatial Matching Engine */}
@@ -386,7 +434,7 @@ export const ProjectDetailPage: React.FC = () => {
                   <span>Spatial Candidate & Matching Engine</span>
                 </div>
                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface-950 border border-border text-slate-400">
-                  Milestone 3 Ready
+                  Active in PostGIS
                 </span>
               </div>
               <p className="text-xs text-slate-400">
@@ -402,7 +450,7 @@ export const ProjectDetailPage: React.FC = () => {
                   <span>Unified Harmonized Records</span>
                 </div>
                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface-950 border border-border text-slate-400">
-                  Milestone 4 Extension
+                  Authoritative Linework
                 </span>
               </div>
               <p className="text-xs text-slate-400">
@@ -413,6 +461,12 @@ export const ProjectDetailPage: React.FC = () => {
         </div>
       )}
 
+      {/* TAB 4: SPATIAL ANALYSIS & INTELLIGENCE */}
+      {activeTab === 'analysis' && (
+        <div className="bg-surface-900 border border-border rounded-xl p-6">
+          <SpatialAnalysisPanel projectId={project.id} />
+        </div>
+      )}
 
       {/* Upload Dataset Modal */}
       <DatasetUploadModal
