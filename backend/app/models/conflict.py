@@ -7,6 +7,7 @@ from sqlalchemy import (
     JSON,
     DateTime,
     Text,
+    Float,
     UniqueConstraint,
     Index,
 )
@@ -190,4 +191,139 @@ class ConflictResolution(Base):
         return (
             f"<ConflictResolution id={self.id} conflict_id={self.conflict_id} "
             f"type='{self.resolution_type}' val={self.resolved_value}>"
+        )
+
+
+class GeospatialConflict(Base):
+    """
+    Stage 08 Geospatial Conflict Record.
+    Captures attribute disagreements, geometry variances, area discrepancies,
+    mutation divergences, and risk discrepancies identified across harmonized candidate feature pairs.
+    """
+
+    __tablename__ = "geospatial_conflicts"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        index=True,
+    )
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("projects.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    harmonized_record_id: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+        index=True,
+    )
+    source_feature_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("canonical_features.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    candidate_feature_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("canonical_features.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    conflict_type: Mapped[str] = mapped_column(
+        String(60),
+        nullable=False,
+        index=True,
+    )
+    category: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        default="ATTRIBUTE",
+        index=True,
+    )
+    severity: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="MEDIUM",
+        index=True,
+    )
+    severity_reason: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True,
+    )
+    status: Mapped[str] = mapped_column(
+        String(30),
+        nullable=False,
+        default="OPEN",
+        index=True,
+    )
+    source_a: Mapped[str] = mapped_column(
+        String(150),
+        nullable=False,
+    )
+    source_b: Mapped[str] = mapped_column(
+        String(150),
+        nullable=False,
+    )
+    field_name: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False,
+        index=True,
+    )
+    value_a: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    value_b: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    normalized_value_a: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    normalized_value_b: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    discrepancy_value: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    discrepancy_percentage: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    detection_rule: Mapped[str] = mapped_column(String(100), nullable=False)
+    explanation: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    evidence: Mapped[Dict[str, Any]] = mapped_column(
+        JSON,
+        nullable=False,
+        default=dict,
+    )
+    geometry_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JSON,
+        nullable=True,
+    )
+    idempotency_key: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+        index=True,
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    # Relationships
+    project: Mapped["Project"] = relationship("Project")
+    source_feature: Mapped[Optional["CanonicalFeature"]] = relationship(
+        "CanonicalFeature", foreign_keys=[source_feature_id], lazy="joined"
+    )
+    candidate_feature: Mapped[Optional["CanonicalFeature"]] = relationship(
+        "CanonicalFeature", foreign_keys=[candidate_feature_id], lazy="joined"
+    )
+
+    __table_args__ = (
+        Index("ix_geospatial_conflicts_proj_status", "project_id", "status"),
+        Index("ix_geospatial_conflicts_proj_severity", "project_id", "severity"),
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<GeospatialConflict id={self.id} project_id={self.project_id} "
+            f"type='{self.conflict_type}' field='{self.field_name}' severity='{self.severity}' status='{self.status}'>"
         )

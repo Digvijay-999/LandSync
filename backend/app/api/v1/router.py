@@ -11,6 +11,9 @@ from app.api.v1.endpoints import (
     assistant_router,
     spatial_analysis_router,
     pipeline_router,
+    validation_router,
+    confidence_router,
+    adjudication_router,
 )
 
 api_v1_router = APIRouter()
@@ -27,5 +30,9 @@ api_v1_router.include_router(conflict_router, tags=["Attribute Conflicts"])
 api_v1_router.include_router(assistant_router, prefix="/assistant", tags=["Evidence Assistant"])
 api_v1_router.include_router(spatial_analysis_router, prefix="/analysis", tags=["Spatial Analysis"])
 api_v1_router.include_router(pipeline_router, tags=["Pipeline Workflow"])
+api_v1_router.include_router(validation_router, tags=["Validation Stage 09"])
+api_v1_router.include_router(confidence_router, tags=["Confidence Scoring Stage 10"])
+api_v1_router.include_router(adjudication_router, tags=["Human Review Stage 11"])
+
 
 

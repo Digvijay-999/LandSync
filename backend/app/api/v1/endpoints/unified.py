@@ -46,11 +46,13 @@ async def build_unified_records(
     response_model=UnifiedRecordListResponse,
     status_code=status.HTTP_200_OK,
     summary="List unified land records for a project",
-    description="Returns a paginated list of unified records, filterable by status (ACTIVE, INCOMPLETE, CONFLICT).",
+    description="Returns a paginated list of unified records, filterable by status, resolution_status, and search query.",
 )
 async def list_unified_records(
     project_id: uuid.UUID,
     status_filter: Optional[str] = Query(None, alias="status", description="Filter by status (ACTIVE, INCOMPLETE, CONFLICT)"),
+    resolution_status: Optional[str] = Query(None, description="Filter by resolution status (UNIFIED, REJECTED)"),
+    search: Optional[str] = Query(None, description="Search query across parcel IDs and source references"),
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
     db: AsyncSession = SessionDep,
@@ -59,6 +61,8 @@ async def list_unified_records(
         db,
         project_id,
         status=status_filter,
+        resolution_status=resolution_status,
+        search=search,
         skip=skip,
         limit=limit,
     )
@@ -76,6 +80,27 @@ async def get_unified_record_statistics(
     db: AsyncSession = SessionDep,
 ) -> UnifiedRecordStatisticsResponse:
     return await UnifiedRecordService.get_statistics(db, project_id)
+
+
+@router.get(
+    "/projects/{project_id}/unified-records/{record_id}",
+    response_model=UnifiedRecordDetailResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get comprehensive unified land record details under project",
+    description="Returns canonical geometry GeoJSON, canonical attributes, source count, status, and contributing source features.",
+)
+async def get_project_unified_record_detail(
+    project_id: uuid.UUID,
+    record_id: uuid.UUID,
+    db: AsyncSession = SessionDep,
+) -> UnifiedRecordDetailResponse:
+    record = await UnifiedRecordService.get_record_detail(db, record_id)
+    if not record or record.project_id != project_id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Unified land record with ID '{record_id}' not found for project '{project_id}'.",
+        )
+    return record
 
 
 @router.get(

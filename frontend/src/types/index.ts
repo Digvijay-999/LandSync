@@ -531,6 +531,18 @@ export interface UnifiedRecordListItem {
   geometry_source_role?: string | null
   area?: number | null
   canonical_attributes: Record<string, any>
+  harmonized_record_id?: string | null
+  source_a_reference?: string | null
+  source_b_reference?: string | null
+  geometry_source?: string | null
+  land_use?: string | null
+  mutation_status?: string | null
+  risk_level?: string | null
+  confidence_score?: number | null
+  validation_status?: string | null
+  human_review_decision?: string | null
+  resolution_status?: string
+  metadata_trail?: Record<string, any>
   created_at: string
   updated_at: string
 }
@@ -552,9 +564,49 @@ export interface UnifiedRecordDetail {
   geometry_source_role?: string | null
   area?: number | null
   canonical_attributes: Record<string, any>
+  harmonized_record_id?: string | null
+  source_a_reference?: string | null
+  source_b_reference?: string | null
+  geometry_source?: string | null
+  land_use?: string | null
+  mutation_status?: string | null
+  risk_level?: string | null
+  confidence_score?: number | null
+  validation_status?: string | null
+  human_review_decision?: string | null
+  resolution_status?: string
+  metadata_trail?: Record<string, any>
   sources: UnifiedRecordSource[]
   created_at: string
   updated_at: string
+}
+
+export interface Stage12ExecutionResponse {
+  stage_number: number
+  stage_id: string
+  status: string
+  project_id: string
+  records_considered: number
+  records_unified: number
+  records_rejected: number
+  average_confidence: number
+  valid_geometries_count: number
+  execution_time_ms: number
+  message: string
+  records_preview: UnifiedRecordListItem[]
+}
+
+export interface Stage12StatusResponse {
+  project_id: string
+  stage_status: string
+  is_completed: boolean
+  is_runnable: boolean
+  records_considered: number
+  records_unified: number
+  records_rejected: number
+  average_confidence: number
+  valid_geometries_count: number
+  last_executed_at?: string | null
 }
 
 export interface UnifiedRecordBuildResponse {
@@ -674,6 +726,233 @@ export interface ProjectProvenanceSummary {
     created_at: string
   }>
 }
+
+// ============================================================================
+// Stage 13: Provenance & Lineage Types
+// ============================================================================
+
+export interface ProvenanceGraphNode {
+  id: string
+  type: string
+  label: string
+  stage: number
+  status: string
+  details: Record<string, any>
+}
+
+export interface ProvenanceGraphEdge {
+  source: string
+  target: string
+  relationship: string
+}
+
+export interface ProvenanceGraph {
+  nodes: ProvenanceGraphNode[]
+  edges: ProvenanceGraphEdge[]
+}
+
+export interface ProvenanceRecordItem {
+  id: string
+  project_id: string
+  unified_land_record_id: string
+  harmonized_record_id: string
+  record_identifier: string
+  source_dataset_ids: string[]
+  source_feature_ids: string[]
+  source_record_identifiers: Record<string, any>
+  feature_match_id?: string | null
+  matched_record_id?: string | null
+  conflict_ids: string[]
+  validation_id?: string | null
+  human_review_decision_id?: string | null
+  confidence_score?: number | null
+  confidence_bucket?: string | null
+  resolution_status: string
+  lineage_completeness_pct: number
+  lineage_status: 'COMPLETE' | 'PARTIAL' | 'QUARANTINED' | string
+  missing_stages: string[]
+  created_at: string
+  updated_at: string
+}
+
+export interface ProvenanceRecordDetailResponse {
+  id: string
+  project_id: string
+  unified_land_record_id: string
+  harmonized_record_id: string
+  record_identifier: string
+  source_dataset_ids: string[]
+  source_feature_ids: string[]
+  source_record_identifiers: Record<string, any>
+  feature_match_id?: string | null
+  matched_record_id?: string | null
+  conflict_ids: string[]
+  validation_id?: string | null
+  human_review_decision_id?: string | null
+  confidence_score?: number | null
+  confidence_bucket?: string | null
+  resolution_status: string
+  lineage_completeness_pct: number
+  lineage_status: string
+  missing_stages: string[]
+  final_record: Record<string, any>
+  sources: ProvenanceSourceItem[]
+  processing: Record<string, any>
+  human_decision: Record<string, any>
+  timeline: ProvenanceTimelineItem[]
+  lineage_graph: ProvenanceGraph
+  metadata_trail: Record<string, any>
+  created_at: string
+  updated_at: string
+}
+
+export interface ProjectProvenanceSummaryResponse {
+  project_id: string
+  project_name: string
+  total_unified_records: number
+  total_sources: number
+  total_accepted_matches: number
+  total_reviews: number
+  datasets: Array<{
+    id: string
+    name: string
+    format: string
+    feature_count: number
+    versions_count: number
+  }>
+  latest_events: Array<{
+    id: string
+    event_type: string
+    source_type?: string | null
+    metadata: Record<string, any>
+    created_at: string
+  }>
+  items: ProvenanceRecordItem[]
+  total: number
+  skip: number
+  limit: number
+  completeness_stats: Record<string, any>
+}
+
+export interface Stage13ExecutionResponse {
+  stage_number: number
+  stage_id: string
+  status: string
+  project_id: string
+  records_traced: number
+  events_count: number
+  datasets_count: number
+  human_decisions_traced: number
+  conflicts_traced: number
+  validation_events_traced: number
+  lineage_completeness_pct: number
+  execution_time_ms: number
+  message: string
+  records_preview: ProvenanceRecordItem[]
+}
+
+export interface Stage13StatusResponse {
+  project_id: string
+  stage_number: number
+  stage_id: string
+  status: 'disabled' | 'ready' | 'running' | 'completed' | string
+  is_completed: boolean
+  is_runnable: boolean
+  prerequisites_met: boolean
+  prerequisites_message?: string | null
+  records_traced: number
+  total_events: number
+  average_completeness_pct: number
+  human_decisions_traced: number
+  conflicts_traced: number
+  validation_events_traced: number
+  last_executed_at?: string | null
+}
+
+// ---------------------------------------------------------------------------
+// Milestone 14: Stage 14 Export & Deliverables Types
+// ---------------------------------------------------------------------------
+
+export interface ExportCreateRequest {
+  format: 'geojson' | 'csv' | 'gpkg' | string
+  include_quarantined?: boolean
+}
+
+export interface ExportJobItem {
+  id: string
+  project_id: string
+  format: string
+  status: string
+  filename: string
+  file_size_bytes: number
+  record_count: number
+  authoritative_count: number
+  quarantined_count: number
+  include_quarantined: boolean
+  crs: string
+  sha256_checksum?: string | null
+  manifest_data: Record<string, any>
+  download_url: string
+  error_message?: string | null
+  created_at: string
+  completed_at?: string | null
+}
+
+export interface ExportJobListResponse {
+  items: ExportJobItem[]
+  total: number
+}
+
+export interface ExportManifestResponse {
+  project_id: string
+  project_name: string
+  export_id: string
+  export_timestamp: string
+  export_format: string
+  pipeline_version: string
+  crs: string
+  total_records: number
+  authoritative_records: number
+  quarantined_records: number
+  include_quarantined: boolean
+  stage12_execution_id?: string | null
+  stage13_execution_id?: string | null
+  data_generation_timestamp: string
+  schema_version: string
+  file_name: string
+  file_size_bytes: number
+  sha256_checksum?: string | null
+}
+
+export interface Stage14ExecutionResponse {
+  execution_id: string
+  stage_id: string
+  stage_number: number
+  status: string
+  message: string
+  authoritative_records_count: number
+  quarantined_records_count: number
+  total_records_count: number
+  export_job: ExportJobItem
+  executed_at: string
+}
+
+export interface Stage14StatusResponse {
+  status: 'disabled' | 'ready' | 'running' | 'completed' | string
+  prerequisites_met: boolean
+  prerequisites_message?: string | null
+  authoritative_records_count: number
+  quarantined_records_count: number
+  total_records_count: number
+  valid_geometry_count: number
+  provenance_coverage_pct: number
+  project_crs: string
+  available_formats: string[]
+  recent_exports: ExportJobItem[]
+  last_run_at?: string | null
+}
+
+
 
 // ---------------------------------------------------------------------------
 // Milestone 7: Attribute Conflict Detection & Reconciliation Types
@@ -1197,4 +1476,370 @@ export interface HarmonizationRunResponse {
   records_preview: HarmonizedRecordPreviewItem[]
   execution_time_ms: number
 }
+
+export interface GeospatialConflict {
+  id: string
+  project_id: string
+  harmonized_record_id: string
+  source_feature_id?: string | null
+  candidate_feature_id?: string | null
+  conflict_type: string
+  category: string
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'
+  severity_reason?: string | null
+  status: 'OPEN' | 'ACKNOWLEDGED' | 'RESOLVED' | 'DISMISSED'
+  source_a: string
+  source_b: string
+  field_name: string
+  value_a?: string | null
+  value_b?: string | null
+  normalized_value_a?: string | null
+  normalized_value_b?: string | null
+  discrepancy_value?: string | null
+  discrepancy_percentage?: number | null
+  detection_rule: string
+  explanation?: string | null
+  evidence: Record<string, any>
+  geometry_metadata?: Record<string, any> | null
+  idempotency_key: string
+  created_at: string
+  updated_at: string
+}
+
+export interface GeospatialConflictListResponse {
+  items: GeospatialConflict[]
+  total: number
+  skip: number
+  limit: number
+  counts_by_severity: Record<string, number>
+  counts_by_type: Record<string, number>
+  counts_by_status: Record<string, number>
+}
+
+export interface ConflictDetectionRunRequest {
+  area_low_threshold_pct?: number
+  area_medium_threshold_pct?: number
+  area_high_threshold_pct?: number
+  include_geometry_metrics?: boolean
+}
+
+export interface ConflictDetectionRunResponse {
+  stage_id: string
+  stage_number: number
+  status: string
+  project_id: string
+  records_scanned: number
+  conflicts_detected: number
+  critical_count: number
+  high_count: number
+  medium_count: number
+  low_count: number
+  counts_by_severity: Record<string, number>
+  counts_by_type: Record<string, number>
+  conflicts_created: number
+  conflicts_updated: number
+  execution_time_ms: number
+}
+
+// ---------------------------------------------------------------------------
+// Milestone 9: Stage 09 Validation Types
+// ---------------------------------------------------------------------------
+
+export type ValidationStatus = 'PASS' | 'WARNING' | 'FAIL'
+
+export interface ValidationResult {
+  id: string
+  project_id: string
+  harmonized_record_id: string
+  source_feature_id?: string | null
+  candidate_feature_id?: string | null
+  source_identifier: string
+  candidate_identifier: string
+  overall_status: ValidationStatus
+  geometry_validity_status: ValidationStatus
+  topology_status: ValidationStatus
+  area_status: ValidationStatus
+  semantic_status: ValidationStatus
+  conflict_status: ValidationStatus
+  failure_reasons: string[]
+  warning_reasons: string[]
+  geometry_metrics: Record<string, any>
+  topology_metrics: Record<string, any>
+  area_metrics: Record<string, any>
+  semantic_metrics: Record<string, any>
+  conflict_metrics: Record<string, any>
+  idempotency_key: string
+  created_at: string
+  updated_at: string
+}
+
+export interface ValidationSummary {
+  project_id: string
+  total_validated: number
+  pass_count: number
+  warning_count: number
+  fail_count: number
+  geometry_failures: number
+  topology_failures: number
+  area_failures: number
+  semantic_failures: number
+  conflict_failures: number
+  counts_by_status: Record<string, number>
+  counts_by_category: Record<string, number>
+}
+
+export interface ValidationResultListResponse {
+  items: ValidationResult[]
+  total: number
+  skip: number
+  limit: number
+  summary?: ValidationSummary | null
+}
+
+export interface ValidationRunRequest {
+  area_tolerance_pct?: number
+  area_warning_threshold_pct?: number
+  check_topology?: boolean
+  check_semantics?: boolean
+  consume_conflicts?: boolean
+}
+
+export interface ValidationRunResponse {
+  stage_id: string
+  stage_number: number
+  status: string
+  project_id: string
+  records_validated: number
+  pass_count: number
+  warning_count: number
+  fail_count: number
+  geometry_failures_count: number
+  topology_failures_count: number
+  area_failures_count: number
+  semantic_failures_count: number
+  conflict_failures_count: number
+  results_created: number
+  results_updated: number
+  execution_time_ms: number
+}
+
+// ---------------------------------------------------------------------------
+// Milestone 10: Stage 10 Confidence Scoring Types
+// ---------------------------------------------------------------------------
+
+export type ConfidenceBucket = 'HIGH' | 'MEDIUM' | 'LOW' | 'AMBIGUOUS'
+export type ConfidenceReviewStatus = 'AUTO_CONFIRMED' | 'PENDING' | 'FLAGGED' | 'REQUIRES_REVIEW'
+
+export interface ConfidenceRecordItem {
+  id: string
+  project_id: string
+  source_feature_id: string
+  candidate_feature_id?: string | null
+  source_identifier: string
+  candidate_identifier?: string | null
+  overall_confidence: number
+  confidence_bucket: ConfidenceBucket
+  review_status: string
+  spatial_score: number
+  geometry_score: number
+  attribute_score: number
+  temporal_score: number
+  weights: {
+    spatial: number
+    geometry: number
+    attribute: number
+    temporal: number
+    [key: string]: number
+  }
+  contributions: {
+    spatial: number
+    geometry: number
+    attribute: number
+    temporal: number
+    [key: string]: number
+  }
+  is_ambiguous: boolean
+  critical_conflict_count: number
+  validation_status?: string | null
+  reasons: string[]
+  created_at?: string
+}
+
+export interface ConfidenceSummary {
+  project_id: string
+  total_records_scored: number
+  high_count: number
+  medium_count: number
+  low_count: number
+  ambiguous_count: number
+  review_required_count: number
+  auto_confirmed_count: number
+  average_confidence: number
+  counts_by_bucket: Record<string, number>
+  counts_by_review_status: Record<string, number>
+}
+
+export interface ConfidenceResultListResponse {
+  items: ConfidenceRecordItem[]
+  total: number
+  skip: number
+  limit: number
+  summary?: ConfidenceSummary | null
+}
+
+export interface ConfidenceScoringRunRequest {
+  spatial_weight?: number
+  geometry_weight?: number
+  attribute_weight?: number
+  temporal_weight?: number
+  high_threshold?: number
+  medium_threshold?: number
+  enforce_validation_constraints?: boolean
+  enforce_conflict_constraints?: boolean
+}
+
+export interface ConfidenceScoringRunResponse {
+  stage_id: string
+  stage_number: number
+  status: string
+  project_id: string
+  records_scored: number
+  high_count: number
+  medium_count: number
+  low_count: number
+  ambiguous_count: number
+  review_required_count: number
+  auto_confirmed_count: number
+  average_confidence: number
+  execution_time_ms: number
+  weights_applied: Record<string, number>
+}
+
+// ---------------------------------------------------------------------------
+// Pipeline Stage 11: Human Review & Adjudication Types
+// ---------------------------------------------------------------------------
+
+export type AdjudicationActionType =
+  | 'ACCEPT_SOURCE_A'
+  | 'ACCEPT_SOURCE_B'
+  | 'MERGE_RECONCILE'
+  | 'REJECT_UNRESOLVED'
+
+export interface ReviewQueueConflictItem {
+  id: string
+  conflict_type: string
+  category: string
+  severity: string
+  severity_reason?: string | null
+  status: string
+  field_name: string
+  source_a: string
+  source_b: string
+  value_a?: string | null
+  value_b?: string | null
+  discrepancy_value?: string | null
+  discrepancy_percentage?: number | null
+  explanation?: string | null
+}
+
+export interface AdjudicationQueueItem {
+  id: string
+  harmonized_record_id: string
+  project_id: string
+  source_identifier: string
+  candidate_identifier: string
+  source_feature_id?: string | null
+  candidate_feature_id?: string | null
+  feature_match_id?: string | null
+  overall_confidence: number
+  confidence_bucket: string
+  bucket_label: string
+  confidence_explanation?: string | null
+  signal_contributions: Record<string, number>
+  reasons: string[]
+  validation_status: string
+  validation_failure_reasons: string[]
+  validation_warning_reasons: string[]
+  conflict_count: number
+  highest_conflict_severity?: string | null
+  has_critical_conflicts: boolean
+  conflicts: ReviewQueueConflictItem[]
+  spatial_metrics: Record<string, any>
+  source_attributes: Record<string, any>
+  candidate_attributes: Record<string, any>
+  harmonized_attributes: Record<string, any>
+  review_status: string
+  adjudication_status: string
+  adjudication_action?: AdjudicationActionType | null
+  authoritative_geometry_source?: string | null
+  authoritative_attributes: Record<string, any>
+  reviewer_name?: string | null
+  notes?: string | null
+  adjudicated_at?: string | null
+  override_applied: boolean
+  requires_mandatory_review: boolean
+}
+
+export type Stage11ReviewQueueItem = AdjudicationQueueItem
+
+export interface ReviewQueueSummary {
+  project_id: string
+  total_review_items: number
+  unresolved_count: number
+  resolved_count: number
+  critical_count: number
+  high_conflict_count: number
+  medium_conflict_count: number
+  low_conflict_count: number
+  accept_source_a_count: number
+  accept_source_b_count: number
+  merged_count: number
+  rejected_count: number
+  average_confidence: number
+  stage_status: string
+  is_completed: boolean
+  completion_progress_pct: number
+  last_adjudication_at?: string | null
+}
+
+export interface ReviewQueueListResponse {
+  items: AdjudicationQueueItem[]
+  total: number
+  page: number
+  page_size: number
+}
+
+export interface AdjudicationActionRequest {
+  action: AdjudicationActionType
+  notes?: string | null
+  reviewer_name?: string | null
+  authoritative_geometry_source?: 'SOURCE_A' | 'SOURCE_B' | 'CUSTOM' | null
+  authoritative_attributes?: Record<string, any>
+}
+
+export interface AdjudicationActionResponse {
+  success: boolean
+  record_id: string
+  action: string
+  status: string
+  decision: AdjudicationQueueItem
+  summary: ReviewQueueSummary
+  stage_status: string
+  is_stage_completed: boolean
+  message: string
+}
+
+export interface Stage11ExecutionResponse {
+  stage_number: number
+  stage_id: string
+  status: string
+  records_adjudicated: number
+  records_pending: number
+  summary: ReviewQueueSummary
+  message: string
+}
+
+
+
+
 

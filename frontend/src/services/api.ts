@@ -61,6 +61,41 @@ import type {
   HarmonizationRunRequest,
   HarmonizedRecordPreviewItem,
   HarmonizationRunResponse,
+  GeospatialConflict,
+  GeospatialConflictListResponse,
+  ConflictDetectionRunRequest,
+  ConflictDetectionRunResponse,
+  ValidationResult,
+  ValidationSummary,
+  ValidationResultListResponse,
+  ValidationRunRequest,
+  ValidationRunResponse,
+  ConfidenceRecordItem,
+  ConfidenceSummary,
+  ConfidenceResultListResponse,
+  ConfidenceScoringRunRequest,
+  ConfidenceScoringRunResponse,
+  AdjudicationQueueItem,
+  ReviewQueueSummary,
+  ReviewQueueListResponse,
+  AdjudicationActionRequest,
+  AdjudicationActionResponse,
+  Stage11ExecutionResponse,
+  Stage12ExecutionResponse,
+  Stage12StatusResponse,
+  Stage13ExecutionResponse,
+  Stage13StatusResponse,
+  ProvenanceRecordDetailResponse,
+  ProjectProvenanceSummaryResponse,
+  ProvenanceTimelineItem,
+  ProvenanceSourceItem,
+  ProvenanceRecordItem,
+  Stage14ExecutionResponse,
+  Stage14StatusResponse,
+  ExportCreateRequest,
+  ExportJobItem,
+  ExportJobListResponse,
+  ExportManifestResponse,
 } from '../types'
 
 
@@ -215,7 +250,274 @@ export const pipelineApi = {
     )
     return response.data
   },
+
+  async runConflictDetection(
+    projectId: string,
+    params?: ConflictDetectionRunRequest
+  ): Promise<ConflictDetectionRunResponse> {
+    const response = await apiClient.post<ConflictDetectionRunResponse>(
+      `/api/v1/projects/${projectId}/pipeline/stage-08/execute`,
+      params || {}
+    )
+    return response.data
+  },
+
+  async runValidation(
+    projectId: string,
+    params?: ValidationRunRequest
+  ): Promise<ValidationRunResponse> {
+    const response = await apiClient.post<ValidationRunResponse>(
+      `/api/v1/projects/${projectId}/pipeline/stage-09/execute`,
+      params || {}
+    )
+    return response.data
+  },
+
+  async getValidationResults(
+    projectId: string,
+    params?: {
+      status?: string
+      category?: string
+      search?: string
+      skip?: number
+      limit?: number
+    }
+  ): Promise<ValidationResultListResponse> {
+    const response = await apiClient.get<ValidationResultListResponse>(
+      `/api/v1/projects/${projectId}/validation-results`,
+      { params }
+    )
+    return response.data
+  },
+
+  async getValidationSummary(projectId: string): Promise<ValidationSummary> {
+    const response = await apiClient.get<ValidationSummary>(
+      `/api/v1/projects/${projectId}/validation-summary`
+    )
+    return response.data
+  },
+
+  async getValidationResultDetail(resultId: string): Promise<ValidationResult> {
+    const response = await apiClient.get<ValidationResult>(
+      `/api/v1/validation-results/${resultId}`
+    )
+    return response.data
+  },
+
+  async runConfidenceScoring(
+    projectId: string,
+    params?: ConfidenceScoringRunRequest
+  ): Promise<ConfidenceScoringRunResponse> {
+    const response = await apiClient.post<ConfidenceScoringRunResponse>(
+      `/api/v1/projects/${projectId}/pipeline/stage-10/execute`,
+      params || {}
+    )
+    return response.data
+  },
+
+  async getConfidenceResults(
+    projectId: string,
+    params?: {
+      bucket?: string
+      review_status?: string
+      search?: string
+      skip?: number
+      limit?: number
+    }
+  ): Promise<ConfidenceResultListResponse> {
+    const response = await apiClient.get<ConfidenceResultListResponse>(
+      `/api/v1/projects/${projectId}/confidence-results`,
+      { params }
+    )
+    return response.data
+  },
+
+  async getConfidenceSummary(projectId: string): Promise<ConfidenceSummary> {
+    const response = await apiClient.get<ConfidenceSummary>(
+      `/api/v1/projects/${projectId}/confidence-summary`
+    )
+    return response.data
+  },
+
+  async getConfidenceResultDetail(recordId: string): Promise<ConfidenceRecordItem> {
+    const response = await apiClient.get<ConfidenceRecordItem>(
+      `/api/v1/confidence-results/${recordId}`
+    )
+    return response.data
+  },
+
+  async getReviewSummary(projectId: string): Promise<ReviewQueueSummary> {
+    const response = await apiClient.get<ReviewQueueSummary>(
+      `/api/v1/projects/${projectId}/review-summary`
+    )
+    return response.data
+  },
+
+  async getAdjudicationQueue(
+    projectId: string,
+    params?: {
+      severity?: string
+      conflict_type?: string
+      bucket?: string
+      validation_status?: string
+      adjudication_status?: string
+      search?: string
+      page?: number
+      page_size?: number
+    }
+  ): Promise<ReviewQueueListResponse> {
+    const response = await apiClient.get<ReviewQueueListResponse>(
+      `/api/v1/projects/${projectId}/review-queue`,
+      { params }
+    )
+    return response.data
+  },
+
+  async getAdjudicationItemDetail(
+    projectId: string,
+    recordId: string
+  ): Promise<AdjudicationQueueItem> {
+    const response = await apiClient.get<AdjudicationQueueItem>(
+      `/api/v1/projects/${projectId}/review-queue/${recordId}`
+    )
+    return response.data
+  },
+
+  async submitAdjudication(
+    projectId: string,
+    recordId: string,
+    payload: AdjudicationActionRequest
+  ): Promise<AdjudicationActionResponse> {
+    const response = await apiClient.post<AdjudicationActionResponse>(
+      `/api/v1/projects/${projectId}/review-queue/${recordId}/adjudicate`,
+      payload
+    )
+    return response.data
+  },
+
+  async finalizeStage11(projectId: string): Promise<Stage11ExecutionResponse> {
+    const response = await apiClient.post<Stage11ExecutionResponse>(
+      `/api/v1/projects/${projectId}/pipeline/stage-11/execute`
+    )
+    return response.data
+  },
+
+  async executeStage12(projectId: string): Promise<Stage12ExecutionResponse> {
+    const response = await apiClient.post<Stage12ExecutionResponse>(
+      `/api/v1/projects/${projectId}/pipeline/stage-12/execute`
+    )
+    return response.data
+  },
+
+  async getStage12Status(projectId: string): Promise<Stage12StatusResponse> {
+    const response = await apiClient.get<Stage12StatusResponse>(
+      `/api/v1/projects/${projectId}/pipeline/stage-12/status`
+    )
+    return response.data
+  },
+
+  async executeStage13(projectId: string): Promise<Stage13ExecutionResponse> {
+    const response = await apiClient.post<Stage13ExecutionResponse>(
+      `/api/v1/projects/${projectId}/pipeline/stage-13/execute`
+    )
+    return response.data
+  },
+
+  async getStage13Status(projectId: string): Promise<Stage13StatusResponse> {
+    const response = await apiClient.get<Stage13StatusResponse>(
+      `/api/v1/projects/${projectId}/pipeline/stage-13/status`
+    )
+    return response.data
+  },
+
+  async executeStage14(projectId: string): Promise<Stage14ExecutionResponse> {
+    const response = await apiClient.post<Stage14ExecutionResponse>(
+      `/api/v1/projects/${projectId}/pipeline/stage-14/execute`
+    )
+    return response.data
+  },
+
+  async getStage14Status(projectId: string): Promise<Stage14StatusResponse> {
+    const response = await apiClient.get<Stage14StatusResponse>(
+      `/api/v1/projects/${projectId}/pipeline/stage-14/status`
+    )
+    return response.data
+  },
+
+  async createExportJob(
+    projectId: string,
+    req: ExportCreateRequest
+  ): Promise<ExportJobItem> {
+    const response = await apiClient.post<ExportJobItem>(
+      `/api/v1/projects/${projectId}/exports`,
+      req
+    )
+    return response.data
+  },
+
+  async getProjectExports(projectId: string): Promise<ExportJobListResponse> {
+    const response = await apiClient.get<ExportJobListResponse>(
+      `/api/v1/projects/${projectId}/exports`
+    )
+    return response.data
+  },
+
+  async getExportManifest(
+    projectId: string,
+    exportId: string
+  ): Promise<ExportManifestResponse> {
+    const response = await apiClient.get<ExportManifestResponse>(
+      `/api/v1/projects/${projectId}/exports/${exportId}/manifest`
+    )
+    return response.data
+  },
+
+  getExportDownloadUrl(projectId: string, exportId: string): string {
+    return `${API_BASE_URL}/api/v1/projects/${projectId}/exports/${exportId}/download`
+  },
+
+  async getProjectProvenance(
+    projectId: string,
+    params?: { skip?: number; limit?: number; status_filter?: string; search?: string }
+  ): Promise<ProjectProvenanceSummaryResponse> {
+    const response = await apiClient.get<ProjectProvenanceSummaryResponse>(
+      `/api/v1/projects/${projectId}/provenance`,
+      { params }
+    )
+    return response.data
+  },
+
+  async getProvenanceRecordDetail(
+    projectId: string,
+    unifiedRecordId: string
+  ): Promise<ProvenanceRecordDetailResponse> {
+    const response = await apiClient.get<ProvenanceRecordDetailResponse>(
+      `/api/v1/projects/${projectId}/provenance/${unifiedRecordId}`
+    )
+    return response.data
+  },
+
+  async getProvenanceTimeline(
+    projectId: string,
+    unifiedRecordId: string
+  ): Promise<ProvenanceTimelineItem[]> {
+    const response = await apiClient.get<ProvenanceTimelineItem[]>(
+      `/api/v1/projects/${projectId}/provenance/${unifiedRecordId}/timeline`
+    )
+    return response.data
+  },
+
+  async getProvenanceSources(
+    projectId: string,
+    unifiedRecordId: string
+  ): Promise<ProvenanceSourceItem[]> {
+    const response = await apiClient.get<ProvenanceSourceItem[]>(
+      `/api/v1/projects/${projectId}/provenance/${unifiedRecordId}/sources`
+    )
+    return response.data
+  },
 }
+
 
 export const api = {
   ...spatialAnalysisApi,
@@ -460,7 +762,7 @@ export const api = {
 
   async getUnifiedRecords(
     projectId: string,
-    params?: { status?: string; skip?: number; limit?: number }
+    params?: { status?: string; resolution_status?: string; search?: string; skip?: number; limit?: number }
   ): Promise<UnifiedRecordListResponse> {
     const response = await apiClient.get<UnifiedRecordListResponse>(
       `/api/v1/projects/${projectId}/unified-records`,
@@ -557,11 +859,35 @@ export const api = {
       status?: string
       attribute_name?: string
       severity?: string
+      conflict_type?: string
+      category?: string
+      source?: string
+      search?: string
       skip?: number
       limit?: number
     }
-  ): Promise<ConflictListResponse> {
-    const response = await apiClient.get<ConflictListResponse>(
+  ): Promise<any> {
+    const response = await apiClient.get(
+      `/api/v1/projects/${projectId}/conflicts`,
+      { params }
+    )
+    return response.data
+  },
+
+  async getGeospatialConflicts(
+    projectId: string,
+    params?: {
+      status?: string
+      severity?: string
+      conflict_type?: string
+      category?: string
+      source?: string
+      search?: string
+      skip?: number
+      limit?: number
+    }
+  ): Promise<GeospatialConflictListResponse> {
+    const response = await apiClient.get<GeospatialConflictListResponse>(
       `/api/v1/projects/${projectId}/conflicts`,
       { params }
     )
@@ -575,9 +901,21 @@ export const api = {
     return response.data
   },
 
-  async getConflictDetail(conflictId: string): Promise<AttributeConflict> {
-    const response = await apiClient.get<AttributeConflict>(
+  async getConflictDetail(conflictId: string): Promise<any> {
+    const response = await apiClient.get(
       `/api/v1/conflicts/${conflictId}`
+    )
+    return response.data
+  },
+
+  async updateConflictStatus(
+    conflictId: string,
+    status: string,
+    notes?: string
+  ): Promise<GeospatialConflict> {
+    const response = await apiClient.patch<GeospatialConflict>(
+      `/api/v1/conflicts/${conflictId}`,
+      { status, notes }
     )
     return response.data
   },

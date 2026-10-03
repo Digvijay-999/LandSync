@@ -126,3 +126,61 @@ class ConflictSummaryResponse(BaseModel):
     records_with_conflicts: int
     by_attribute: Dict[str, int] = Field(default_factory=dict)
     by_severity: Dict[str, int] = Field(default_factory=dict)
+
+
+class GeospatialConflictRead(BaseModel):
+    """
+    Representation of a Stage 08 Geospatial Conflict.
+    """
+
+    id: uuid.UUID
+    project_id: uuid.UUID
+    harmonized_record_id: str
+    source_feature_id: Optional[uuid.UUID] = None
+    candidate_feature_id: Optional[uuid.UUID] = None
+    conflict_type: str
+    category: str
+    severity: str
+    severity_reason: Optional[str] = None
+    status: str
+    source_a: str
+    source_b: str
+    field_name: str
+    value_a: Optional[str] = None
+    value_b: Optional[str] = None
+    normalized_value_a: Optional[str] = None
+    normalized_value_b: Optional[str] = None
+    discrepancy_value: Optional[str] = None
+    discrepancy_percentage: Optional[float] = None
+    detection_rule: str
+    explanation: Optional[str] = None
+    evidence: Dict[str, Any] = Field(default_factory=dict)
+    geometry_metadata: Optional[Dict[str, Any]] = None
+    idempotency_key: str
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class GeospatialConflictStatusUpdate(BaseModel):
+    """
+    Payload for updating a GeospatialConflict status (OPEN, ACKNOWLEDGED, RESOLVED, DISMISSED).
+    """
+
+    status: str = Field(..., description="Target status: OPEN, ACKNOWLEDGED, RESOLVED, DISMISSED")
+    notes: Optional[str] = Field(None, description="Optional audit notes or rationale for status change")
+
+
+class GeospatialConflictListResponse(BaseModel):
+    """
+    Paginated list of Stage 08 Geospatial Conflicts with aggregate metrics.
+    """
+
+    items: List[GeospatialConflictRead]
+    total: int
+    skip: int
+    limit: int
+    counts_by_severity: Dict[str, int] = Field(default_factory=dict)
+    counts_by_type: Dict[str, int] = Field(default_factory=dict)
+    counts_by_status: Dict[str, int] = Field(default_factory=dict)

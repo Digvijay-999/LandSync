@@ -1,8 +1,9 @@
 import uuid
+import time
 from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any, Tuple, Set
 from collections import defaultdict
-from sqlalchemy import select, func, and_, or_
+from sqlalchemy import select, func, and_, or_, text, desc, case
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload, joinedload
 
@@ -10,7 +11,8 @@ from app.models.project import Project
 from app.models.dataset import Dataset, DatasetVersion
 from app.models.feature import CanonicalFeature
 from app.models.unified import UnifiedLandRecord, UnifiedLandRecordSource
-from app.models.conflict import AttributeConflict, ConflictResolution
+from app.models.conflict import AttributeConflict, ConflictResolution, GeospatialConflict
+from app.models.pipeline import PipelineStageExecution
 from app.models.provenance import ProvenanceEvent
 from app.services.provenance.service import extract_feature_display_id
 from app.services.unified.service import detect_source_role
@@ -22,6 +24,13 @@ from app.schemas.conflict import (
     ConflictDismissInput,
     ConflictListResponse,
     ConflictSummaryResponse,
+    GeospatialConflictRead,
+    GeospatialConflictStatusUpdate,
+    GeospatialConflictListResponse,
+)
+from app.schemas.pipeline import (
+    ConflictDetectionRunRequest,
+    ConflictDetectionRunResponse,
 )
 
 
@@ -43,6 +52,66 @@ def parse_numeric_value(val: Any) -> Optional[float]:
         return float(val)
     except (ValueError, TypeError):
         return None
+
+
+def normalize_semantic_land_use(val: Any) -> Optional[str]:
+    """Normalizes land-use string into standardized semantic categories."""
+    if val is None:
+        return None
+    v = str(val).strip().lower()
+    if not v or v in ["none", "null", "unknown", "—", "-"]:
+        return None
+    if any(k in v for k in ["res", "housing", "gaothan", "bungalow", "apartment", "flats", "living"]):
+        return "RESIDENTIAL"
+    if any(k in v for k in ["agr", "farm", "crop", "paddy", "orchard", "kheti", "rural"]):
+        return "AGRICULTURAL"
+    if any(k in v for k in ["com", "shop", "office", "retail", "market", "mall", "business"]):
+        return "COMMERCIAL"
+    if any(k in v for k in ["ind", "factory", "warehouse", "workshop", "midc", "manufacturing"]):
+        return "INDUSTRIAL"
+    if any(k in v for k in ["gov", "public", "school", "hospital", "institute", "civic"]):
+        return "PUBLIC_INSTITUTIONAL"
+    if any(k in v for k in ["forest", "green", "garden", "park", "reserve"]):
+        return "FOREST_GREEN"
+    if any(k in v for k in ["vacant", "barren", "open", "na", "waste", "unutilized"]):
+        return "VACANT"
+    return v.upper()
+
+
+def normalize_semantic_mutation(val: Any) -> Optional[str]:
+    """Normalizes parcel registry mutation status."""
+    if val is None:
+        return None
+    v = str(val).strip().lower()
+    if not v or v in ["none", "null", "unknown", "—", "-"]:
+        return None
+    if any(k in v for k in ["appr", "cert", "sanction", "verified", "registered", "final"]):
+        return "APPROVED"
+    if any(k in v for k in ["pend", "in_progress", "under_review", "submitted", "awaiting", "draft"]):
+        return "PENDING"
+    if any(k in v for k in ["disp", "litig", "stay", "court", "object", "dispute", "challenge"]):
+        return "DISPUTED"
+    if any(k in v for k in ["reject", "cancel", "revoked", "dismissed"]):
+        return "REJECTED"
+    return v.upper()
+
+
+def normalize_semantic_risk(val: Any) -> Optional[str]:
+    """Normalizes environmental / hazard risk ratings."""
+    if val is None:
+        return None
+    v = str(val).strip().lower()
+    if not v or v in ["none", "null", "unknown", "—", "-"]:
+        return None
+    if any(k in v for k in ["crit", "severe", "very_high", "flood_zone_1"]):
+        return "CRITICAL"
+    if any(k in v for k in ["high", "hazard", "red", "danger"]):
+        return "HIGH"
+    if any(k in v for k in ["med", "moderate", "amber", "yellow"]):
+        return "MEDIUM"
+    if any(k in v for k in ["low", "safe", "green", "minimal"]):
+        return "LOW"
+    return v.upper()
 
 
 class ConflictDetectionService:
@@ -864,3 +933,782 @@ class ConflictDetectionService:
             created_at=conflict.created_at,
             updated_at=conflict.updated_at,
         )
+
+    # =========================================================================
+    # STAGE 08 — GEOSPATIAL CONFLICT DETECTION ENGINE & WORKFLOW
+    # =========================================================================
+
+    @classmethod
+    def _classify_area_severity(
+        cls,
+        diff_pct: float,
+        req: ConflictDetectionRunRequest,
+    ) -> Tuple[str, str]:
+        """Deterministic severity classification for parcel area discrepancy."""
+        if diff_pct > req.area_high_threshold_pct:
+            return (
+                "CRITICAL",
+                f"Parcel area differs by {diff_pct:.1f}%, exceeding the critical threshold of {req.area_high_threshold_pct:.1f}%.",
+            )
+        elif diff_pct >= req.area_medium_threshold_pct:
+            return (
+                "HIGH",
+                f"Parcel area differs by {diff_pct:.1f}%, exceeding the high conflict threshold of {req.area_medium_threshold_pct:.1f}%.",
+            )
+        elif diff_pct >= req.area_low_threshold_pct:
+            return (
+                "MEDIUM",
+                f"Parcel area differs by {diff_pct:.1f}%, exceeding the standard tolerance threshold of {req.area_low_threshold_pct:.1f}%.",
+            )
+        else:
+            return (
+                "LOW",
+                f"Parcel area differs by {diff_pct:.1f}%, within minor tolerance limits.",
+            )
+
+    @classmethod
+    def _classify_land_use_severity(
+        cls,
+        norm_a: str,
+        norm_b: str,
+    ) -> Tuple[str, str]:
+        """Deterministic severity classification for land use divergence."""
+        critical_incompatible = {
+            ("AGRICULTURAL", "INDUSTRIAL"), ("INDUSTRIAL", "AGRICULTURAL"),
+            ("AGRICULTURAL", "COMMERCIAL"), ("COMMERCIAL", "AGRICULTURAL"),
+            ("RESIDENTIAL", "INDUSTRIAL"), ("INDUSTRIAL", "RESIDENTIAL"),
+            ("FOREST_GREEN", "INDUSTRIAL"), ("INDUSTRIAL", "FOREST_GREEN"),
+            ("FOREST_GREEN", "COMMERCIAL"), ("COMMERCIAL", "FOREST_GREEN"),
+        }
+        if (norm_a, norm_b) in critical_incompatible:
+            return (
+                "CRITICAL",
+                f"Severe zoning disparity between incompatible land-use classifications ({norm_a} vs {norm_b}).",
+            )
+        elif (norm_a == "RESIDENTIAL" and norm_b == "COMMERCIAL") or (norm_a == "COMMERCIAL" and norm_b == "RESIDENTIAL"):
+            return (
+                "HIGH",
+                f"Significant land use conflict between {norm_a} and {norm_b} requiring regulatory review.",
+            )
+        elif "VACANT" in (norm_a, norm_b):
+            return (
+                "MEDIUM",
+                f"Developed vs vacant land-use designation divergence ({norm_a} vs {norm_b}).",
+            )
+        else:
+            return (
+                "MEDIUM",
+                f"Semantic land use classification divergence ({norm_a} vs {norm_b}).",
+            )
+
+    @classmethod
+    def _classify_mutation_severity(
+        cls,
+        norm_a: str,
+        norm_b: str,
+    ) -> Tuple[str, str]:
+        """Deterministic severity classification for parcel mutation / registry status."""
+        if "DISPUTED" in (norm_a, norm_b) or "REJECTED" in (norm_a, norm_b):
+            return (
+                "CRITICAL",
+                f"Registry title dispute or rejection flagged in mutation record ({norm_a} vs {norm_b}).",
+            )
+        elif ("APPROVED" in (norm_a, norm_b)) and ("PENDING" in (norm_a, norm_b)):
+            return (
+                "HIGH",
+                f"Disagreement in mutation confirmation: one source records Approved while another remains Pending.",
+            )
+        else:
+            return (
+                "MEDIUM",
+                f"Registry mutation status divergence between '{norm_a}' and '{norm_b}'.",
+            )
+
+    @classmethod
+    def _classify_risk_severity(
+        cls,
+        norm_a: str,
+        norm_b: str,
+    ) -> Tuple[str, str]:
+        """Deterministic severity classification for environmental / hazard risk ratings."""
+        if ("CRITICAL" in (norm_a, norm_b) or "HIGH" in (norm_a, norm_b)) and ("LOW" in (norm_a, norm_b)):
+            return (
+                "CRITICAL",
+                f"Major environmental hazard divergence: High/Critical hazard vs Low/Safe risk.",
+            )
+        elif ("HIGH" in (norm_a, norm_b)) and ("MEDIUM" in (norm_a, norm_b)):
+            return (
+                "HIGH",
+                f"Substantial hazard risk rating divergence ({norm_a} vs {norm_b}).",
+            )
+        else:
+            return (
+                "MEDIUM",
+                f"Environmental risk rating discrepancy ({norm_a} vs {norm_b}).",
+            )
+
+    @classmethod
+    def _classify_geometry_severity(
+        cls,
+        iou: float,
+        centroid_dist: float,
+        valid_a: bool,
+        valid_b: bool,
+    ) -> Tuple[str, str]:
+        """Deterministic severity classification for topological / spatial boundary variance."""
+        if not valid_a or not valid_b:
+            return (
+                "CRITICAL",
+                f"Invalid topological polygon geometry detected (Source A valid={valid_a}, Source B valid={valid_b}).",
+            )
+        elif iou < 0.50 or centroid_dist > 25.0:
+            return (
+                "CRITICAL",
+                f"Major boundary misalignment: spatial IoU is {iou:.1%} (<50%) or centroid offset is {centroid_dist:.1f} m (>25m).",
+            )
+        elif iou < 0.70 or centroid_dist > 10.0:
+            return (
+                "HIGH",
+                f"Substantial boundary discrepancy: spatial IoU is {iou:.1%} (<70%) or centroid offset is {centroid_dist:.1f} m (>10m).",
+            )
+        elif iou < 0.85 or centroid_dist > 5.0:
+            return (
+                "MEDIUM",
+                f"Moderate boundary variance: spatial IoU is {iou:.1%} (<85%) or centroid offset is {centroid_dist:.1f} m (>5m).",
+            )
+        else:
+            return (
+                "LOW",
+                f"Minor boundary deviation: spatial IoU is {iou:.1%}, centroid offset is {centroid_dist:.1f} m.",
+            )
+
+    @classmethod
+    async def execute_stage_08(
+        cls,
+        db: AsyncSession,
+        project_id: uuid.UUID,
+        req: Optional[ConflictDetectionRunRequest] = None,
+    ) -> ConflictDetectionRunResponse:
+        """
+        Executes STAGE 08 — Conflict Detection:
+        Consumes Stage 07 harmonized records and candidate pairs, executes deterministic
+        conflict detection rules across area, land-use, mutation, risk, geometry, and attributes,
+        calculates PostGIS spatial evidence, and persists conflict records idempotently.
+        """
+        start_time = time.perf_counter()
+        if req is None:
+            req = ConflictDetectionRunRequest()
+
+        project = await db.get(Project, project_id)
+        if not project:
+            raise ValueError(f"Project with ID '{project_id}' not found.")
+
+        # 1. Fetch Stage 07 execution output
+        stage7_stmt = (
+            select(PipelineStageExecution)
+            .where(
+                PipelineStageExecution.project_id == project_id,
+                PipelineStageExecution.stage_id == "harmonization",
+                PipelineStageExecution.status == "completed",
+            )
+            .order_by(PipelineStageExecution.completed_at.desc())
+            .limit(1)
+        )
+        stage7_exec = (await db.execute(stage7_stmt)).scalar_one_or_none()
+        if not stage7_exec:
+            raise ValueError(
+                "Stage 07 Attribute/Geometry Harmonization must be completed before executing Stage 08 Conflict Detection."
+            )
+
+        records_preview = (stage7_exec.results or {}).get("records_preview") or []
+
+        # Fetch datasets in project for source names
+        ds_stmt = (
+            select(Dataset)
+            .where(Dataset.project_id == project_id)
+            .order_by(Dataset.created_at.asc())
+        )
+        datasets = list((await db.execute(ds_stmt)).scalars().all())
+        ds_name_a = datasets[0].name if len(datasets) > 0 else "Source Dataset A"
+        ds_name_b = datasets[1].name if len(datasets) > 1 else "Source Dataset B"
+
+        detected_conflicts_data: List[Dict[str, Any]] = []
+
+        # 2. Iterate each harmonized candidate pair and detect conflicts
+        for item in records_preview:
+            rec_id = item.get("id") or str(uuid.uuid4())
+            src_ident = item.get("source_identifier") or "Src"
+            cand_ident = item.get("candidate_identifier") or "Cand"
+            src_survey = item.get("source_survey_number")
+            cand_survey = item.get("candidate_survey_number")
+            src_area = item.get("source_area")
+            cand_area = item.get("candidate_area")
+            src_lu = item.get("source_land_use")
+            cand_lu = item.get("candidate_land_use")
+            src_mut = item.get("source_mutation_status")
+            cand_mut = item.get("candidate_mutation_status")
+            src_risk = item.get("source_risk_level")
+            cand_risk = item.get("candidate_risk_level")
+            geom_status = item.get("geometry_status") or "AUTHORITATIVE_SELECTED"
+
+            # Parse feature IDs
+            sf_id: Optional[uuid.UUID] = None
+            cf_id: Optional[uuid.UUID] = None
+            if "_" in rec_id:
+                parts = rec_id.split("_")
+                try:
+                    sf_id = uuid.UUID(parts[0])
+                    cf_id = uuid.UUID(parts[1])
+                except (ValueError, IndexError):
+                    pass
+
+            # Spatial metrics via PostGIS where possible
+            iou = 0.85
+            centroid_dist = 2.5
+            valid_sf = True
+            valid_cf = True
+            gis_area_a = src_area
+            gis_area_b = cand_area
+
+            if req.include_geometry_metrics and sf_id and cf_id:
+                try:
+                    spatial_sql = text("""
+                        SELECT
+                            ST_Area(sf.geometry::geography) AS area_sf,
+                            ST_Area(cf.geometry::geography) AS area_cf,
+                            ST_Area(
+                                CASE 
+                                    WHEN ST_Intersects(sf.geometry, cf.geometry) 
+                                    THEN ST_Intersection(sf.geometry, cf.geometry)::geography 
+                                    ELSE ST_GeomFromText('POLYGON EMPTY', 4326)::geography 
+                                END
+                            ) AS inter_area,
+                            ST_Distance(
+                                ST_Centroid(sf.geometry)::geography, 
+                                ST_Centroid(cf.geometry)::geography
+                            ) AS centroid_dist,
+                            ST_IsValid(sf.geometry) AS valid_sf,
+                            ST_IsValid(cf.geometry) AS valid_cf
+                        FROM canonical_features sf, canonical_features cf
+                        WHERE sf.id = :sf_id AND cf.id = :cf_id
+                    """)
+                    row = (await db.execute(spatial_sql, {"sf_id": sf_id, "cf_id": cf_id})).first()
+                    if row:
+                        gis_area_a = float(row.area_sf or 0.0)
+                        gis_area_b = float(row.area_cf or 0.0)
+                        inter_a = float(row.inter_area or 0.0)
+                        centroid_dist = round(float(row.centroid_dist or 0.0), 2)
+                        valid_sf = bool(row.valid_sf)
+                        valid_cf = bool(row.valid_cf)
+                        union_a = (gis_area_a + gis_area_b - inter_a)
+                        iou = round(inter_a / union_a, 4) if union_a > 0 else 0.0
+                except Exception:
+                    pass
+
+            geom_metadata = {
+                "iou": iou,
+                "centroid_distance_meters": centroid_dist,
+                "source_area_sqm": gis_area_a or src_area,
+                "candidate_area_sqm": gis_area_b or cand_area,
+                "source_valid": valid_sf,
+                "candidate_valid": valid_cf,
+                "geometry_status": geom_status,
+            }
+
+            # RULE A: Area Discrepancy
+            eval_area_a = src_area if src_area is not None else gis_area_a
+            eval_area_b = cand_area if cand_area is not None else gis_area_b
+            if eval_area_a and eval_area_b and max(eval_area_a, eval_area_b) > 0:
+                area_diff = round(abs(eval_area_a - eval_area_b), 2)
+                area_pct = round(area_diff / max(eval_area_a, eval_area_b) * 100.0, 2)
+                if area_pct >= req.area_low_threshold_pct:
+                    sev, sev_reason = cls._classify_area_severity(area_pct, req)
+                    detected_conflicts_data.append({
+                        "harmonized_record_id": rec_id,
+                        "source_feature_id": sf_id,
+                        "candidate_feature_id": cf_id,
+                        "conflict_type": "AREA_DISCREPANCY",
+                        "category": "GEOMETRY",
+                        "severity": sev,
+                        "severity_reason": sev_reason,
+                        "source_a": ds_name_a,
+                        "source_b": ds_name_b,
+                        "field_name": "area",
+                        "value_a": f"{eval_area_a:.2f} m²",
+                        "value_b": f"{eval_area_b:.2f} m²",
+                        "normalized_value_a": f"{eval_area_a:.2f}",
+                        "normalized_value_b": f"{eval_area_b:.2f}",
+                        "discrepancy_value": f"{area_diff:.2f} m²",
+                        "discrepancy_percentage": area_pct,
+                        "detection_rule": "RULE_AREA_DISCREPANCY_PERCENT",
+                        "explanation": f"Parcel area diverges by {area_pct:.1f}% ({eval_area_a:.1f} m² vs {eval_area_b:.1f} m², difference of {area_diff:.1f} m²).",
+                        "evidence": {
+                            "source_area": eval_area_a,
+                            "candidate_area": eval_area_b,
+                            "difference_sqm": area_diff,
+                            "percentage": area_pct,
+                            "threshold_low": req.area_low_threshold_pct,
+                            "threshold_medium": req.area_medium_threshold_pct,
+                            "threshold_high": req.area_high_threshold_pct,
+                        },
+                        "geometry_metadata": geom_metadata,
+                        "idempotency_key": f"{project_id}:{rec_id}:AREA_DISCREPANCY:area",
+                    })
+
+            # RULE B: Land Use Conflict
+            norm_lu_a = normalize_semantic_land_use(src_lu)
+            norm_lu_b = normalize_semantic_land_use(cand_lu)
+            if norm_lu_a and norm_lu_b and norm_lu_a != norm_lu_b:
+                sev, sev_reason = cls._classify_land_use_severity(norm_lu_a, norm_lu_b)
+                detected_conflicts_data.append({
+                    "harmonized_record_id": rec_id,
+                    "source_feature_id": sf_id,
+                    "candidate_feature_id": cf_id,
+                    "conflict_type": "LAND_USE_CONFLICT",
+                    "category": "SEMANTIC",
+                    "severity": sev,
+                    "severity_reason": sev_reason,
+                    "source_a": ds_name_a,
+                    "source_b": ds_name_b,
+                    "field_name": "land_use",
+                    "value_a": str(src_lu),
+                    "value_b": str(cand_lu),
+                    "normalized_value_a": norm_lu_a,
+                    "normalized_value_b": norm_lu_b,
+                    "discrepancy_value": f"{norm_lu_a} != {norm_lu_b}",
+                    "discrepancy_percentage": None,
+                    "detection_rule": "RULE_SEMANTIC_LAND_USE_DISCREPANCY",
+                    "explanation": f"Semantic land use mismatch: Source A declares '{src_lu}' ({norm_lu_a}) while Source B declares '{cand_lu}' ({norm_lu_b}).",
+                    "evidence": {
+                        "raw_source_value": src_lu,
+                        "raw_candidate_value": cand_lu,
+                        "normalized_source": norm_lu_a,
+                        "normalized_candidate": norm_lu_b,
+                    },
+                    "geometry_metadata": geom_metadata,
+                    "idempotency_key": f"{project_id}:{rec_id}:LAND_USE_CONFLICT:land_use",
+                })
+
+            # RULE C: Mutation / Status Conflict
+            norm_mut_a = normalize_semantic_mutation(src_mut)
+            norm_mut_b = normalize_semantic_mutation(cand_mut)
+            if norm_mut_a and norm_mut_b and norm_mut_a != norm_mut_b:
+                sev, sev_reason = cls._classify_mutation_severity(norm_mut_a, norm_mut_b)
+                detected_conflicts_data.append({
+                    "harmonized_record_id": rec_id,
+                    "source_feature_id": sf_id,
+                    "candidate_feature_id": cf_id,
+                    "conflict_type": "MUTATION_CONFLICT",
+                    "category": "REGISTRY",
+                    "severity": sev,
+                    "severity_reason": sev_reason,
+                    "source_a": ds_name_a,
+                    "source_b": ds_name_b,
+                    "field_name": "mutation_status",
+                    "value_a": str(src_mut),
+                    "value_b": str(cand_mut),
+                    "normalized_value_a": norm_mut_a,
+                    "normalized_value_b": norm_mut_b,
+                    "discrepancy_value": f"{norm_mut_a} != {norm_mut_b}",
+                    "discrepancy_percentage": None,
+                    "detection_rule": "RULE_REGISTRY_MUTATION_DISAGREEMENT",
+                    "explanation": f"Registry mutation status conflict: Source A reports '{src_mut}' ({norm_mut_a}) while Source B reports '{cand_mut}' ({norm_mut_b}).",
+                    "evidence": {
+                        "raw_source_mutation": src_mut,
+                        "raw_candidate_mutation": cand_mut,
+                        "normalized_source": norm_mut_a,
+                        "normalized_candidate": norm_mut_b,
+                    },
+                    "geometry_metadata": geom_metadata,
+                    "idempotency_key": f"{project_id}:{rec_id}:MUTATION_CONFLICT:mutation_status",
+                })
+
+            # RULE D: Environmental / Hazard Risk Conflict
+            norm_risk_a = normalize_semantic_risk(src_risk)
+            norm_risk_b = normalize_semantic_risk(cand_risk)
+            if norm_risk_a and norm_risk_b and norm_risk_a != norm_risk_b:
+                sev, sev_reason = cls._classify_risk_severity(norm_risk_a, norm_risk_b)
+                detected_conflicts_data.append({
+                    "harmonized_record_id": rec_id,
+                    "source_feature_id": sf_id,
+                    "candidate_feature_id": cf_id,
+                    "conflict_type": "RISK_CONFLICT",
+                    "category": "RISK",
+                    "severity": sev,
+                    "severity_reason": sev_reason,
+                    "source_a": ds_name_a,
+                    "source_b": ds_name_b,
+                    "field_name": "risk_level",
+                    "value_a": str(src_risk),
+                    "value_b": str(cand_risk),
+                    "normalized_value_a": norm_risk_a,
+                    "normalized_value_b": norm_risk_b,
+                    "discrepancy_value": f"{norm_risk_a} != {norm_risk_b}",
+                    "discrepancy_percentage": None,
+                    "detection_rule": "RULE_ENVIRONMENTAL_RISK_DIVERGENCE",
+                    "explanation": f"Hazard classification divergence: Source A evaluates risk as '{src_risk}' ({norm_risk_a}) vs Source B '{cand_risk}' ({norm_risk_b}).",
+                    "evidence": {
+                        "raw_source_risk": src_risk,
+                        "raw_candidate_risk": cand_risk,
+                        "normalized_source": norm_risk_a,
+                        "normalized_candidate": norm_risk_b,
+                    },
+                    "geometry_metadata": geom_metadata,
+                    "idempotency_key": f"{project_id}:{rec_id}:RISK_CONFLICT:risk_level",
+                })
+
+            # RULE E: Geometry / Spatial Boundary Mismatch
+            if iou < 0.85 or centroid_dist > 5.0 or (not valid_sf) or (not valid_cf) or (geom_status != "CONGRUENT"):
+                sev, sev_reason = cls._classify_geometry_severity(iou, centroid_dist, valid_sf, valid_cf)
+                detected_conflicts_data.append({
+                    "harmonized_record_id": rec_id,
+                    "source_feature_id": sf_id,
+                    "candidate_feature_id": cf_id,
+                    "conflict_type": "GEOMETRY_MISMATCH",
+                    "category": "GEOMETRY",
+                    "severity": sev,
+                    "severity_reason": sev_reason,
+                    "source_a": ds_name_a,
+                    "source_b": ds_name_b,
+                    "field_name": "geometry",
+                    "value_a": f"Parcel {src_ident} Polygon",
+                    "value_b": f"Parcel {cand_ident} Polygon",
+                    "normalized_value_a": f"IoU: {iou:.2%}",
+                    "normalized_value_b": f"Offset: {centroid_dist:.1f}m",
+                    "discrepancy_value": f"IoU: {iou:.2%}, Centroid: {centroid_dist:.1f}m",
+                    "discrepancy_percentage": round((1.0 - iou) * 100.0, 2),
+                    "detection_rule": "RULE_POSTGIS_SPATIAL_TOPOLOGY_MISMATCH",
+                    "explanation": f"Boundary variance detected between datasets: Spatial IoU is {iou:.1%} and centroid offset is {centroid_dist:.1f} m.",
+                    "evidence": geom_metadata,
+                    "geometry_metadata": geom_metadata,
+                    "idempotency_key": f"{project_id}:{rec_id}:GEOMETRY_MISMATCH:geometry",
+                })
+
+            # RULE F: Cadastral Survey Number Disagreement (Attribute Mismatch)
+            if src_survey and cand_survey and str(src_survey).strip().lower() != str(cand_survey).strip().lower():
+                detected_conflicts_data.append({
+                    "harmonized_record_id": rec_id,
+                    "source_feature_id": sf_id,
+                    "candidate_feature_id": cf_id,
+                    "conflict_type": "ATTRIBUTE_MISMATCH",
+                    "category": "REGISTRY",
+                    "severity": "MEDIUM",
+                    "severity_reason": f"Cadastral survey identifier mismatch between '{src_survey}' and '{cand_survey}'.",
+                    "source_a": ds_name_a,
+                    "source_b": ds_name_b,
+                    "field_name": "survey_number",
+                    "value_a": str(src_survey),
+                    "value_b": str(cand_survey),
+                    "normalized_value_a": str(src_survey).strip().upper(),
+                    "normalized_value_b": str(cand_survey).strip().upper(),
+                    "discrepancy_value": f"{src_survey} != {cand_survey}",
+                    "discrepancy_percentage": None,
+                    "detection_rule": "RULE_CADASTRAL_IDENTIFIER_DISCREPANCY",
+                    "explanation": f"Survey identifier mismatch: Source A records '{src_survey}' while Source B records '{cand_survey}'.",
+                    "evidence": {
+                        "source_survey": src_survey,
+                        "candidate_survey": cand_survey,
+                    },
+                    "geometry_metadata": geom_metadata,
+                    "idempotency_key": f"{project_id}:{rec_id}:ATTRIBUTE_MISMATCH:survey_number",
+                })
+
+        # 3. Idempotent Database Upsert
+        existing_stmt = select(GeospatialConflict).where(GeospatialConflict.project_id == project_id)
+        existing_conflicts = list((await db.execute(existing_stmt)).scalars().all())
+        existing_by_key = {c.idempotency_key: c for c in existing_conflicts}
+
+        created_count = 0
+        updated_count = 0
+        now = datetime.now(timezone.utc)
+
+        for c_data in detected_conflicts_data:
+            key = c_data["idempotency_key"]
+            existing = existing_by_key.get(key)
+            if existing:
+                # Retain human reviewer status if acknowledged or resolved
+                if existing.status in ["ACKNOWLEDGED", "RESOLVED", "DISMISSED"]:
+                    pass
+                else:
+                    existing.status = "OPEN"
+
+                existing.severity = c_data["severity"]
+                existing.severity_reason = c_data["severity_reason"]
+                existing.value_a = c_data["value_a"]
+                existing.value_b = c_data["value_b"]
+                existing.normalized_value_a = c_data["normalized_value_a"]
+                existing.normalized_value_b = c_data["normalized_value_b"]
+                existing.discrepancy_value = c_data["discrepancy_value"]
+                existing.discrepancy_percentage = c_data["discrepancy_percentage"]
+                existing.explanation = c_data["explanation"]
+                existing.evidence = c_data["evidence"]
+                existing.geometry_metadata = c_data["geometry_metadata"]
+                existing.updated_at = now
+                updated_count += 1
+            else:
+                new_conflict = GeospatialConflict(
+                    id=uuid.uuid4(),
+                    project_id=project_id,
+                    harmonized_record_id=c_data["harmonized_record_id"],
+                    source_feature_id=c_data["source_feature_id"],
+                    candidate_feature_id=c_data["candidate_feature_id"],
+                    conflict_type=c_data["conflict_type"],
+                    category=c_data["category"],
+                    severity=c_data["severity"],
+                    severity_reason=c_data["severity_reason"],
+                    status="OPEN",
+                    source_a=c_data["source_a"],
+                    source_b=c_data["source_b"],
+                    field_name=c_data["field_name"],
+                    value_a=c_data["value_a"],
+                    value_b=c_data["value_b"],
+                    normalized_value_a=c_data["normalized_value_a"],
+                    normalized_value_b=c_data["normalized_value_b"],
+                    discrepancy_value=c_data["discrepancy_value"],
+                    discrepancy_percentage=c_data["discrepancy_percentage"],
+                    detection_rule=c_data["detection_rule"],
+                    explanation=c_data["explanation"],
+                    evidence=c_data["evidence"],
+                    geometry_metadata=c_data["geometry_metadata"],
+                    idempotency_key=key,
+                    created_at=now,
+                    updated_at=now,
+                )
+                db.add(new_conflict)
+                existing_by_key[key] = new_conflict
+                created_count += 1
+
+        # 4. Compute Summary Statistics
+        counts_by_sev = {
+            "CRITICAL": sum(1 for c in detected_conflicts_data if c["severity"] == "CRITICAL"),
+            "HIGH": sum(1 for c in detected_conflicts_data if c["severity"] == "HIGH"),
+            "MEDIUM": sum(1 for c in detected_conflicts_data if c["severity"] == "MEDIUM"),
+            "LOW": sum(1 for c in detected_conflicts_data if c["severity"] == "LOW"),
+        }
+        counts_by_type: Dict[str, int] = {}
+        for c in detected_conflicts_data:
+            t = c["conflict_type"]
+            counts_by_type[t] = counts_by_type.get(t, 0) + 1
+
+        duration_ms = round((time.perf_counter() - start_time) * 1000.0, 2)
+
+        results_data = {
+            "records_scanned": len(records_preview),
+            "conflicts_detected": len(detected_conflicts_data),
+            "critical_count": counts_by_sev["CRITICAL"],
+            "high_count": counts_by_sev["HIGH"],
+            "medium_count": counts_by_sev["MEDIUM"],
+            "low_count": counts_by_sev["LOW"],
+            "counts_by_severity": counts_by_sev,
+            "counts_by_type": counts_by_type,
+            "conflicts_created": created_count,
+            "conflicts_updated": updated_count,
+            "execution_time_ms": duration_ms,
+        }
+
+        # 5. Update or Create PipelineStageExecution for Stage 08
+        stage8_stmt = (
+            select(PipelineStageExecution)
+            .where(
+                PipelineStageExecution.project_id == project_id,
+                PipelineStageExecution.stage_id == "conflict",
+            )
+        )
+        stage8_exec = (await db.execute(stage8_stmt)).scalar_one_or_none()
+
+        inputs_data = req.model_dump()
+        if not stage8_exec:
+            stage8_exec = PipelineStageExecution(
+                id=uuid.uuid4(),
+                project_id=project_id,
+                stage_number=8,
+                stage_id="conflict",
+                status="completed",
+                inputs=inputs_data,
+                results=results_data,
+                started_at=now,
+                completed_at=now,
+            )
+            db.add(stage8_exec)
+        else:
+            stage8_exec.status = "completed"
+            stage8_exec.inputs = inputs_data
+            stage8_exec.results = results_data
+            stage8_exec.completed_at = now
+
+        await db.commit()
+
+        return ConflictDetectionRunResponse(
+            stage_id="conflict",
+            stage_number=8,
+            status="completed",
+            project_id=project_id,
+            records_scanned=len(records_preview),
+            conflicts_detected=len(detected_conflicts_data),
+            critical_count=counts_by_sev["CRITICAL"],
+            high_count=counts_by_sev["HIGH"],
+            medium_count=counts_by_sev["MEDIUM"],
+            low_count=counts_by_sev["LOW"],
+            counts_by_severity=counts_by_sev,
+            counts_by_type=counts_by_type,
+            conflicts_created=created_count,
+            conflicts_updated=updated_count,
+            execution_time_ms=duration_ms,
+        )
+
+    @classmethod
+    async def list_geospatial_conflicts(
+        cls,
+        db: AsyncSession,
+        project_id: uuid.UUID,
+        severity: Optional[str] = None,
+        conflict_type: Optional[str] = None,
+        category: Optional[str] = None,
+        status: Optional[str] = None,
+        source: Optional[str] = None,
+        search: Optional[str] = None,
+        skip: int = 0,
+        limit: int = 50,
+    ) -> GeospatialConflictListResponse:
+        """
+        Lists Stage 08 Geospatial Conflicts with pagination, filtering, and aggregate metrics.
+        """
+        project = await db.get(Project, project_id)
+        if not project:
+            raise ValueError(f"Project with ID '{project_id}' not found.")
+
+        # Aggregate counts across all conflicts for this project
+        sev_stmt = (
+            select(GeospatialConflict.severity, func.count(GeospatialConflict.id))
+            .where(GeospatialConflict.project_id == project_id)
+            .group_by(GeospatialConflict.severity)
+        )
+        sev_rows = (await db.execute(sev_stmt)).all()
+        counts_by_sev = {r[0]: r[1] for r in sev_rows}
+
+        type_stmt = (
+            select(GeospatialConflict.conflict_type, func.count(GeospatialConflict.id))
+            .where(GeospatialConflict.project_id == project_id)
+            .group_by(GeospatialConflict.conflict_type)
+        )
+        type_rows = (await db.execute(type_stmt)).all()
+        counts_by_type = {r[0]: r[1] for r in type_rows}
+
+        status_stmt = (
+            select(GeospatialConflict.status, func.count(GeospatialConflict.id))
+            .where(GeospatialConflict.project_id == project_id)
+            .group_by(GeospatialConflict.status)
+        )
+        status_rows = (await db.execute(status_stmt)).all()
+        counts_by_status = {r[0]: r[1] for r in status_rows}
+
+        # Build filter conditions
+        filters = [GeospatialConflict.project_id == project_id]
+
+        if severity and severity.upper() != "ALL":
+            filters.append(GeospatialConflict.severity == severity.strip().upper())
+        if conflict_type and conflict_type.upper() != "ALL":
+            filters.append(GeospatialConflict.conflict_type == conflict_type.strip().upper())
+        if category and category.upper() != "ALL":
+            filters.append(GeospatialConflict.category == category.strip().upper())
+        if status and status.upper() != "ALL":
+            filters.append(GeospatialConflict.status == status.strip().upper())
+        if source:
+            s_pat = f"%{source.strip()}%"
+            filters.append(
+                or_(
+                    GeospatialConflict.source_a.ilike(s_pat),
+                    GeospatialConflict.source_b.ilike(s_pat),
+                )
+            )
+        if search:
+            q_pat = f"%{search.strip()}%"
+            filters.append(
+                or_(
+                    GeospatialConflict.harmonized_record_id.ilike(q_pat),
+                    GeospatialConflict.field_name.ilike(q_pat),
+                    GeospatialConflict.explanation.ilike(q_pat),
+                    GeospatialConflict.value_a.ilike(q_pat),
+                    GeospatialConflict.value_b.ilike(q_pat),
+                )
+            )
+
+        # Count total matching
+        total_stmt = select(func.count(GeospatialConflict.id)).where(*filters)
+        total = (await db.execute(total_stmt)).scalar() or 0
+
+        # Query items with custom severity ordering: CRITICAL -> HIGH -> MEDIUM -> LOW
+        severity_order = case(
+            (GeospatialConflict.severity == "CRITICAL", 1),
+            (GeospatialConflict.severity == "HIGH", 2),
+            (GeospatialConflict.severity == "MEDIUM", 3),
+            (GeospatialConflict.severity == "LOW", 4),
+            else_=5,
+        )
+
+        query = (
+            select(GeospatialConflict)
+            .where(*filters)
+            .order_by(severity_order.asc(), GeospatialConflict.created_at.desc())
+            .offset(skip)
+            .limit(limit)
+        )
+        items = list((await db.execute(query)).scalars().all())
+
+        return GeospatialConflictListResponse(
+            items=[GeospatialConflictRead.model_validate(c) for c in items],
+            total=total,
+            skip=skip,
+            limit=limit,
+            counts_by_severity=counts_by_sev,
+            counts_by_type=counts_by_type,
+            counts_by_status=counts_by_status,
+        )
+
+    @classmethod
+    async def get_geospatial_conflict(
+        cls,
+        db: AsyncSession,
+        conflict_id: uuid.UUID,
+    ) -> Optional[GeospatialConflictRead]:
+        """Returns full details of a Stage 08 GeospatialConflict."""
+        conflict = await db.get(GeospatialConflict, conflict_id)
+        if not conflict:
+            return None
+        return GeospatialConflictRead.model_validate(conflict)
+
+    @classmethod
+    async def update_geospatial_conflict_status(
+        cls,
+        db: AsyncSession,
+        conflict_id: uuid.UUID,
+        update_data: GeospatialConflictStatusUpdate,
+    ) -> GeospatialConflictRead:
+        """Updates the status of a Stage 08 GeospatialConflict with audit trail."""
+        conflict = await db.get(GeospatialConflict, conflict_id)
+        if not conflict:
+            raise ValueError(f"Geospatial conflict with ID '{conflict_id}' not found.")
+
+        target_status = update_data.status.strip().upper()
+        valid_statuses = ["OPEN", "ACKNOWLEDGED", "RESOLVED", "DISMISSED"]
+        if target_status not in valid_statuses:
+            raise ValueError(f"Invalid status '{update_data.status}'. Allowed: {', '.join(valid_statuses)}")
+
+        now = datetime.now(timezone.utc)
+        conflict.status = target_status
+        conflict.updated_at = now
+
+        evidence = dict(conflict.evidence or {})
+        history = list(evidence.get("status_history", []))
+        history.append({
+            "status": target_status,
+            "notes": update_data.notes,
+            "updated_at": now.isoformat(),
+        })
+        evidence["status_history"] = history
+        conflict.evidence = evidence
+
+        await db.commit()
+        await db.refresh(conflict)
+        return GeospatialConflictRead.model_validate(conflict)
+
