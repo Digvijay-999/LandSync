@@ -7,6 +7,8 @@ export function useUnifiedRecords(
   projectId?: string,
   params?: {
     status?: string
+    resolution_status?: string
+    search?: string
     skip?: number
     limit?: number
   }

@@ -41,7 +41,7 @@ export const PipelineIndicator: React.FC<PipelineIndicatorProps> = ({
         stage_id: def.stage_id,
         name: def.name,
         status: def.stage_number < 5 ? ('completed' as const) : def.stage_number === 5 ? ('ready' as const) : ('disabled' as const),
-        is_runnable: def.stage_number <= 7,
+        is_runnable: def.stage_number <= 11,
         prerequisites_met: def.stage_number <= 5,
         prerequisites_message: def.stage_number > 5 ? 'Pending prior stages' : null,
         description: '',

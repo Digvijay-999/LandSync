@@ -131,6 +131,65 @@ class HarmonizationRunResponse(BaseModel):
     execution_time_ms: float
 
 
+class ConflictDetectionRunRequest(BaseModel):
+    area_low_threshold_pct: float = Field(default=2.0, ge=0.1, le=10.0)
+    area_medium_threshold_pct: float = Field(default=5.0, ge=1.0, le=25.0)
+    area_high_threshold_pct: float = Field(default=15.0, ge=5.0, le=50.0)
+    include_geometry_metrics: bool = Field(default=True)
+
+
+class ConflictDetectionRunResponse(BaseModel):
+    stage_id: str = "conflict"
+    stage_number: int = 8
+    status: str = "completed"
+    project_id: uuid.UUID
+    records_scanned: int
+    conflicts_detected: int
+    critical_count: int
+    high_count: int
+    medium_count: int
+    low_count: int
+    counts_by_severity: Dict[str, int] = Field(default_factory=dict)
+    counts_by_type: Dict[str, int] = Field(default_factory=dict)
+    conflicts_created: int
+    conflicts_updated: int
+    execution_time_ms: float
+
+
+class ValidationRunRequest(BaseModel):
+    area_tolerance_pct: float = Field(default=5.0, ge=0.1, le=25.0)
+    area_warning_threshold_pct: float = Field(default=15.0, ge=1.0, le=50.0)
+    check_topology: bool = Field(default=True)
+    check_semantics: bool = Field(default=True)
+    consume_conflicts: bool = Field(default=True)
+
+
+class ValidationRunResponse(BaseModel):
+    stage_id: str = "validation"
+    stage_number: int = 9
+    status: str = "completed"
+    project_id: uuid.UUID
+    records_validated: int
+    pass_count: int
+    warning_count: int
+    fail_count: int
+    geometry_failures_count: int
+    topology_failures_count: int
+    area_failures_count: int
+    semantic_failures_count: int
+    conflict_failures_count: int
+    results_created: int
+    results_updated: int
+    execution_time_ms: float
+
+
+from app.schemas.confidence import (
+    ConfidenceScoringRunRequest,
+    ConfidenceScoringRunResponse,
+)
+
+
+
 class PipelineStageItem(BaseModel):
     stage_number: int
     stage_id: str

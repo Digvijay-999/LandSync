@@ -25,6 +25,12 @@ from app.schemas.pipeline import (
     HarmonizationRunRequest,
     HarmonizedRecordPreviewItem,
     HarmonizationRunResponse,
+    ConflictDetectionRunRequest,
+    ConflictDetectionRunResponse,
+    ValidationRunRequest,
+    ValidationRunResponse,
+    ConfidenceScoringRunRequest,
+    ConfidenceScoringRunResponse,
     PipelineStageItem,
     PipelineStatusResponse,
 )
@@ -112,6 +118,27 @@ class PipelineService:
 
         stage7_exec = exec_by_stage.get("harmonization")
         stage7_completed = bool(stage7_exec and stage7_exec.status == "completed")
+
+        stage8_exec = exec_by_stage.get("conflict")
+        stage8_completed = bool(stage8_exec and stage8_exec.status == "completed")
+
+        stage9_exec = exec_by_stage.get("validation")
+        stage9_completed = bool(stage9_exec and stage9_exec.status == "completed")
+
+        stage10_exec = exec_by_stage.get("confidence") or exec_by_stage.get("scoring")
+        stage10_completed = bool(stage10_exec and stage10_exec.status == "completed")
+
+        stage11_exec = exec_by_stage.get("review")
+        stage11_completed = bool(stage11_exec and stage11_exec.status == "completed")
+
+        stage12_exec = exec_by_stage.get("record") or exec_by_stage.get("unified")
+        stage12_completed = bool(stage12_exec and stage12_exec.status == "completed")
+
+        stage13_exec = exec_by_stage.get("provenance")
+        stage13_completed = bool(stage13_exec and stage13_exec.status == "completed")
+
+        stage14_exec = exec_by_stage.get("export")
+        stage14_completed = bool(stage14_exec and stage14_exec.status == "completed")
 
         for defn in cls.STAGE_DEFINITIONS:
             s_num = defn["number"]
@@ -273,54 +300,132 @@ class PipelineService:
             # Stage 08: Conflict Detection
             elif s_num == 8:
                 prereq_met = stage7_completed
-                is_runnable = False
+                is_runnable = stage7_completed
                 if not prereq_met:
                     status = "disabled"
                     prereq_msg = "Requires Stage 07 Attribute/Geometry Harmonization to be completed first."
+                elif stage8_completed:
+                    status = "completed"
                 else:
                     status = "ready"
 
+                inputs_summary = {
+                    "area_low_threshold_pct": 2.0,
+                    "area_medium_threshold_pct": 5.0,
+                    "area_high_threshold_pct": 15.0,
+                    "include_geometry_metrics": True,
+                    "detection_rules": [
+                        "AREA_DISCREPANCY",
+                        "LAND_USE_CONFLICT",
+                        "MUTATION_CONFLICT",
+                        "RISK_CONFLICT",
+                        "GEOMETRY_MISMATCH",
+                        "ATTRIBUTE_MISMATCH",
+                    ],
+                }
+                if stage8_completed and stage8_exec and stage8_exec.results:
+                    results_summary = stage8_exec.results
+                else:
+                    results_summary = None
+
             # Stage 09: Validation
             elif s_num == 9:
-                prereq_met = stage6_completed
-                is_runnable = False
-                status = "ready" if stage6_completed else "disabled"
-                prereq_msg = None if stage6_completed else "Requires completed matching and harmonization."
+                prereq_met = stage8_completed
+                is_runnable = stage8_completed
+                status = "completed" if stage9_completed else ("ready" if stage8_completed else "disabled")
+                prereq_msg = None if stage8_completed else "Requires Stage 08 Conflict Detection to be completed first."
+
+                inputs_summary = {
+                    "area_tolerance_pct": 5.0,
+                    "area_warning_threshold_pct": 15.0,
+                    "check_topology": True,
+                    "check_semantics": True,
+                    "consume_conflicts": True,
+                }
+                if stage9_completed and stage9_exec and stage9_exec.results:
+                    results_summary = stage9_exec.results
+                else:
+                    results_summary = None
 
             # Stage 10: Confidence Scoring
             elif s_num == 10:
-                prereq_met = stage6_completed
-                is_runnable = False
-                status = "completed" if stage6_completed else "disabled"
-                prereq_msg = None if stage6_completed else "Calculated automatically during Feature Matching."
-                if stage6_completed:
-                    results_summary = {"scoring_model": "Multi-Signal Explainable Scoring v1.1"}
+                prereq_met = stage9_completed or stage7_completed
+                is_runnable = prereq_met
+                status = "completed" if stage10_completed else ("ready" if prereq_met else "disabled")
+                prereq_msg = None if prereq_met else "Requires Stage 09 Validation (or Stage 07 Harmonization)."
+                inputs_summary = {
+                    "spatial_weight": 0.30,
+                    "geometry_weight": 0.30,
+                    "attribute_weight": 0.30,
+                    "temporal_weight": 0.10,
+                    "high_threshold": 0.90,
+                    "medium_threshold": 0.70,
+                }
+                if stage10_completed and stage10_exec and stage10_exec.results:
+                    results_summary = stage10_exec.results
+                else:
+                    results_summary = None
 
             # Stage 11: Human Review
             elif s_num == 11:
-                prereq_met = stage6_completed
-                is_runnable = False
-                status = "ready" if stage6_completed else "disabled"
-                prereq_msg = None if stage6_completed else "Requires Stage 06 Feature Matching."
+                prereq_met = stage10_completed
+                is_runnable = stage10_completed
+                if not prereq_met:
+                    status = "disabled"
+                    prereq_msg = "Requires Stage 10 Confidence Scoring to be completed first."
+                elif stage11_completed:
+                    status = "completed"
+                elif stage11_exec and stage11_exec.status == "running":
+                    status = "running"
+                else:
+                    status = "ready"
+
+                inputs_summary = {
+                    "source_stages": ["Stage 08 Conflicts", "Stage 09 Validation", "Stage 10 Confidence"],
+                    "adjudication_actions": ["ACCEPT_SOURCE_A", "ACCEPT_SOURCE_B", "MERGE_RECONCILE", "REJECT_UNRESOLVED"],
+                }
+                if stage11_exec and stage11_exec.results:
+                    results_summary = stage11_exec.results
 
             # Stage 12: Unified Record
             elif s_num == 12:
-                prereq_met = stage6_completed
-                is_runnable = False
-                status = "ready" if stage6_completed else "disabled"
-                prereq_msg = None if stage6_completed else "Requires Review decisions."
+                prereq_met = stage11_completed
+                is_runnable = stage11_completed
+                status = "completed" if stage12_completed else ("ready" if stage11_completed else "disabled")
+                prereq_msg = None if stage11_completed else "Requires Stage 11 Human Review to be completed first."
+                inputs_summary = {
+                    "source_stages": ["Stage 07 Harmonization", "Stage 08 Conflicts", "Stage 09 Validation", "Stage 10 Confidence", "Stage 11 Human Review"],
+                    "geometry_validation": "PostGIS EPSG:4326 + Shapely make_valid",
+                    "adjudication_precedence": "Strict Human Adjudication Precedence",
+                }
+                if stage12_exec and stage12_exec.results:
+                    results_summary = stage12_exec.results
 
             # Stage 13: Provenance
             elif s_num == 13:
-                prereq_met = has_any_datasets
-                is_runnable = False
-                status = "ready" if has_any_datasets else "disabled"
+                prereq_met = stage12_completed
+                is_runnable = stage12_completed
+                status = "completed" if stage13_completed else ("ready" if stage12_completed else "disabled")
+                prereq_msg = None if stage12_completed else "Requires Stage 12 Unified Record to be completed first."
+                inputs_summary = {
+                    "source_stages": ["01-Ingestion", "04-Normalization", "06-Matching", "07-Harmonization", "08-Conflicts", "09-Validation", "10-Confidence", "11-HumanReview", "12-UnifiedRecord"],
+                    "idempotency_enforced": True,
+                }
+                if stage13_completed and stage13_exec and stage13_exec.results:
+                    results_summary = stage13_exec.results
 
             # Stage 14: Export
             elif s_num == 14:
-                prereq_met = has_any_datasets
-                is_runnable = False
-                status = "ready" if has_any_datasets else "disabled"
+                prereq_met = stage13_completed
+                is_runnable = stage13_completed
+                status = "completed" if stage14_completed else ("ready" if stage13_completed else "disabled")
+                prereq_msg = None if stage13_completed else "Requires Stage 13 Provenance to be completed first."
+                inputs_summary = {
+                    "export_formats": ["GeoJSON", "GeoPackage", "CSV"],
+                    "include_provenance_trail": True,
+                }
+                if stage14_completed and stage14_exec and stage14_exec.results:
+                    results_summary = stage14_exec.results
 
             stages.append(
                 PipelineStageItem(
@@ -338,8 +443,8 @@ class PipelineService:
                 )
             )
 
-        # Active stage: next stage that is ready or runnable
-        active_num = 5
+        # Active stage: next stage that is ready or runnable (defaults to 14 if all completed)
+        active_num = 14 if stage14_completed else 5
         for s in stages:
             if s.status == "ready" and s.is_runnable:
                 active_num = s.stage_number
@@ -1005,3 +1110,96 @@ class PipelineService:
             records_preview=records_preview,
             execution_time_ms=duration_ms,
         )
+
+    @classmethod
+    async def run_conflict_detection(
+        cls,
+        db: AsyncSession,
+        project_id: uuid.UUID,
+        req: Optional[ConflictDetectionRunRequest] = None,
+    ) -> ConflictDetectionRunResponse:
+        """
+        Executes STAGE 08 — Conflict Detection:
+        Coordinates with ConflictDetectionService to consume Stage 07 harmonized records,
+        detect conflicts across area, land-use, mutation, risk, and geometry, and persist results.
+        """
+        from app.services.conflict.service import ConflictDetectionService
+        return await ConflictDetectionService.execute_stage_08(db, project_id, req)
+
+    @classmethod
+    async def run_validation(
+        cls,
+        db: AsyncSession,
+        project_id: uuid.UUID,
+        req: Optional[ValidationRunRequest] = None,
+    ) -> ValidationRunResponse:
+        """
+        Executes STAGE 09 — Validation:
+        Coordinates with ValidationService to verify geometric validity,
+        topological integrity, area tolerances, semantic business rules,
+        and conflict results across harmonized candidate records.
+        """
+        from app.services.validation.service import ValidationService
+        return await ValidationService.execute_stage_09(db, project_id, req)
+
+    @classmethod
+    async def run_confidence_scoring(
+        cls,
+        db: AsyncSession,
+        project_id: uuid.UUID,
+        req: Optional[ConfidenceScoringRunRequest] = None,
+    ) -> ConfidenceScoringRunResponse:
+        """
+        Executes STAGE 10 — Confidence Scoring:
+        Coordinates with ConfidenceScoringService to compute multi-component
+        explainable confidence scores over validated/harmonized candidate records.
+        """
+        from app.services.confidence.service import ConfidenceScoringService
+        if req is None:
+            req = ConfidenceScoringRunRequest()
+        return await ConfidenceScoringService.execute_stage_10(db=db, project_id=project_id, req=req)
+
+    @classmethod
+    async def run_stage_12(
+        cls,
+        db: AsyncSession,
+        project_id: uuid.UUID,
+    ):
+        """
+        Executes STAGE 12 — Unified Record:
+        Coordinates with UnifiedRecordService to synthesize authoritative master land records
+        from harmonized, validated, and human-adjudicated data.
+        """
+        from app.services.unified.service import UnifiedRecordService
+        return await UnifiedRecordService.synthesize_stage_12(db=db, project_id=project_id)
+
+    @classmethod
+    async def run_stage_13(
+        cls,
+        db: AsyncSession,
+        project_id: uuid.UUID,
+    ):
+        """
+        Executes STAGE 13 — Provenance:
+        Coordinates with ProvenanceService to trace and persist complete lineage
+        and audit events for Unified Land Records.
+        """
+        from app.services.provenance.service import ProvenanceService
+        return await ProvenanceService.execute_stage_13(db=db, project_id=project_id)
+
+    @classmethod
+    async def run_stage_14(
+        cls,
+        db: AsyncSession,
+        project_id: uuid.UUID,
+    ):
+        """
+        Executes STAGE 14 — Export & Deliverables:
+        Coordinates with ExportService to generate authoritative geospatial deliverables
+        (GeoJSON, GeoPackage, CSV) and defensible lineage manifests.
+        """
+        from app.services.export.service import ExportService
+        return await ExportService.execute_stage_14(db=db, project_id=project_id)
+
+
+

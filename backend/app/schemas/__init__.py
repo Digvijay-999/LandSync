@@ -59,6 +59,28 @@ from app.schemas.conflict import (
     ConflictDismissInput,
     ConflictListResponse,
     ConflictSummaryResponse,
+    GeospatialConflictRead,
+    GeospatialConflictStatusUpdate,
+    GeospatialConflictListResponse,
+)
+from app.schemas.pipeline import (
+    CandidateGenerationRequest,
+    CandidateGenerationResponse,
+    FeatureMatchingRunRequest,
+    FeatureMatchingRunResponse,
+    HarmonizationRunRequest,
+    HarmonizationRunResponse,
+    ConflictDetectionRunRequest,
+    ConflictDetectionRunResponse,
+    ValidationRunRequest,
+    ValidationRunResponse,
+    PipelineStageItem,
+    PipelineStatusResponse,
+)
+from app.schemas.validation import (
+    ValidationResultRead,
+    ValidationSummaryResponse,
+    ValidationResultListResponse,
 )
 from app.schemas.assistant import (
     AssistantIntent,
@@ -97,6 +119,30 @@ from app.schemas.spatial_analysis import (
 from app.schemas.conflict_proposal import (
     ConflictResolutionProposal,
     ConflictSourceReference,
+)
+from app.schemas.confidence import (
+    ConfidenceBucketType,
+    ConfidenceRecordItem,
+    ConfidenceSummaryResponse,
+    ConfidenceResultListResponse,
+    ConfidenceScoringRunRequest,
+    ConfidenceScoringRunResponse,
+)
+from app.schemas.adjudication import (
+    ReviewQueueItem,
+    ReviewQueueSummaryResponse,
+    ReviewQueueListResponse,
+    AdjudicationActionRequest,
+    AdjudicationActionResponse,
+    Stage11ExecutionResponse,
+)
+from app.schemas.export import (
+    ExportCreateRequest,
+    ExportJobItem,
+    ExportJobListResponse,
+    ExportManifestResponse,
+    Stage14ExecutionResponse,
+    Stage14StatusResponse,
 )
 
 __all__ = [
@@ -153,6 +199,24 @@ __all__ = [
     "ConflictDismissInput",
     "ConflictListResponse",
     "ConflictSummaryResponse",
+    "GeospatialConflictRead",
+    "GeospatialConflictStatusUpdate",
+    "GeospatialConflictListResponse",
+    "CandidateGenerationRequest",
+    "CandidateGenerationResponse",
+    "FeatureMatchingRunRequest",
+    "FeatureMatchingRunResponse",
+    "HarmonizationRunRequest",
+    "HarmonizationRunResponse",
+    "ConflictDetectionRunRequest",
+    "ConflictDetectionRunResponse",
+    "ValidationRunRequest",
+    "ValidationRunResponse",
+    "ValidationResultRead",
+    "ValidationSummaryResponse",
+    "ValidationResultListResponse",
+    "PipelineStageItem",
+    "PipelineStatusResponse",
     "AssistantIntent",
     "AssistantEvidenceSource",
     "AssistantQueryRequest",
@@ -180,6 +244,24 @@ __all__ = [
     "AnalysisHistorySummary",
     "ConflictResolutionProposal",
     "ConflictSourceReference",
+    "ConfidenceBucketType",
+    "ConfidenceRecordItem",
+    "ConfidenceSummaryResponse",
+    "ConfidenceResultListResponse",
+    "ConfidenceScoringRunRequest",
+    "ConfidenceScoringRunResponse",
+    "ReviewQueueItem",
+    "ReviewQueueSummaryResponse",
+    "ReviewQueueListResponse",
+    "AdjudicationActionRequest",
+    "AdjudicationActionResponse",
+    "Stage11ExecutionResponse",
+    "ExportCreateRequest",
+    "ExportJobItem",
+    "ExportJobListResponse",
+    "ExportManifestResponse",
+    "Stage14ExecutionResponse",
+    "Stage14StatusResponse",
 ]
 
 

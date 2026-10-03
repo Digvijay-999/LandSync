@@ -9,6 +9,9 @@ from app.api.v1.endpoints.conflict import router as conflict_router
 from app.api.v1.endpoints.assistant import router as assistant_router
 from app.api.v1.endpoints.spatial_analysis import router as spatial_analysis_router
 from app.api.v1.endpoints.pipeline import router as pipeline_router
+from app.api.v1.endpoints.validation import router as validation_router
+from app.api.v1.endpoints.confidence import router as confidence_router
+from app.api.v1.endpoints.adjudication import router as adjudication_router
 
 __all__ = [
     "health_router",
@@ -22,5 +25,8 @@ __all__ = [
     "assistant_router",
     "spatial_analysis_router",
     "pipeline_router",
+    "validation_router",
+    "confidence_router",
+    "adjudication_router",
 ]
 

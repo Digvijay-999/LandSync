@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
   ArrowLeft,
@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   Compass,
 } from 'lucide-react'
+import { useAppStore } from '../stores/useAppStore'
 import { useProject } from '../hooks/useProjects'
 import { useProjectDatasets, useDeleteDataset } from '../hooks/useDatasets'
 import { StatusBadge } from '../components/common/StatusBadge'
@@ -37,6 +38,14 @@ import type { Dataset } from '../types'
 
 export const ProjectDetailPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>()
+  const { setActiveProjectId } = useAppStore()
+
+  useEffect(() => {
+    if (projectId) {
+      setActiveProjectId(projectId)
+    }
+  }, [projectId, setActiveProjectId])
+
   const { data: project, isLoading: projectLoading, isError } = useProject(projectId)
   const { data: datasetsData, isLoading: datasetsLoading } = useProjectDatasets(projectId)
   const { data: pipelineStatus } = usePipelineStatus(projectId)

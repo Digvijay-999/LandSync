@@ -1,6 +1,7 @@
 import uuid
-from typing import Optional, List
+from typing import Optional, List, Union, Any
 from fastapi import APIRouter, HTTPException, Query, status
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import SessionDep
@@ -11,9 +12,12 @@ from app.schemas.conflict import (
     ConflictDismissInput,
     ConflictListResponse,
     ConflictSummaryResponse,
+    GeospatialConflictRead,
+    GeospatialConflictStatusUpdate,
+    GeospatialConflictListResponse,
 )
 from app.schemas.conflict_proposal import ConflictResolutionProposal
-from app.models.conflict import AttributeConflict
+from app.models.conflict import AttributeConflict, GeospatialConflict
 from app.services.assistant.conflict_advisor import ConflictAdvisorService
 
 router = APIRouter()
@@ -43,30 +47,52 @@ async def get_record_conflicts(
 
 @router.get(
     "/projects/{project_id}/conflicts",
-    response_model=ConflictListResponse,
+    response_model=Union[GeospatialConflictListResponse, ConflictListResponse],
     status_code=status.HTTP_200_OK,
-    summary="List paginated attribute conflicts for a project",
-    description="Filterable by status (UNRESOLVED, RESOLVED, DISMISSED), attribute_name, and severity.",
+    summary="List paginated conflicts for a project",
+    description="Returns Stage 08 Geospatial Conflicts if present, or legacy attribute conflicts. Supports filtering by severity, conflict_type, category, status, source, and search.",
 )
 async def list_project_conflicts(
     project_id: uuid.UUID,
-    status_filter: Optional[str] = Query(None, alias="status", description="Filter by status (UNRESOLVED, RESOLVED, DISMISSED, ALL)"),
-    attribute_name: Optional[str] = Query(None, description="Filter by attribute name (e.g. land_use, area)"),
-    severity: Optional[str] = Query(None, description="Filter by severity (HIGH, MEDIUM, LOW)"),
+    status_filter: Optional[str] = Query(None, alias="status", description="Filter by status (OPEN, ACKNOWLEDGED, RESOLVED, DISMISSED, ALL)"),
+    conflict_type: Optional[str] = Query(None, description="Filter by conflict type (e.g. AREA_DISCREPANCY, LAND_USE_CONFLICT, etc.)"),
+    category: Optional[str] = Query(None, description="Filter by category (e.g. GEOMETRY, SEMANTIC, REGISTRY, RISK)"),
+    severity: Optional[str] = Query(None, description="Filter by severity (CRITICAL, HIGH, MEDIUM, LOW)"),
+    source: Optional[str] = Query(None, description="Filter by dataset or source name"),
+    search: Optional[str] = Query(None, description="Filter by parcel/record identifier or keyword"),
+    attribute_name: Optional[str] = Query(None, description="Legacy attribute name filter"),
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
     db: AsyncSession = SessionDep,
-) -> ConflictListResponse:
+) -> Any:
     try:
-        return await ConflictDetectionService.get_project_conflicts(
-            db,
-            project_id=project_id,
-            status=status_filter,
-            attribute_name=attribute_name,
-            severity=severity,
-            skip=skip,
-            limit=limit,
-        )
+        # Check if Stage 08 Geospatial Conflicts exist for this project
+        count_stmt = select(func.count(GeospatialConflict.id)).where(GeospatialConflict.project_id == project_id)
+        geo_count = (await db.execute(count_stmt)).scalar() or 0
+
+        if geo_count > 0 or conflict_type or category or source or search:
+            return await ConflictDetectionService.list_geospatial_conflicts(
+                db,
+                project_id=project_id,
+                severity=severity,
+                conflict_type=conflict_type,
+                category=category,
+                status=status_filter,
+                source=source,
+                search=search,
+                skip=skip,
+                limit=limit,
+            )
+        else:
+            return await ConflictDetectionService.get_project_conflicts(
+                db,
+                project_id=project_id,
+                status=status_filter,
+                attribute_name=attribute_name,
+                severity=severity,
+                skip=skip,
+                limit=limit,
+            )
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except Exception as e:
@@ -100,22 +126,75 @@ async def get_project_conflict_summary(
 
 @router.get(
     "/conflicts/{conflict_id}",
-    response_model=AttributeConflictRead,
+    response_model=Union[GeospatialConflictRead, AttributeConflictRead],
     status_code=status.HTTP_200_OK,
     summary="Get conflict details and evidence",
-    description="Returns detailed source values, conflict classification, and resolution history.",
+    description="Returns detailed source values, spatial evidence, and conflict classification.",
 )
 async def get_conflict_detail(
     conflict_id: uuid.UUID,
     db: AsyncSession = SessionDep,
-) -> AttributeConflictRead:
-    conflict = await ConflictDetectionService.get_conflict_detail(db, conflict_id)
-    if not conflict:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Attribute conflict with ID '{conflict_id}' not found.",
-        )
-    return conflict
+) -> Any:
+    # 1. Try finding in Stage 08 Geospatial Conflicts
+    geo_conflict = await ConflictDetectionService.get_geospatial_conflict(db, conflict_id)
+    if geo_conflict:
+        return geo_conflict
+
+    # 2. Fall back to AttributeConflict
+    attr_conflict = await ConflictDetectionService.get_conflict_detail(db, conflict_id)
+    if attr_conflict:
+        return attr_conflict
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"Conflict with ID '{conflict_id}' not found.",
+    )
+
+
+@router.patch(
+    "/conflicts/{conflict_id}",
+    response_model=Union[GeospatialConflictRead, AttributeConflictRead],
+    status_code=status.HTTP_200_OK,
+    summary="Update conflict status",
+    description="Updates conflict status (OPEN, ACKNOWLEDGED, RESOLVED, DISMISSED) with optional notes.",
+)
+async def update_conflict_status(
+    conflict_id: uuid.UUID,
+    input_data: GeospatialConflictStatusUpdate,
+    db: AsyncSession = SessionDep,
+) -> Any:
+    # 1. Try finding in Stage 08 Geospatial Conflicts
+    geo = await db.get(GeospatialConflict, conflict_id)
+    if geo:
+        try:
+            return await ConflictDetectionService.update_geospatial_conflict_status(
+                db, conflict_id, input_data
+            )
+        except ValueError as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+    # 2. Try finding in AttributeConflict
+    attr = await db.get(AttributeConflict, conflict_id)
+    if attr:
+        if input_data.status.upper() == "RESOLVED":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Use POST /conflicts/{conflict_id}/resolve to provide resolution evidence for unified record conflicts.",
+            )
+        elif input_data.status.upper() == "DISMISSED":
+            return await ConflictDetectionService.dismiss_conflict(
+                db, conflict_id, ConflictDismissInput(reason=input_data.notes or "Dismissed via status update")
+            )
+        else:
+            attr.status = input_data.status.upper()
+            await db.commit()
+            await db.refresh(attr)
+            return await ConflictDetectionService.get_conflict_detail(db, conflict_id)
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"Conflict with ID '{conflict_id}' not found.",
+    )
 
 
 @router.post(
